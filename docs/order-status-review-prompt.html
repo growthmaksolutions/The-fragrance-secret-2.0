@@ -1,0 +1,143 @@
+<!--
+  Order status page — "How did that go?" experience rating.
+
+  WHERE THIS GOES
+  Shopify admin › Settings › Checkout › Order status page › Additional scripts.
+  Paste the whole block, including the <script> tags, and Save.
+
+  It does NOT belong in the theme. Shopify owns the page shown after checkout
+  and no theme file renders there, which is why this is a paste-in script and
+  why it is unaffected by whether the theme is up to date.
+
+  WHAT IT ASKS, AND WHAT IT DELIBERATELY DOES NOT
+  It rates the ORDERING experience — checkout, the delivery promise, how easy
+  the site was. Not the fragrance. At this moment the customer has not received
+  the bottle, so a product review here would be a guess published next to real
+  ones. Judge.me's post-fulfilment email asks about the product, once they have
+  worn it. The two are separate on purpose, and the card says so.
+
+  BEFORE IT WILL SHOW ANYTHING
+  Put the Judge.me shop-review form link in FORM_URL below. Judge.me › Settings
+  › Shop reviews. Left blank, nothing renders at all — five stars that open
+  nothing are worse than no card.
+-->
+<script>
+(function () {
+  'use strict';
+
+  /* ------------------------------------------------------------------ */
+  /* CONFIG — the only line you need to edit.                            */
+  var FORM_URL = '';
+  var DELAY_MS = 2500;   /* let the order details land first */
+  /* ------------------------------------------------------------------ */
+
+  try {
+    if (!FORM_URL) return;
+
+    /* Order status page only. Shopify exposes this object there; on any other
+       page it is absent and this exits rather than drawing over something. */
+    var checkout = window.Shopify && window.Shopify.checkout;
+    if (!checkout) return;
+
+    var orderKey = 'tfs_exp_rating_' + (checkout.order_id || checkout.token || 'x');
+
+    /* Asked once. A prompt that returns on every refresh of a page people
+       revisit to check delivery reads as nagging. */
+    try { if (window.localStorage.getItem(orderKey)) return; } catch (e) {}
+
+    var GOLD = '#C9A84C', INK = '#0D0A06', WARM = '#6B6257', LINE = '#E6DFD2';
+
+    function el(tag, css, text) {
+      var n = document.createElement(tag);
+      if (css) n.setAttribute('style', css);
+      if (text) n.textContent = text;
+      return n;
+    }
+
+    function seen() { try { window.localStorage.setItem(orderKey, '1'); } catch (e) {} }
+
+    var card = el('div',
+      'position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(14px);' +
+      'z-index:2147483000;width:calc(100% - 32px);max-width:420px;box-sizing:border-box;' +
+      'background:#fff;border:1px solid ' + LINE + ';border-radius:12px;padding:20px 22px;' +
+      'box-shadow:0 18px 44px -12px rgba(13,10,6,.28);opacity:0;' +
+      'transition:opacity .28s ease,transform .28s ease;' +
+      'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;');
+    card.setAttribute('role', 'dialog');
+    card.setAttribute('aria-label', 'Rate your ordering experience');
+
+    var close = el('button', 'position:absolute;top:10px;right:12px;border:0;background:none;' +
+      'font-size:20px;line-height:1;color:' + WARM + ';cursor:pointer;padding:4px;', '×');
+    close.setAttribute('aria-label', 'Dismiss');
+
+    var h = el('div', 'font-size:1.02rem;font-weight:600;color:' + INK + ';margin:0 18px 6px 0;',
+      'How did that go?');
+    var sub = el('div', 'font-size:.84rem;line-height:1.55;color:' + WARM + ';margin-bottom:14px;',
+      'Your order is in. Tell us how the ordering itself went — it takes a few seconds.');
+
+    var row = el('div', 'display:flex;gap:4px;');
+    row.setAttribute('role', 'group');
+    row.setAttribute('aria-label', 'Rate from 1 to 5');
+
+    var stars = [];
+    function paint(upTo) {
+      for (var i = 0; i < stars.length; i++) {
+        stars[i].style.color = i < upTo ? GOLD : LINE;
+      }
+    }
+
+    for (var i = 1; i <= 5; i++) {
+      (function (score) {
+        var b = el('button',
+          'border:0;background:none;cursor:pointer;padding:2px 3px;font-size:30px;line-height:1;' +
+          'color:' + LINE + ';transition:color .15s,transform .15s;', '★');
+        b.setAttribute('aria-label', score + ' out of 5');
+        b.addEventListener('mouseenter', function () { paint(score); b.style.transform = 'scale(1.1)'; });
+        b.addEventListener('mouseleave', function () { paint(0); b.style.transform = ''; });
+        b.addEventListener('focus', function () { paint(score); });
+        b.addEventListener('blur', function () { paint(0); });
+        b.addEventListener('click', function () {
+          seen();
+          /* The link a merchant pastes usually carries a ?shop_domain already,
+             so the separator is worked out rather than assumed. */
+          var sep = FORM_URL.indexOf('?') === -1 ? '?' : '&';
+          window.open(FORM_URL + sep + 'rating=' + score, '_blank', 'noopener');
+          hide();
+        });
+        stars.push(b);
+        row.appendChild(b);
+      })(i);
+    }
+
+    var note = el('div', 'font-size:.72rem;color:' + WARM + ';margin-top:12px;line-height:1.5;',
+      'This is about the checkout, not the fragrance — we’ll ask how it wears once it reaches you.');
+
+    function hide() {
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(-50%) translateY(14px)';
+      setTimeout(function () { if (card.parentNode) card.parentNode.removeChild(card); }, 320);
+    }
+    close.addEventListener('click', function () { seen(); hide(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && card.parentNode) { seen(); hide(); }
+    });
+
+    card.appendChild(close);
+    card.appendChild(h);
+    card.appendChild(sub);
+    card.appendChild(row);
+    card.appendChild(note);
+
+    setTimeout(function () {
+      document.body.appendChild(card);
+      /* Force the reflow so the entrance transition runs from its start value. */
+      void card.offsetWidth;
+      card.style.opacity = '1';
+      card.style.transform = 'translateX(-50%) translateY(0)';
+    }, DELAY_MS);
+
+  } catch (e) {
+    /* A broken prompt must never take the order confirmation down with it. */
+  }
+})();
+</script>
