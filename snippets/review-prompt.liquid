@@ -1,0 +1,109 @@
+{%- comment -%}
+  Review prompt — the storefront popup, for a customer who has received
+  something and not been asked about it.
+  Usage: {% render 'review-prompt' %} from overlays, so it is on every template.
+
+  Why it lives here and not on the order status page. Shopify does not allow a
+  modal to open on its own after checkout — Thank you, Order status and the
+  customer account pages all forbid it, and the platform is explicit that a
+  modal opens on buyer interaction or not at all. Our own storefront has no
+  such rule, so the ask that has to appear by itself has to appear here.
+
+  Three gates, and all of them have to pass before any markup is written.
+
+  Signed in. customer.orders is only readable for a logged-in customer, which
+  is also the only way to know what they bought. Guests get nothing, and most
+  cash-on-delivery buyers are guests — this reaches the minority who have an
+  account, which is why the Judge.me request email is still the mechanism that
+  does the real work.
+
+  Fulfilled. Asking about a bottle that has not arrived is the same mistake as
+  asking at checkout. The loop skips every order that is not fulfilled rather
+  than taking the most recent one and hoping.
+
+  A real product on the line. A line item whose product has since been deleted
+  has no URL to send anyone to, so it is skipped instead of rendering a card
+  that goes nowhere.
+
+  One order, one product, one ask. The most recent fulfilled order that has
+  anything promptable in it; the first line with a product behind it. A popup
+  offering four things to review is a menu, and a menu gets dismissed.
+{%- endcomment -%}
+
+{%- liquid
+  # A flag rather than testing an unset variable: Liquid has no nil literal,
+  # and "assign x = blank" leans on behaviour that is easy to misread later.
+  assign rp_found = false
+
+  if customer and customer.orders.size > 0
+    for o in customer.orders
+      unless o.fulfillment_status == 'fulfilled'
+        continue
+      endunless
+      for line in o.line_items
+        if line.product == blank
+          continue
+        endif
+        assign rp_order = o
+        assign rp_item = line
+        assign rp_found = true
+        break
+      endfor
+      if rp_found
+        break
+      endif
+    endfor
+  endif
+-%}
+
+{%- if rp_found -%}
+  {%- liquid
+    assign rp_product = rp_item.product
+    # Keyed on both, so a second order of the same scent may be asked about
+    # again while a dismissal of this one sticks.
+    assign rp_key = 'tfs_rp_' | append: rp_order.id | append: '_' | append: rp_product.id
+  -%}
+  {%- comment -%}
+    hidden until app.js decides, so it cannot flash on first paint. The
+    destination is a real href on every star: with no JavaScript the card
+    never shows, but if it ever does, every control still goes somewhere.
+
+    The rating rides along as a query parameter the same way the order-page
+    card sends it. Judge.me decides whether to honour it on the product form;
+    if it does not, the shopper picks again on a form they were going to be
+    shown anyway, so the click is never wasted.
+  {%- endcomment -%}
+  <div class="rev-prompt" id="revPrompt" data-key="{{ rp_key }}" data-path="{{ rp_product.url }}" hidden>
+    <button type="button" class="rev-prompt-x" data-rp-dismiss aria-label="Not now">
+      <span class="mi" aria-hidden="true">close</span>
+    </button>
+
+    <div class="rev-prompt-body">
+      {%- if rp_item.image -%}
+        <img class="rev-prompt-img" src="{{ rp_item.image | image_url: width: 140 }}"
+             alt="" width="64" height="64" loading="lazy">
+      {%- endif -%}
+
+      <div class="rev-prompt-copy">
+        <p class="rev-prompt-title">How was it?</p>
+        <p class="rev-prompt-name">{{ rp_product.title | truncate: 58 }}</p>
+      </div>
+    </div>
+
+    {%- comment -%}
+      Each star is its own link, labelled with what it does: a screen reader
+      meets five distinct controls rather than five identical icons, and the
+      whole thing works without JavaScript driving it.
+    {%- endcomment -%}
+    <div class="rev-prompt-stars" role="group" aria-label="Rate {{ rp_product.title | escape }}">
+      {%- for i in (1..5) -%}
+        <a class="rev-prompt-star" href="{{ rp_product.url }}?jdgm_rating={{ i }}#judgeme_product_reviews"
+           data-rp-go aria-label="Rate {{ i }} out of 5 and write a review">
+          <span class="mi mi-f" aria-hidden="true">star</span>
+        </a>
+      {%- endfor -%}
+    </div>
+
+    <p class="rev-prompt-note">Ordered {{ rp_order.created_at | date: '%-d %b' }} &middot; takes a few seconds</p>
+  </div>
+{%- endif -%}

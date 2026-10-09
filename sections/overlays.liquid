@@ -94,6 +94,12 @@
   </div>
 </div>
 
+{%- comment -%}
+  Rendered last, so it sits above the floating chrome in source order but is
+  positioned clear of it in CSS.
+{%- endcomment -%}
+{% render 'review-prompt' %}
+
 {% schema %}
 { "name": "Overlays & floats", "settings": [] }
 {% endschema %}

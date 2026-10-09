@@ -1541,3 +1541,65 @@ body.jdgm-modal-open .sticky-atc {
   .oer-star { transition: none; }
   .oer-star:hover { transform: none; }
 }
+
+/* ── Review prompt ────────────────────────────────────────────────────────
+   The storefront popup asking about something already delivered. Markup in
+   snippets/review-prompt.liquid, timing in app.js. Bottom-left on desktop so
+   it never covers the WhatsApp float or the chat launcher, both of which sit
+   bottom-right; full width above them on phones. */
+.rev-prompt {
+  position: fixed; left: 22px; bottom: 22px; z-index: 900;
+  width: 330px; max-width: calc(100vw - 32px); box-sizing: border-box;
+  background: var(--white); border: 1px solid var(--cream-dk); border-radius: 12px;
+  padding: 18px 20px 16px; box-shadow: 0 18px 44px -14px rgba(13,10,6,.3);
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.rev-prompt.is-up { opacity: 1; transform: translateY(0); }
+
+.rev-prompt-x {
+  position: absolute; top: 8px; right: 8px; border: 0; background: none;
+  color: var(--warm); cursor: pointer; padding: 5px; line-height: 1; border-radius: 50%;
+}
+.rev-prompt-x:hover { color: var(--ink); background: var(--cream); }
+.rev-prompt-x .mi { font-size: 18px; }
+
+.rev-prompt-body { display: flex; gap: 12px; align-items: center; margin-right: 20px; }
+.rev-prompt-img { width: 52px; height: 52px; object-fit: cover; border-radius: 7px; flex: none; }
+/* min-width:0 so a long product name can shrink inside the flex row: without
+   it a flex item refuses to go below its content width and pushes the card
+   wider than its own max-width. */
+.rev-prompt-copy { min-width: 0; }
+.rev-prompt-title { font-size: .95rem; font-weight: 600; color: var(--ink); margin: 0 0 2px; }
+.rev-prompt-name { font-size: .76rem; color: var(--warm); margin: 0; line-height: 1.4; }
+
+.rev-prompt-stars { display: flex; gap: 2px; margin: 13px 0 0; }
+.rev-prompt-star {
+  display: inline-flex; padding: 2px; color: var(--cream-dk);
+  transition: color .16s, transform .16s;
+}
+.rev-prompt-star .mi { font-size: 29px; }
+
+/* Empty until pointed at, then filled up to the pointer and cleared past it —
+   the same behaviour as the order page's card, so the two read as one thing. */
+.rev-prompt-stars:hover .rev-prompt-star { color: var(--gold); }
+.rev-prompt-stars .rev-prompt-star:hover ~ .rev-prompt-star { color: var(--cream-dk); }
+.rev-prompt-star:hover { transform: scale(1.09); }
+/* A keyboard never fires :hover, so focus has to fill as well as ring. */
+.rev-prompt-star:focus-visible {
+  color: var(--gold); outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px;
+}
+
+.rev-prompt-note { font-size: .7rem; color: var(--muted); margin: 10px 0 0; }
+
+@media (max-width: 560px) {
+  /* Above the floating buttons rather than beside them: at this width there is
+     no beside. */
+  .rev-prompt { left: 16px; right: 16px; width: auto; bottom: 86px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rev-prompt { transition: none; }
+  .rev-prompt-star { transition: none; }
+  .rev-prompt-star:hover { transform: none; }
+}

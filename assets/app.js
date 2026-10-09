@@ -1050,6 +1050,72 @@ function selectQuiz(node, val) {
 }
 
 /* ═══════════════════════════════════════
+   REVIEW PROMPT
+   The popup for a customer who has received something and not said anything
+   about it. Liquid has already decided whether there is anything to ask about
+   — snippets/review-prompt.liquid writes no markup at all otherwise — so this
+   only decides when, and whether this person has had enough.
+═══════════════════════════════════════ */
+(function () {
+  var DELAY = 6000;
+
+  function init() {
+    var card = document.getElementById('revPrompt');
+    if (!card) return;
+
+    var key = card.getAttribute('data-key');
+
+    /* Dismissed, or already acted on. localStorage can throw outright in a
+       private window, and a prompt that cannot remember being closed would
+       come back on every page — so a failure to read is treated as "shown
+       already" rather than "show again". */
+    try { if (window.localStorage.getItem(key)) return; }
+    catch (e) { return; }
+
+    function done() {
+      try { window.localStorage.setItem(key, '1'); } catch (e) {}
+    }
+
+    /* Not on the product it is asking about: the review widget is already on
+       that page, and a card floating over it is in the way of the thing it is
+       pointing at. Compared as paths because the href carries a query string
+       and a hash that location.pathname does not. Not over the cart or
+       checkout either — interrupting someone on their way to paying is the one
+       place this must never appear. */
+    var own = (card.getAttribute('data-path') || '').split('?')[0].replace(/\/$/, '');
+    var path = location.pathname.replace(/\/$/, '');
+    if ((own && path === own) || /\/(cart|checkout)/.test(path)) return;
+
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('[data-rp-dismiss]')) { e.preventDefault(); done(); hide(); return; }
+      /* A star is a real link, so it is left to navigate on its own; all this
+         does is make sure the card does not come back afterwards. */
+      if (e.target.closest('[data-rp-go]')) done();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !card.hidden) { done(); hide(); }
+    });
+
+    function hide() {
+      card.classList.remove('is-up');
+      setTimeout(function () { card.hidden = true; }, 320);
+    }
+
+    setTimeout(function () {
+      card.hidden = false;
+      /* Force the reflow so the entrance runs from its start value, the same
+         way the cart drawer does. */
+      void card.offsetWidth;
+      card.classList.add('is-up');
+    }, DELAY);
+  }
+
+  if (document.readyState !== 'loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+
+/* ═══════════════════════════════════════
    FIND MY SCENT → CHAT APP BRIDGE
    The in-theme concierge was removed; chat is handled by the Chizy AI chatbot
    app, which injects its own launcher. Every "Find My Scent" action in the
