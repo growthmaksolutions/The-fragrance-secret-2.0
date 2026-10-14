@@ -111,7 +111,9 @@ def main():
         print("\n%sDry run — nothing was written. Re-run with --apply.%s" % (YELLOW, RESET))
         return
 
-    result = client.call(UPDATE, {"policy": {"id": policy["id"], "body": updated}})
+    # ShopPolicyInput took an id when this was written; the current API
+    # identifies the policy by type and rejects id outright.
+    result = client.call(UPDATE, {"policy": {"type": policy["type"], "body": updated}})
     errors = result["shopPolicyUpdate"]["userErrors"]
     if errors:
         sys.exit("%sShopify rejected it: %s%s" % (RED, json.dumps(errors, indent=2), RESET))

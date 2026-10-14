@@ -17,6 +17,7 @@
     "text_direction": "ltr",
     "whatsapp_number": "971547330534",
     "free_shipping_threshold": "250",
+    "shipping_flat_rate": "12",
     "returns_window_days": "2",
     "welcome_offer_enabled": true,
     "welcome_offer_code": "WELCOME10",
