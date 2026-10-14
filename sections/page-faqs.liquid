@@ -151,7 +151,7 @@
       written into app.js. With none synced the whole section — heading
       included — is absent, rather than a promise of testimonials over a gap.
     {%- endcomment -%}
-    {%- assign tfs_shop_reviews = shop.metafields.judgeme.shop_reviews_count | plus: 0 -%}
+    {%- assign tfs_shop_reviews = shop.metafields.judgeme.all_reviews_count | plus: 0 -%}
     {%- if tfs_shop_reviews > 0 -%}
     <section class="reviews">
       <div class="reviews-inner">

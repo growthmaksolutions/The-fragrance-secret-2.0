@@ -35,19 +35,23 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign sr_count = shop.metafields.judgeme.shop_reviews_count | plus: 0
+  # all_reviews_*, not shop_reviews_*. Judge.me publishes both: shop_reviews
+  # counts only reviews about the shop itself (3), all_reviews counts those
+  # plus every product review (24). The carousel below shows all of them, so
+  # the summary has to count the same set or the two contradict each other on
+  # the same screen.
+  assign sr_count = shop.metafields.judgeme.all_reviews_count | plus: 0
+  assign sr_rating = shop.metafields.judgeme.all_reviews_rating
   assign sr_mode = show | default: 'carousel'
 -%}
 
 {%- if sr_count > 0 -%}
   {%- if sr_mode == 'summary' -%}
     {%- comment -%}
-      Judge.me publishes the count reliably. The average is not guaranteed to
-      be synced into a metafield on every plan, so the stars are rendered only
-      when there is a number behind them — a count on its own is still true,
-      where five stars on nothing is the thing being removed.
+      Stars only when there is an average behind them. A count on its own is
+      still true; five stars on nothing is the thing this file exists to
+      remove.
     {%- endcomment -%}
-    {%- assign sr_rating = shop.metafields.judgeme.shop_rating | default: shop.metafields.judgeme.shop_average_rating -%}
     <div class="rv-summary fade-up">
       {%- if sr_rating != blank -%}
         <div class="rv-big">{{ sr_rating | times: 1.0 | round: 1 }}</div>
@@ -61,13 +65,24 @@
     </div>
   {%- else -%}
     {%- comment -%}
-      Judge.me's own carousel widget. Its script finds this container and
-      fills it with real reviews; the theme does not render review cards of
-      its own any more, which is the point.
+      The metafield, not an empty container.
+
+      The first version of this rendered <div class="jdgm-carousel"></div> and
+      trusted Judge.me's script to find and fill it. It never did: the heading
+      shipped over an empty box, which is the exact failure this snippet was
+      written to prevent, just with the fabricated reviews taken out.
+
+      judgeme.featured_carousel holds the widget already rendered — six real
+      reviews, about 4 KB of HTML, written by the app whenever reviews change.
+      Server-rendered means it is there at first paint, needs no round trip,
+      and cannot shift the layout when a script arrives late.
+
+      The wrapper div is Judge.me's own documented requirement; the widget
+      sizes its slides against it.
     {%- endcomment -%}
     <div style="clear:both"></div>
     <div class="jdgm-carousel-wrapper">
-      <div class="jdgm-carousel jdgm-carousel--default" data-from-snippet="shop-reviews"></div>
+      {{ shop.metafields.judgeme.featured_carousel }}
     </div>
   {%- endif -%}
 {%- else -%}
