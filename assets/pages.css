@@ -1603,3 +1603,47 @@ body.jdgm-modal-open .sticky-atc {
   .rev-prompt-star { transition: none; }
   .rev-prompt-star:hover { transform: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   MOBILE: 16px FLOOR ON TEXT FIELDS
+
+   iOS Safari zooms the whole page when a text field with a font size under
+   16px takes focus, and it does not zoom back out. On a phone that throws
+   the submit button — and often the field itself — off screen mid-typing,
+   which is why so many mobile forms feel like they are fighting back.
+
+   The fields across this theme sat between 12.5px and 14.4px, so every one
+   of them did it: the newsletter, the concierge, the referral code, the
+   price filter, the contact and account forms, the coupon box.
+
+   The alternative fix is maximum-scale=1 on the viewport meta, which stops
+   the zoom by banning pinch-zoom entirely. That breaks the page for anyone
+   who needs to magnify it, so it is not a fix.
+
+   Phones and tablets only — the desktop type scale is untouched. These
+   fields are full-width at this size anyway, where 16px reads better than
+   the 13px they were set at.
+
+   Last in the last stylesheet: pages.css loads after theme.css, so this
+   lands on top of the per-component rules it is correcting without needing
+   !important or a specificity fight.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .capture-form input,
+  .news-form input,
+  .ref-code-row input,
+  .ai-input-row input,
+  .sf-search input,
+  .sf-price-field input,
+  .field input,
+  .field select,
+  .field textarea,
+  .co-promo input,
+  .sf-sort,
+  .fb-select,
+  .bis-input,
+  .ccoupon-input,
+  .hdr-search-input {
+    font-size: 16px
+  }
+}
