@@ -1421,6 +1421,25 @@ function initVariantPicker() {
         (v && v.available ? 'In stock — ships within 48 hours' : 'Currently out of stock');
     }
 
+    /* The arrival date goes with the stock line. Promising a delivery date
+       for a size that cannot be bought is worse than showing nothing. */
+    var deliveryRow = document.querySelector('[data-delivery-row]');
+    if (deliveryRow) deliveryRow.hidden = !(v && v.available);
+
+    /* Out-of-stock variants get the back-in-stock form in place of the buy
+       controls, so the page always offers something to do. */
+    var notify = document.querySelector('[data-notify-block]');
+    if (notify) {
+      var oos = !!(v && !v.available);
+      notify.hidden = !oos;
+      if (oos) {
+        var vIn = notify.querySelector('[data-notify-variant]');
+        if (vIn) vIn.value = v.id;
+        var vLabel = notify.querySelector('[data-notify-variant-label]');
+        if (vLabel) vLabel.textContent = v.options ? v.options.join(' / ') : '';
+      }
+    }
+
     /* Both add-to-cart buttons: the one in the page and the sticky bar's. */
     var sellable = !!(v && v.available);
     var label = v ? (v.available ? 'Add to Cart' : 'Sold Out') : 'Unavailable';
@@ -1465,6 +1484,87 @@ function initVariantPicker() {
     apply(find(selection()));
   });
 }
+/* ── Delivery estimate ──
+   snippets/delivery-estimate.liquid renders the dates server-side, which is
+   right for first paint and for a visitor with no JavaScript. The problem it
+   cannot solve on its own is Shopify's page cache: a PDP rendered last night
+   and served this morning quotes yesterday's estimate, and nothing in the
+   markup says so.
+
+   So the same arithmetic runs again here against the browser's clock, and
+   the line is rewritten only if it disagrees with what Liquid rendered —
+   which on a freshly rendered page is never, so the common case costs one
+   comparison and touches no DOM.
+
+   The working week is Monday–Friday, matching the UAE and the Liquid side.
+   Deliberately the shopper's own clock rather than the store's: someone
+   browsing from another timezone sees a date that matches the day they
+   think it is, and the cutoff is an hour of the day either way. */
+function initDeliveryEstimate() {
+  document.querySelectorAll('[data-delivery-estimate]').forEach(function (node) {
+    var cutoff = parseInt(node.getAttribute('data-cutoff'), 10);
+    var daysMin = parseInt(node.getAttribute('data-days-min'), 10);
+    var daysMax = parseInt(node.getAttribute('data-days-max'), 10);
+    if (isNaN(cutoff) || isNaN(daysMin) || isNaN(daysMax)) return;
+
+    var now = new Date();
+    var cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    /* Past the cutoff nothing is picked today, so the clock starts tomorrow. */
+    if (now.getHours() >= cutoff) cursor.setDate(cursor.getDate() + 1);
+
+    var counted = 0, minDate = null, maxDate = null, guard = 0;
+    while (counted < daysMax && guard++ < 60) {
+      cursor.setDate(cursor.getDate() + 1);
+      var dow = cursor.getDay();
+      if (dow === 0 || dow === 6) continue;   // UAE weekend
+      counted++;
+      if (counted === daysMin && !minDate) minDate = new Date(cursor);
+      if (counted === daysMax) maxDate = new Date(cursor);
+    }
+    if (!maxDate) return;
+    if (!minDate) minDate = maxDate;
+
+    /* en-GB gives "Wed, 15 Oct" — day before month, which is how the rest of
+       the site writes dates and what the Liquid format produces. */
+    function label(d) {
+      try {
+        return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+                .replace(/^(\w+)\s/, '$1, ');
+      } catch (e) { return null; }
+    }
+    var minText = label(minDate), maxText = label(maxDate);
+    if (!minText || !maxText) return;
+
+    var minEl = node.querySelector('[data-delivery-min]');
+    var maxEl = node.querySelector('[data-delivery-max]');
+    /* Same day at both ends: Liquid rendered a single date and there is no
+       [data-delivery-min] to fill. */
+    if (minEl && minEl.textContent.trim() !== minText) minEl.textContent = minText;
+    if (maxEl && maxEl.textContent.trim() !== maxText) maxEl.textContent = maxText;
+  });
+}
+
+/* ── Back-in-stock confirmation ──
+   Shopify answers a successful contact-form post with a redirect back to the
+   same URL carrying ?contact_posted=true. That is a fresh page load, so the
+   PDP re-renders against whatever variant the URL names — normally an
+   available one — and snippets/back-in-stock.liquid marks its block hidden.
+   The confirmation would then be sealed inside a hidden div and the shopper
+   would see no acknowledgement at all for an address they just handed over.
+
+   So: if the parameter is there and the block holds a rendered confirmation,
+   show it and bring it into view. */
+function initNotifyConfirmation() {
+  if (location.search.indexOf('contact_posted=true') === -1) return;
+  var block = document.querySelector('[data-notify-block]');
+  if (!block || !block.querySelector('[data-notify-posted]')) return;
+  block.hidden = false;
+  /* The block sits below the fold on most products, and a confirmation that
+     is never seen is the same as none. */
+  try { block.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  catch (e) { block.scrollIntoView(); }
+}
+
 function initThumbs() {
   const list = el('thumblist'); if (!list) return;
   list.querySelectorAll('.thumb').forEach(t => {
@@ -1622,6 +1722,8 @@ function initApp() {
   initHeaderScroll();
   initThumbs();
   initVariantPicker();
+  initDeliveryEstimate();
+  initNotifyConfirmation();
   initStickyAtc();
   initCountdowns();
   initLegalToc();

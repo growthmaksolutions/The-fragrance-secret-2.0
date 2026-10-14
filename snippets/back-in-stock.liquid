@@ -1,0 +1,139 @@
+{%- comment -%}
+  "Notify me when it's back" — the out-of-stock path.
+
+  Usage: {% render 'back-in-stock', product: product, variant: variant %}
+
+  Before this, a sold-out size gave the shopper a greyed-out button and
+  nothing else: the page was a dead end, and the demand it represented went
+  unrecorded. Back-in-stock is also the highest-earning automated flow there
+  is — ahead of abandoned cart — but only for stores that capture the
+  address in the first place, which is this.
+
+  ── Why a contact form ───────────────────────────────────────────────────
+
+  A theme cannot write to Shopify. There is no storefront API for "remember
+  this person wants this variant", so the alternatives are an app or an
+  email. This uses Shopify's built-in contact form, which posts and arrives
+  as a normal contact-form notification carrying the product, the variant
+  and its id — enough for the merchant to send the alert by hand, or to
+  forward into Klaviyo as a trigger.
+
+  It is deliberately the smallest thing that works end to end today. When an
+  app is added, replace the inner fields and keep the surrounding markup:
+  app.js only looks for [data-notify-block], [data-notify-variant] and
+  [data-notify-variant-label].
+
+  ── The success state ────────────────────────────────────────────────────
+
+  Two things make this less obvious than it looks.
+
+  First, form.posted_successfully? only exists INSIDE the form block — read
+  outside it the variable is nil, which is falsy, so a success check wrapped
+  around the whole snippet would silently never fire. The branch therefore
+  sits inside the form.
+
+  Second, Shopify handles a successful post by redirecting back to this URL
+  with ?contact_posted=true. That is a fresh page load, so the selected
+  variant is whatever the URL says — usually an available one — and this
+  block would render hidden with the confirmation sealed inside it. app.js
+  reads that parameter and reveals the block, which is why the markup below
+  carries data-notify-posted for it to find.
+
+  ── Marketing consent ────────────────────────────────────────────────────
+
+  The opt-in checkbox is unticked, and it is separate from the alert itself.
+  Asking to be told about one bottle is not agreeing to a newsletter, and
+  bundling the two is the "basket sneaking" pattern the CCPA guidelines name
+  — the same rule that governs auto-added gifts. The alert is sent either
+  way; only the marketing list depends on the tick.
+{%- endcomment -%}
+
+{%- liquid
+  assign bis_variant = variant | default: product.selected_or_first_available_variant
+  assign is_oos = true
+  if bis_variant.available
+    assign is_oos = false
+  endif
+  assign variant_label = ''
+  if bis_variant.title != 'Default Title'
+    assign variant_label = bis_variant.title
+  endif
+-%}
+
+<div class="bis-block" data-notify-block{% unless is_oos %} hidden{% endunless %}>
+  {%- form 'contact', class: 'bis-form', id: 'back-in-stock-form' -%}
+    {%- if form.posted_successfully? -%}
+      {%- comment -%}
+        data-notify-posted is the flag app.js looks for when it sees
+        ?contact_posted=true in the URL — see the header note.
+      {%- endcomment -%}
+      <div class="bis-done" role="status" data-notify-posted>
+        <span class="mi" aria-hidden="true">mark_email_read</span>
+        <div>
+          <strong>You're on the list.</strong>
+          <p>We'll email you as soon as this one is back. No other mail — just this bottle.</p>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="bis-head">
+        <span class="mi" aria-hidden="true">notifications_active</span>
+        <div>
+          <strong>Sold out{% if variant_label != blank %} in <span data-notify-variant-label>{{ variant_label }}</span>{% endif %}</strong>
+          <p>Leave your email and we'll tell you the moment it's back in stock.</p>
+        </div>
+      </div>
+
+      {%- comment -%}
+        The merchant reads this in a plain email, so the body has to carry
+        everything needed to act on it — including the variant id, which is
+        the only unambiguous handle on "which size".
+      {%- endcomment -%}
+      <input type="hidden" name="contact[subject]" value="Back in stock request">
+      <input type="hidden" name="contact[product]" value="{{ product.title | escape }}">
+      <input type="hidden" name="contact[product_url]" value="{{ shop.url }}{{ product.url }}">
+      <input type="hidden" name="contact[variant_id]" value="{{ bis_variant.id }}" data-notify-variant>
+      <input type="hidden" name="contact[body]"
+             value="Notify me when {{ product.title | escape }}{% if variant_label != blank %} ({{ variant_label | escape }}){% endif %} is back in stock.">
+
+      <div class="bis-row">
+        {%- comment -%}
+          A real <label>, not a placeholder. Placeholders vanish on focus and
+          are not announced as labels — WCAG, and also the reason mistyped
+          emails go unnoticed. Visually hidden because the heading above
+          already says what the field is for.
+        {%- endcomment -%}
+        <label class="visually-hidden" for="bis-email">Email address</label>
+        <input class="bis-input"
+               id="bis-email"
+               type="email"
+               name="contact[email]"
+               autocomplete="email"
+               inputmode="email"
+               required
+               placeholder="you@example.com"
+               aria-describedby="bis-privacy">
+        <button type="submit" class="btn-g bis-submit">
+          <span class="mi" aria-hidden="true">notifications</span>Notify me
+        </button>
+      </div>
+
+      {%- comment -%}
+        A div, not a p: default_errors renders a <ul>, and a list inside a
+        paragraph is invalid HTML that browsers silently restructure.
+      {%- endcomment -%}
+      {%- if form.errors -%}
+        <div class="bis-error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <label class="bis-optin">
+        <input type="checkbox" name="contact[marketing_opt_in]" value="yes">
+        <span>Also send me new arrivals and offers. Optional — the stock alert comes either way.</span>
+      </label>
+
+      <p class="bis-privacy" id="bis-privacy">
+        We use your address for this alert only. See our
+        <a href="{{ shop.privacy_policy.url | default: '/pages/privacy-policy' }}">privacy policy</a>.
+      </p>
+    {%- endif -%}
+  {%- endform -%}
+</div>

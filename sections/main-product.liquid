@@ -41,9 +41,23 @@
     </div>
   </div>
 
-  {%- form 'product', product, id: 'product-form', class: 'pdp-form' -%}
-    <input type="hidden" name="id" value="{{ cv.id }}">
+  {%- comment -%}
+    The product form used to wrap this whole section. It now opens and closes
+    around the CTA block alone, further down, and the reason is the
+    back-in-stock form. Shopify's contact form is a real <form> element and
+    nesting one inside another is invalid HTML — the browser drops the inner
+    tags and the notify fields end up posting to /cart/add.
 
+    (Written out in prose rather than as the tag itself: Liquid parses the
+    contents of a comment block even though it does not execute them, so an
+    unclosed block tag quoted in here is a parse error, not documentation.)
+
+    Nothing else needed the wrapper. The only controls that have to be inside
+    a product form are the hidden variant id, the quantity input, the submit
+    button and the dynamic payment button, and all four live in .cta-block.
+    The variant buttons are type="button" and resolve through app.js, which
+    writes the chosen id into that hidden input.
+  {%- endcomment -%}
     <section class="pdp-main">
       <div class="pdp-main-inner">
 
@@ -196,7 +210,25 @@
             <div class="ub-views"><span class="mi" aria-hidden="true">verified_user</span>Authenticity guaranteed · {{ settings.returns_window_days | default: '2' }}-day returns</div>
           </div>
 
+          {%- comment -%}
+            Delivery estimate, directly above Add to Cart. "Ships within 48
+            hours" is a fact about the warehouse; this is the answer to the
+            question the shopper is actually asking, and it is the one piece
+            of information that stops a slow-delivery abandonment happening
+            two steps later in checkout.
+
+            Hidden on a variant that cannot be bought — there is no date to
+            promise for something out of stock, and app.js toggles this row
+            with the rest of the buy controls when a size is picked.
+          {%- endcomment -%}
+          <div class="pdp-delivery" data-delivery-row{% unless cv.available %} hidden{% endunless %}>
+            {% render 'delivery-estimate' %}
+            <span class="de-note">to the UAE · free over AED {{ settings.free_shipping_threshold | default: '250' }}</span>
+          </div>
+
           <!-- CTA BLOCK (primary action — kept above the fold) -->
+          {%- form 'product', product, id: 'product-form', class: 'pdp-form' -%}
+          <input type="hidden" name="id" value="{{ cv.id }}">
           <div class="cta-block">
             <div class="qty-row">
               <div class="qty-wrap">
@@ -242,6 +274,16 @@
             </button>
             {%- endif -%}
           </div>
+          {%- endform -%}
+
+          {%- comment -%}
+            Back in stock — outside the product form, which is why that form
+            was narrowed above. Hidden while the selected variant is sellable;
+            app.js shows it and fills in the variant when a sold-out size is
+            picked, so the page always offers something to do instead of a
+            dead "Sold Out" button.
+          {%- endcomment -%}
+          {% render 'back-in-stock', product: product, variant: cv %}
 
           <!-- KEY INFO -->
           <div class="key-info">
@@ -429,7 +471,6 @@
         </div><!-- /pdp-info -->
       </div><!-- /pdp-main-inner -->
     </section>
-  {%- endform -%}
 
   <!-- FAQ — full width, below the product image and details -->
   {%- if faq != blank -%}

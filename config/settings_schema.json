@@ -35,7 +35,12 @@
     "settings": [
       { "type": "paragraph", "content": "The free-delivery threshold was hard-coded in eighteen files \u2014 the cart bar, the trust strips, the FAQs, the announcement bar \u2014 and changing it meant finding all of them. It is one number now. It must match the shipping rate in Shopify admin \u203a Settings \u203a Shipping and delivery, and the Shipping policy text, neither of which the theme can set." },
       { "type": "text", "id": "free_shipping_threshold", "label": "Free delivery above", "default": "250", "info": "Digits only, in store currency. Orders at or above this total ship free." },
-      { "type": "text", "id": "returns_window_days", "label": "Return window (days)", "default": "2", "info": "Digits only. Must match Settings \u203a Policies \u203a Refund policy. The storefront also states what returns are accepted for \u2014 faulty, wrong or incomplete orders \u2014 because a bare number reads as a change-of-mind window, which this store does not offer." }
+      { "type": "text", "id": "returns_window_days", "label": "Return window (days)", "default": "2", "info": "Digits only. Must match Settings \u203a Policies \u203a Refund policy. The storefront also states what returns are accepted for \u2014 faulty, wrong or incomplete orders \u2014 because a bare number reads as a change-of-mind window, which this store does not offer." },
+      { "type": "header", "content": "Delivery estimate" },
+      { "type": "paragraph", "content": "\"Delivered by Thursday\" answers the question \"ships in 1\u20134 business days\" leaves open, and 20% of shoppers who abandon a checkout say delivery was too slow \u2014 a figure they can only act on if they are told before the payment step. The dates below are worked out from these three numbers and the UAE working week (Monday\u2013Friday), and they must match the Shipping policy and the courier's real service, which the theme cannot see." },
+      { "type": "range", "id": "dispatch_cutoff_hour", "label": "Same-day dispatch cutoff", "min": 0, "max": 23, "step": 1, "default": 18, "unit": "h", "info": "Store time, 24-hour. Orders placed after this hour start their clock the next business day." },
+      { "type": "range", "id": "delivery_days_min", "label": "Fastest delivery", "min": 1, "max": 14, "step": 1, "default": 1, "unit": "d", "info": "Business days after dispatch." },
+      { "type": "range", "id": "delivery_days_max", "label": "Slowest delivery", "min": 1, "max": 21, "step": 1, "default": 4, "unit": "d", "info": "Business days after dispatch. Shown as the \"by\" date, so this is the promise \u2014 keep it the one the courier actually meets." }
     ]
   },
   {

@@ -1,0 +1,97 @@
+{%- comment -%}
+  Delivery estimate — "Arrives Wed, 15 – Mon, 20 Oct".
+
+  Usage:
+    {% render 'delivery-estimate' %}                  full line
+    {% render 'delivery-estimate', compact: true %}   dates only, no icon
+
+  Why it exists: the PDP said "ships within 48 hours" and the Shipping tab
+  said "1–4 business days". Neither answers the question a shopper is
+  actually asking, which is what day the bottle lands. 20% of shoppers who
+  abandon a checkout give slow delivery as the reason, and they can only
+  weigh that if they are told before the payment step rather than after it.
+
+  ── The dates are real ───────────────────────────────────────────────────
+
+  Worked out from three theme settings — the dispatch cutoff, and the
+  fastest and slowest delivery in business days — against the UAE working
+  week, which is Monday to Friday. Order after the cutoff and the clock
+  starts the next business day, exactly as the Shipping policy says. Nothing
+  here is a countdown or an invented promise; change the settings and this
+  line changes with them.
+
+  ── Why it is also computed in JavaScript ────────────────────────────────
+
+  Liquid renders the correct dates at render time, and Shopify caches pages.
+  A PDP rendered last night and served this morning would quote yesterday's
+  estimate with no way to tell. So the figures are also carried as data
+  attributes and app.js recomputes them on load, correcting the line if the
+  page came from cache. Server-rendered first means no layout shift and no
+  blank slot, and the line still reads correctly with JavaScript off — it is
+  only ever wrong by a cache's age, and only until JS runs.
+{%- endcomment -%}
+
+{%- liquid
+  assign cutoff = settings.dispatch_cutoff_hour | default: 18 | times: 1
+  assign days_min = settings.delivery_days_min | default: 1 | times: 1
+  assign days_max = settings.delivery_days_max | default: 4 | times: 1
+
+  assign now_hour = 'now' | date: '%H' | times: 1
+  assign now_dow = 'now' | date: '%w' | times: 1
+  assign now_ts = 'now' | date: '%s' | times: 1
+
+  # Past the cutoff, nothing is picked today — the clock starts tomorrow.
+  assign lead = 0
+  if now_hour >= cutoff
+    assign lead = 1
+  endif
+
+  # Walk forward a day at a time, counting only business days, until the
+  # fastest and the slowest have both been reached. Liquid has no date
+  # arithmetic, so the weekend has to be stepped over by hand: %w gives
+  # 0 for Sunday and 6 for Saturday, which is the UAE weekend.
+  assign min_offset = 0
+  assign max_offset = 0
+  assign counted = 0
+  for i in (1..40)
+    assign cursor = lead | plus: i
+    assign dow = now_dow | plus: cursor | modulo: 7
+    if dow == 0 or dow == 6
+      continue
+    endif
+    assign counted = counted | plus: 1
+    if counted == days_min and min_offset == 0
+      assign min_offset = cursor
+    endif
+    if counted >= days_max
+      assign max_offset = cursor
+      break
+    endif
+  endfor
+
+  assign min_ts = min_offset | times: 86400 | plus: now_ts
+  assign max_ts = max_offset | times: 86400 | plus: now_ts
+  assign min_label = min_ts | date: '%a, %-d %b'
+  assign max_label = max_ts | date: '%a, %-d %b'
+-%}
+
+<span class="delivery-est"
+      data-delivery-estimate
+      data-cutoff="{{ cutoff }}"
+      data-days-min="{{ days_min }}"
+      data-days-max="{{ days_max }}">
+  {%- unless compact -%}<span class="mi" aria-hidden="true">event_available</span>{%- endunless -%}
+  {%- comment -%}
+    One range, not two dates with a label each: "Arrives Wed, 15 – Mon, 20
+    Oct" is read at a glance, where "Earliest … Latest …" asks the shopper to
+    do the comparison. Collapsed to a single date when the two fall on the
+    same day, which they do whenever fastest and slowest are set the same.
+  {%- endcomment -%}
+  <span class="de-text">
+    {%- if min_label == max_label -%}
+      Arrives <b data-delivery-max>{{ max_label }}</b>
+    {%- else -%}
+      Arrives <b data-delivery-min>{{ min_label }}</b> – <b data-delivery-max>{{ max_label }}</b>
+    {%- endif -%}
+  </span>
+</span>

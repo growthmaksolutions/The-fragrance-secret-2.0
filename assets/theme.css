@@ -8135,3 +8135,160 @@ html body .jdgm-form textarea:focus {
     .cart-remove:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
 
     .cl-img { flex-shrink: 0; display: block; line-height: 0 }
+
+    /* ═══════════════════════════════════════
+       DELIVERY ESTIMATE  (snippets/delivery-estimate.liquid)
+       Sits between the stock line and Add to Cart, answering "what day does
+       it land" rather than "how fast do we pack". Quiet green rather than
+       the gold used by offers: this is a fact, not a promotion, and it
+       should not compete with the price for attention.
+    ═══════════════════════════════════════ */
+    .pdp-delivery {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 4px 10px;
+      margin: 0 0 18px;
+      padding: 11px 14px;
+      border: 1px solid rgba(47, 124, 79, .18);
+      border-radius: 6px;
+      background: rgba(47, 124, 79, .055)
+    }
+
+    .pdp-delivery[hidden] { display: none }
+
+    .delivery-est {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--fb);
+      font-size: .82rem;
+      color: #2F7C4F
+    }
+
+    .delivery-est .mi { font-size: 18px; flex-shrink: 0 }
+    .delivery-est b { font-weight: 700; white-space: nowrap }
+
+    .de-note {
+      font-family: var(--fb);
+      font-size: .75rem;
+      color: var(--warm)
+    }
+
+    /* ═══════════════════════════════════════
+       BACK IN STOCK  (snippets/back-in-stock.liquid)
+       Replaces the dead "Sold Out" button with the one useful action left.
+    ═══════════════════════════════════════ */
+    .bis-block {
+      margin: 0 0 24px;
+      padding: 18px;
+      border: 1px solid var(--cream-dk);
+      border-radius: 8px;
+      background: var(--cream)
+    }
+
+    .bis-block[hidden] { display: none }
+
+    .bis-head, .bis-done {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start
+    }
+
+    .bis-head .mi, .bis-done .mi {
+      font-size: 22px;
+      color: var(--gold-dk);
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .bis-head strong, .bis-done strong {
+      display: block;
+      font-family: var(--fb);
+      font-size: .9rem;
+      color: var(--ink);
+      margin-bottom: 3px
+    }
+
+    .bis-head p, .bis-done p {
+      margin: 0;
+      font-family: var(--fb);
+      font-size: .8rem;
+      line-height: 1.5;
+      color: var(--warm)
+    }
+
+    .bis-form { margin-top: 14px }
+
+    .bis-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .bis-input {
+      flex: 1 1 200px;
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid var(--cream-dk);
+      border-radius: 6px;
+      background: var(--white);
+      font-family: var(--fb);
+      /* 16px floor: anything smaller and iOS Safari zooms the page on focus,
+         which on a phone throws the Add to Cart button off screen. */
+      font-size: 16px;
+      color: var(--ink)
+    }
+
+    .bis-input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px }
+    .bis-input::placeholder { color: var(--muted) }
+
+    .bis-submit {
+      flex: 0 0 auto;
+      /* 48px matches the Android minimum tap target; the input's own height
+         is set by its padding and font size and lands at the same place. */
+      min-height: 48px
+    }
+
+    .bis-error {
+      margin: 10px 0 0;
+      font-family: var(--fb);
+      font-size: .78rem;
+      color: #C0392B
+    }
+
+    .bis-error ul { margin: 0; padding-left: 18px }
+
+    .bis-optin {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin-top: 12px;
+      font-family: var(--fb);
+      font-size: .76rem;
+      line-height: 1.5;
+      color: var(--warm);
+      cursor: pointer
+    }
+
+    .bis-optin input {
+      flex-shrink: 0;
+      margin-top: 2px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--gold-dk)
+    }
+
+    .bis-privacy {
+      margin: 10px 0 0;
+      font-family: var(--fb);
+      font-size: .72rem;
+      color: var(--muted)
+    }
+
+    .bis-privacy a { color: var(--gold-dk); text-decoration: underline }
+
+    @media (max-width:520px) {
+      .bis-row { flex-direction: column }
+      .bis-submit { width: 100%; justify-content: center }
+    }
