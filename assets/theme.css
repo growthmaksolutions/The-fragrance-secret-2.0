@@ -8365,3 +8365,94 @@ html body .jdgm-form textarea:focus {
     }
 
     .fchip-clear:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+
+    /* ═══════════════════════════════════════
+       CART COUPON  (snippets/cart-coupon.liquid)
+       A disclosure, not an open field: present for anyone holding a code,
+       invisible to everyone else so it does not advertise that one exists.
+    ═══════════════════════════════════════ */
+    .ccoupon { margin: 0 0 14px }
+
+    .ccoupon-fold > summary { list-style: none }
+    .ccoupon-fold > summary::-webkit-details-marker { display: none }
+
+    .ccoupon-summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 2px;
+      cursor: pointer;
+      font-family: var(--fb);
+      font-size: .8rem;
+      color: var(--gold-dk);
+      user-select: none
+    }
+
+    .ccoupon-summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+    .ccoupon-summary .mi { font-size: 17px }
+
+    .ccoupon-chev {
+      margin-left: auto;
+      transition: transform .25s var(--ease)
+    }
+
+    .ccoupon-fold[open] .ccoupon-chev { transform: rotate(180deg) }
+
+    .ccoupon-body { padding: 4px 0 2px }
+
+    .ccoupon-row { display: flex; gap: 8px }
+
+    .ccoupon-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 11px 13px;
+      border: 1px solid var(--cream-dk);
+      border-radius: 6px;
+      background: var(--white);
+      font-family: var(--fb);
+      /* 16px floor — anything smaller and iOS zooms the page on focus, which
+         inside the cart drawer scrolls the Checkout button out of reach. */
+      font-size: 16px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--ink)
+    }
+
+    .ccoupon-input::placeholder { text-transform: none; letter-spacing: 0; color: var(--muted) }
+    .ccoupon-input:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px }
+
+    .ccoupon-apply {
+      flex: 0 0 auto;
+      /* 44px, the iOS tap-target minimum, matched to the input's own height. */
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid var(--ink);
+      border-radius: 6px;
+      background: var(--ink);
+      color: var(--cream);
+      font-family: var(--fb);
+      font-size: .78rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background .2s, opacity .2s
+    }
+
+    .ccoupon-apply:hover { background: var(--charcoal) }
+    .ccoupon-apply:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+    .ccoupon-apply[disabled] { opacity: .55; cursor: default }
+
+    .ccoupon-msg {
+      margin: 9px 0 0;
+      font-family: var(--fb);
+      font-size: .76rem;
+      line-height: 1.45;
+      color: var(--warm)
+    }
+
+    .ccoupon-msg:empty { display: none }
+    /* Never colour alone: the tick and the wording carry the outcome too,
+       which is both a WCAG requirement and the only version that survives
+       being read aloud. */
+    .ccoupon-msg.is-ok { color: #2F7C4F }
+    .ccoupon-msg.is-bad { color: #C0392B }

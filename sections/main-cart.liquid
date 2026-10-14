@@ -110,6 +110,13 @@
           </div>
           {% render 'welcome-offer', style: 'row' %}
           {%- comment -%}
+            Collapsed by default — see the snippet for why an open, empty code
+            box sends shoppers off the site looking for something to put in
+            it. Above the totals, because that is where the discount it
+            produces will appear.
+          {%- endcomment -%}
+          {% render 'cart-coupon', uid: 'page' %}
+          {%- comment -%}
             Subtotal is the price before discounts and Total is what Shopify
             will charge, so the two only differ when something has actually
             come off — and when it has, #cartDiscounts names it. Both are kept

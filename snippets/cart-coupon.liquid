@@ -1,0 +1,103 @@
+{%- comment -%}
+  "Have a discount code?" — collapsed, in the cart.
+
+  Usage: {% render 'cart-coupon', uid: 'drawer' %}
+
+  Shown but closed, which is the whole point. A code box sitting open with a
+  blank field is an advertisement that a discount exists somewhere, and the
+  shopper leaves to go and find it — often onto a coupon site, sometimes
+  back through someone else's affiliate link, frequently not back at all.
+  Absent, and anyone actually holding a code has to carry it to checkout on
+  faith. A disclosure is the answer to both: invisible unless you are
+  looking for it, and one tap away if you are.
+
+  ── How a code is applied ────────────────────────────────────────────────
+
+  Through /discount/CODE?redirect=…, the same documented route the welcome
+  offer uses — see snippets/welcome-offer.liquid, which explains why it is a
+  real navigation rather than a background fetch. Shopify attaches the code
+  to the cart and hands the shopper straight back.
+
+  This is therefore JavaScript-only, because the code is a path segment and
+  a plain GET form cannot build one. The noscript note below says so and
+  points at checkout, rather than rendering a field that silently does
+  nothing.
+
+  ── Telling the shopper it failed ────────────────────────────────────────
+
+  /discount/ with a bad code redirects back exactly as a good one does,
+  having applied nothing and said nothing — so a typo looks identical to
+  success. The redirect therefore carries the attempted code back in
+  ?coupon_tried=, and app.js compares it against data-applied below, which
+  lists what Shopify actually honoured. Match: confirmed. No match: the code
+  was not accepted, said plainly.
+
+  Liquid cannot read a query parameter, which is why that comparison is in
+  JavaScript and the evidence it needs is published as an attribute here.
+
+  Params
+    uid  a suffix for the input id, so the drawer and the cart page can both
+         render this without colliding. Labels need an id to point at.
+{%- endcomment -%}
+
+{%- liquid
+  assign cc_uid = uid | default: 'cart'
+
+  # What Shopify is actually honouring, upcased, so app.js can compare
+  # against the attempted code without caring how the merchant typed it.
+  assign cc_applied = ''
+  for cc_d in cart.cart_level_discount_applications
+    assign cc_title = cc_d.title | upcase
+    assign cc_applied = cc_applied | append: cc_title | append: ','
+  endfor
+
+  # Come back to this page, not the home page. request.path drops the query
+  # string deliberately: nothing here needs filters or pagination carried.
+  assign cc_back = request.path | default: '/'
+-%}
+
+<div class="ccoupon" data-coupon data-applied="{{ cc_applied | escape }}" data-back="{{ cc_back | escape }}">
+  <details class="ccoupon-fold">
+    <summary class="ccoupon-summary">
+      <span class="mi" aria-hidden="true">local_offer</span>
+      <span>Have a discount code?</span>
+      <span class="mi ccoupon-chev" aria-hidden="true">expand_more</span>
+    </summary>
+
+    <div class="ccoupon-body">
+      <label class="visually-hidden" for="coupon-{{ cc_uid }}">Discount code</label>
+      <div class="ccoupon-row">
+        {%- comment -%}
+          type="text" with autocapitalize on: codes are conventionally
+          upper-case and a phone keyboard that lower-cases them makes the
+          field look broken. Shopify matches case-insensitively, so this is
+          presentation — it just needs to look like what is on the email.
+
+          Not type="search" and not a form: Enter is handled in app.js, and
+          a bare <form> here would nest inside the cart page's checkout form.
+        {%- endcomment -%}
+        <input class="ccoupon-input"
+               id="coupon-{{ cc_uid }}"
+               type="text"
+               name="coupon"
+               autocomplete="off"
+               autocapitalize="characters"
+               spellcheck="false"
+               placeholder="Enter code"
+               data-coupon-input
+               aria-describedby="coupon-msg-{{ cc_uid }}">
+        <button type="button" class="ccoupon-apply" data-coupon-apply>Apply</button>
+      </div>
+
+      {%- comment -%}
+        One live region for both outcomes, so a screen reader announces the
+        result of applying a code without the field losing focus.
+      {%- endcomment -%}
+      <p class="ccoupon-msg" id="coupon-msg-{{ cc_uid }}" data-coupon-msg role="status" aria-live="polite"></p>
+
+      <noscript>
+        <p class="ccoupon-msg is-note">Enter your code at checkout — the field there applies it to this order.</p>
+      </noscript>
+    </div>
+  </details>
+</div>

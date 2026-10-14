@@ -1544,6 +1544,113 @@ function initDeliveryEstimate() {
   });
 }
 
+/* ── Cart coupon ──
+   snippets/cart-coupon.liquid has the reasoning. Two jobs here.
+
+   Applying: /discount/CODE?redirect=… is the documented way to attach a code
+   to a cart, and the code is a path segment, so the URL has to be built and
+   navigated to. The redirect carries the attempted code back as
+   ?coupon_tried= purely so the second job is possible.
+
+   Reporting: Shopify redirects back identically whether the code was
+   honoured or not, applying nothing and saying nothing — so a typo is
+   indistinguishable from success, which is the single worst way a coupon
+   field can behave. On the way back, the attempted code is compared against
+   data-applied, which Liquid filled with what Shopify actually honoured, and
+   the shopper is told which happened.
+
+   Delegated, because the drawer re-renders itself through the Section
+   Rendering API and any handler bound to its nodes would be thrown away on
+   the first cart change. */
+function initCartCoupon() {
+  function msg(block, text, state) {
+    var out = block.querySelector('[data-coupon-msg]');
+    if (!out) return;
+    out.textContent = text;
+    out.classList.remove('is-ok', 'is-bad');
+    if (state) out.classList.add(state);
+  }
+
+  function apply(block) {
+    var input = block.querySelector('[data-coupon-input]');
+    if (!input) return;
+    var code = (input.value || '').trim();
+    if (!code) { msg(block, 'Enter a code first.', 'is-bad'); input.focus(); return; }
+
+    /* Already on the bag — going round the redirect would change nothing and
+       cost a page load to say so. */
+    var applied = (block.getAttribute('data-applied') || '').toUpperCase();
+    if (applied.split(',').indexOf(code.toUpperCase()) !== -1) {
+      msg(block, code.toUpperCase() + ' is already applied to this order.', 'is-ok');
+      return;
+    }
+
+    var back = block.getAttribute('data-back') || location.pathname || '/';
+    /* The tried code rides back on the redirect so the result can be
+       reported. encodeURIComponent twice over: once for the parameter inside
+       `back`, once for `back` inside `redirect`. */
+    var backWithFlag = back + (back.indexOf('?') === -1 ? '?' : '&') +
+                       'coupon_tried=' + encodeURIComponent(code);
+    var btn = block.querySelector('[data-coupon-apply]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Applying…'; }
+    msg(block, 'Checking that code…', '');
+    location.href = '/discount/' + encodeURIComponent(code) +
+                    '?redirect=' + encodeURIComponent(backWithFlag);
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-coupon-apply]');
+    if (!btn) return;
+    var block = btn.closest('[data-coupon]');
+    if (block) apply(block);
+  });
+
+  /* Enter inside the field. It is not a form — a form here would nest inside
+     the cart page's checkout form — so the key has to be handled by hand. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    var input = e.target.closest && e.target.closest('[data-coupon-input]');
+    if (!input) return;
+    e.preventDefault();
+    var block = input.closest('[data-coupon]');
+    if (block) apply(block);
+  });
+
+  /* The report, on the way back. */
+  var tried = null;
+  try { tried = new URLSearchParams(location.search).get('coupon_tried'); }
+  catch (e) { return; }
+  if (!tried) return;
+
+  document.querySelectorAll('[data-coupon]').forEach(function (block) {
+    var applied = (block.getAttribute('data-applied') || '').toUpperCase();
+    var ok = applied.split(',').indexOf(tried.toUpperCase()) !== -1;
+    var fold = block.querySelector('.ccoupon-fold');
+    /* Open the disclosure either way: a result nobody can see is no result.
+       On success it shows the confirmation; on failure, the field with the
+       rejected code still in it. */
+    if (fold) fold.open = true;
+    if (ok) {
+      msg(block, '✓ ' + tried.toUpperCase() + ' applied — the discount is on your order below.', 'is-ok');
+    } else {
+      msg(block, tried.toUpperCase() + " wasn't accepted. Check the spelling, or whether it has expired or needs a higher order value.", 'is-bad');
+      var input = block.querySelector('[data-coupon-input]');
+      if (input) input.value = tried;
+    }
+  });
+
+  /* Take the flag out of the URL once it has been read. It is a message to
+     this page load, not part of the address — left in place it would be
+     bookmarked, shared, and re-announced on every refresh. */
+  if (window.history && history.replaceState) {
+    try {
+      var u = new URL(location.href);
+      u.searchParams.delete('coupon_tried');
+      history.replaceState({}, '', u.pathname + (u.search || '') + u.hash);
+    } catch (e) { /* older browsers keep the parameter */ }
+  }
+}
+
 /* ── Listing scroll restore ──
    Coming back from a product to the row it was in. Browsers restore scroll
    on a back navigation by themselves, and usually get it right — but not
@@ -1785,6 +1892,7 @@ function initApp() {
   initDeliveryEstimate();
   initNotifyConfirmation();
   initListingScrollMemory();
+  initCartCoupon();
   initStickyAtc();
   initCountdowns();
   initLegalToc();

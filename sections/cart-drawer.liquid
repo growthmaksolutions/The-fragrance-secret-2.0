@@ -104,6 +104,13 @@
       <footer class="cd-foot">
         {% render 'welcome-offer', style: 'row' %}
         {%- comment -%}
+          Collapsed by default — see the snippet for why an open, empty code
+          box sends shoppers off the site looking for something to put in it.
+          Above the totals, because that is where the discount it produces
+          will appear.
+        {%- endcomment -%}
+        {% render 'cart-coupon', uid: 'drawer' %}
+        {%- comment -%}
           With a discount on the bag the single Subtotal line was a lie by
           omission: it showed the discounted figure with nothing to say why it
           differed from the prices above it. Before-price, named discounts,
