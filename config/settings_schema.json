@@ -48,7 +48,9 @@
         { "value": "none", "label": "None — we dispatch every day" }
       ], "info": "Which days the arrival estimate skips. The Shipping policy says handling runs Monday to Saturday, so the default rests on Sunday only — counting Saturday as a non-working day pushes every estimate a day late." },
       { "type": "range", "id": "delivery_days_min", "label": "Fastest delivery", "min": 1, "max": 14, "step": 1, "default": 1, "unit": "d", "info": "Business days after dispatch." },
-      { "type": "range", "id": "delivery_days_max", "label": "Slowest delivery", "min": 1, "max": 21, "step": 1, "default": 4, "unit": "d", "info": "Business days after dispatch. Shown as the \"by\" date, so this is the promise \u2014 keep it the one the courier actually meets." }
+      { "type": "range", "id": "delivery_days_max", "label": "Slowest delivery", "min": 1, "max": 21, "step": 1, "default": 4, "unit": "d", "info": "Business days after dispatch. Shown as the \"by\" date, so this is the promise \u2014 keep it the one the courier actually meets." },
+      { "type": "paragraph", "content": "Where it goes changes when it lands. The UAE has no postal codes, so the usual pincode box cannot exist here \u2014 the destination is an emirate, and this is the list the shopper picks from. Their choice is remembered across the site.\n\nOne line per destination, written \"Emirate: extra working days\". Zero means it arrives in the window above; 2 means two working days later. The figures must be the courier's real ones \u2014 every line here is a delivery promise, and an invented one is worse than no picker at all. Leave the box empty to show no picker and quote one window for the whole country." },
+      { "type": "textarea", "id": "delivery_zones", "label": "Destinations and extra days", "default": "Dubai: 0\nSharjah: 0\nAjman: 0\nUmm Al Quwain: 0\nRas Al Khaimah: 0\nFujairah: 0\nAbu Dhabi: 0", "info": "Put the one most orders go to first \u2014 it is what the page shows before the shopper chooses." }
     ]
   },
   {

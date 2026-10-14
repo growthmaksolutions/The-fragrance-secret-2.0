@@ -8456,3 +8456,49 @@ html body .jdgm-form textarea:focus {
        being read aloud. */
     .ccoupon-msg.is-ok { color: #2F7C4F }
     .ccoupon-msg.is-bad { color: #C0392B }
+
+    /* Destination picker beside the arrival date. The UAE has no postal
+       codes, so this is an emirate rather than the pincode box the pattern
+       usually calls for — seven known answers, which is a select, not a
+       text field needing validation and a lookup. */
+    .de-zone-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--fb);
+      font-size: .82rem;
+      color: #2F7C4F
+    }
+
+    .de-to { color: var(--warm) }
+
+    .de-zone {
+      /* Styled as text with an underline, not as a form control: it sits
+         mid-sentence in a trust line, and a boxed <select> there reads as
+         something that must be filled in before buying. */
+      appearance: none;
+      -webkit-appearance: none;
+      border: 0;
+      border-bottom: 1px dashed rgba(47, 124, 79, .5);
+      border-radius: 0;
+      background: transparent;
+      padding: 1px 14px 1px 2px;
+      font-family: var(--fb);
+      font-size: .82rem;
+      font-weight: 700;
+      color: #2F7C4F;
+      cursor: pointer;
+      /* Caret drawn inline so no icon font or image is needed. */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232F7C4F' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1px center;
+      background-size: 9px
+    }
+
+    .de-zone:hover { border-bottom-style: solid }
+    .de-zone:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+
+    @media (max-width:420px) {
+      /* Wraps to its own line rather than squeezing the date. */
+      .de-zone-wrap { width: 100%; margin-top: 2px }
+    }

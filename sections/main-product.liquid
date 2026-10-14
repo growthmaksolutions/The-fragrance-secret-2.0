@@ -222,8 +222,14 @@
             with the rest of the buy controls when a size is picked.
           {%- endcomment -%}
           <div class="pdp-delivery" data-delivery-row{% unless cv.available %} hidden{% endunless %}>
-            {% render 'delivery-estimate' %}
-            <span class="de-note">to the UAE · free over AED {{ settings.free_shipping_threshold | default: '250' }}</span>
+            {% render 'delivery-estimate', uid: 'pdp' %}
+            {%- comment -%}
+              "to the UAE" used to sit here. The destination picker now says
+              where it is going, in the shopper's own words, so repeating the
+              country beside it was saying the same thing twice and less
+              precisely.
+            {%- endcomment -%}
+            <span class="de-note">free over AED {{ settings.free_shipping_threshold | default: '250' }}</span>
           </div>
 
           <!-- CTA BLOCK (primary action — kept above the fold) -->

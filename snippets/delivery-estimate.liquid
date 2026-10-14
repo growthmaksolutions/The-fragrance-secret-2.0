@@ -31,6 +31,23 @@
   Note also that the policy's window is 1–4 business days "in total",
   handling included — so these are counted from the order, not from dispatch.
 
+  ── The destination picker ───────────────────────────────────────────────
+
+  The guide asks for a pincode or ZIP checker beside this, because where an
+  order goes changes when it lands. The UAE has no postal code system at
+  all, so there is no pincode to check — the unit of destination here is the
+  emirate, and that is what the shopper picks.
+
+  Every destination and its extra working days comes from the Delivery
+  settings, and ships set to zero: out of the box the picker names where the
+  order is going without claiming anywhere is slower, because the store's
+  shipping is configured as one UAE zone and inventing per-emirate delays
+  would be inventing a delivery promise. Fill in the courier's real figures
+  and the dates move with them. Empty the setting and no picker renders.
+
+  The choice is remembered in localStorage, so it follows the shopper from
+  one product to the next rather than resetting on every page.
+
   ── Why it is also computed in JavaScript ────────────────────────────────
 
   Liquid renders the correct dates at render time, and Shopify caches pages.
@@ -107,7 +124,8 @@
       data-cutoff="{{ cutoff }}"
       data-days-min="{{ days_min }}"
       data-days-max="{{ days_max }}"
-      data-rest-days="{{ rest_days }}">
+      data-rest-days="{{ rest_days }}"
+      data-zone-key="tfs:delivery-zone">
   {%- unless compact -%}<span class="mi" aria-hidden="true">event_available</span>{%- endunless -%}
   {%- comment -%}
     One range, not two dates with a label each: "Arrives Wed, 15 – Mon, 20
@@ -122,4 +140,39 @@
       Arrives <b data-delivery-min>{{ min_label }}</b> – <b data-delivery-max>{{ max_label }}</b>
     {%- endif -%}
   </span>
+
+  {%- comment -%}
+    Destination picker — see the header note on why this is an emirate and
+    not a pincode. Rendered only when the setting names somewhere; an empty
+    setting means one country-wide window and no control.
+
+    A plain <select>, not a text box with a lookup: there are seven answers,
+    the shopper knows theirs, and a free-text field would need validation,
+    an error state and a serviceability call to say what a list says for
+    free. It is also outside the product form — a select inside it would be
+    posted to /cart/add as a line-item property.
+  {%- endcomment -%}
+  {%- assign zone_lines = settings.delivery_zones | default: '' | strip | newline_to_br | split: '<br />' -%}
+  {%- assign zone_count = 0 -%}
+  {%- for raw in zone_lines -%}{%- if raw | strip != blank -%}{%- assign zone_count = zone_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+
+  {%- if zone_count > 0 -%}
+    <span class="de-zone-wrap">
+      <label class="visually-hidden" for="de-zone-{{ uid | default: 'pdp' }}">Delivery destination</label>
+      <span class="de-to" aria-hidden="true">to</span>
+      <select class="de-zone" id="de-zone-{{ uid | default: 'pdp' }}" data-delivery-zone>
+        {%- for raw in zone_lines -%}
+          {%- assign line = raw | strip -%}
+          {%- if line == blank -%}{%- continue -%}{%- endif -%}
+          {%- comment -%}
+            Split on the first colon only — "Umm Al Quwain: 1" has one, but a
+            name is allowed to contain others without losing its days.
+          {%- endcomment -%}
+          {%- assign zname = line | split: ':' | first | strip -%}
+          {%- assign zextra = line | remove_first: zname | remove_first: ':' | strip | plus: 0 -%}
+          <option value="{{ zname | escape }}" data-extra="{{ zextra }}">{{ zname }}</option>
+        {%- endfor -%}
+      </select>
+    </span>
+  {%- endif -%}
 </span>

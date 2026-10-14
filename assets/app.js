@@ -1539,21 +1539,8 @@ function initDeliveryEstimate() {
       .map(function (d) { return parseInt(d, 10); })
       .filter(function (d) { return !isNaN(d); });
 
-    var now = new Date();
-    var cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    /* Past the cutoff nothing is picked today, so the clock starts tomorrow. */
-    if (now.getHours() >= cutoff) cursor.setDate(cursor.getDate() + 1);
-
-    var counted = 0, minDate = null, maxDate = null, guard = 0;
-    while (counted < daysMax && guard++ < 60) {
-      cursor.setDate(cursor.getDate() + 1);
-      if (restDays.indexOf(cursor.getDay()) !== -1) continue;
-      counted++;
-      if (counted === daysMin && !minDate) minDate = new Date(cursor);
-      if (counted === daysMax) maxDate = new Date(cursor);
-    }
-    if (!maxDate) return;
-    if (!minDate) minDate = maxDate;
+    var select = node.querySelector('[data-delivery-zone]');
+    var storeKey = node.getAttribute('data-zone-key') || 'tfs:delivery-zone';
 
     /* en-GB gives "Wed, 15 Oct" — day before month, which is how the rest of
        the site writes dates and what the Liquid format produces. */
@@ -1563,15 +1550,72 @@ function initDeliveryEstimate() {
                 .replace(/^(\w+)\s/, '$1, ');
       } catch (e) { return null; }
     }
-    var minText = label(minDate), maxText = label(maxDate);
-    if (!minText || !maxText) return;
 
-    var minEl = node.querySelector('[data-delivery-min]');
-    var maxEl = node.querySelector('[data-delivery-max]');
-    /* Same day at both ends: Liquid rendered a single date and there is no
-       [data-delivery-min] to fill. */
-    if (minEl && minEl.textContent.trim() !== minText) minEl.textContent = minText;
-    if (maxEl && maxEl.textContent.trim() !== maxText) maxEl.textContent = maxText;
+    function render() {
+      /* Extra working days for the chosen destination. Liquid renders the
+         first option's dates, so with no choice made this adds nothing and
+         the markup already agrees. */
+      var extra = 0;
+      if (select && select.selectedIndex >= 0) {
+        var opt = select.options[select.selectedIndex];
+        extra = parseInt(opt && opt.getAttribute('data-extra'), 10) || 0;
+      }
+      var wantMin = daysMin + extra;
+      var wantMax = daysMax + extra;
+
+      var now = new Date();
+      var cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      /* Past the cutoff nothing is picked today, so the clock starts tomorrow. */
+      if (now.getHours() >= cutoff) cursor.setDate(cursor.getDate() + 1);
+
+      var counted = 0, minDate = null, maxDate = null, guard = 0;
+      while (counted < wantMax && guard++ < 120) {
+        cursor.setDate(cursor.getDate() + 1);
+        if (restDays.indexOf(cursor.getDay()) !== -1) continue;
+        counted++;
+        if (counted === wantMin && !minDate) minDate = new Date(cursor);
+        if (counted === wantMax) maxDate = new Date(cursor);
+      }
+      if (!maxDate) return;
+      if (!minDate) minDate = maxDate;
+
+      var minText = label(minDate), maxText = label(maxDate);
+      if (!minText || !maxText) return;
+
+      var minEl = node.querySelector('[data-delivery-min]');
+      var maxEl = node.querySelector('[data-delivery-max]');
+      /* Same day at both ends: Liquid rendered a single date and there is no
+         [data-delivery-min] to fill. */
+      if (minEl && minEl.textContent.trim() !== minText) minEl.textContent = minText;
+      if (maxEl && maxEl.textContent.trim() !== maxText) maxEl.textContent = maxText;
+    }
+
+    if (select) {
+      /* Restore the destination this shopper already chose, so it follows
+         them from product to product instead of resetting each page. */
+      try {
+        var saved = localStorage.getItem(storeKey);
+        if (saved) {
+          for (var i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === saved) { select.selectedIndex = i; break; }
+          }
+        }
+      } catch (e) { /* private mode: the first option stands */ }
+
+      select.addEventListener('change', function () {
+        try { localStorage.setItem(storeKey, select.value); } catch (e) { /* no-op */ }
+        render();
+        /* Every estimate on the page moves together — the sticky bar and the
+           cart carry the same promise as the one just changed. */
+        document.querySelectorAll('[data-delivery-zone]').forEach(function (other) {
+          if (other === select || other.value === select.value) return;
+          other.value = select.value;
+          other.dispatchEvent(new Event('change'));
+        });
+      });
+    }
+
+    render();
   });
 }
 
