@@ -13,12 +13,23 @@
 
   ── The dates are real ───────────────────────────────────────────────────
 
-  Worked out from three theme settings — the dispatch cutoff, and the
-  fastest and slowest delivery in business days — against the UAE working
-  week, which is Monday to Friday. Order after the cutoff and the clock
-  starts the next business day, exactly as the Shipping policy says. Nothing
-  here is a countdown or an invented promise; change the settings and this
-  line changes with them.
+  Worked out from theme settings — the dispatch cutoff, the fastest and
+  slowest delivery in business days, and which days are not worked — against
+  the store's own Shipping policy. Order after the cutoff and the clock
+  starts the next business day, exactly as that policy says. Nothing here is
+  a countdown or an invented promise; change the settings and this line
+  changes with them.
+
+  The working week is a setting and not a constant because this got it wrong
+  once. It assumed Monday to Friday — the UAE federal working week — while
+  the store's Shipping policy says "Handling time: typically 1 business day,
+  Monday to Saturday". Treating Saturday as a rest day inserted a day that
+  does not exist into every estimate, so each one promised delivery a day
+  later than the business actually works to. The default below is Sunday
+  only, which is what that policy describes.
+
+  Note also that the policy's window is 1–4 business days "in total",
+  handling included — so these are counted from the order, not from dispatch.
 
   ── Why it is also computed in JavaScript ────────────────────────────────
 
@@ -40,23 +51,39 @@
   assign now_dow = 'now' | date: '%w' | times: 1
   assign now_ts = 'now' | date: '%s' | times: 1
 
+  # Rest days as %w numbers: 0 is Sunday, 6 is Saturday. Comma-delimited on
+  # both sides when tested below so "6" can never match inside "16".
+  case settings.delivery_rest_days
+    when 'fri'
+      assign rest_days = '5'
+    when 'fri-sat'
+      assign rest_days = '5,6'
+    when 'sat-sun'
+      assign rest_days = '0,6'
+    when 'none'
+      assign rest_days = ''
+    else
+      assign rest_days = '0'
+  endcase
+  assign rest_key = ',' | append: rest_days | append: ','
+
   # Past the cutoff, nothing is picked today — the clock starts tomorrow.
   assign lead = 0
   if now_hour >= cutoff
     assign lead = 1
   endif
 
-  # Walk forward a day at a time, counting only business days, until the
+  # Walk forward a day at a time, counting only working days, until the
   # fastest and the slowest have both been reached. Liquid has no date
-  # arithmetic, so the weekend has to be stepped over by hand: %w gives
-  # 0 for Sunday and 6 for Saturday, which is the UAE weekend.
+  # arithmetic, so the rest days have to be stepped over by hand.
   assign min_offset = 0
   assign max_offset = 0
   assign counted = 0
   for i in (1..40)
     assign cursor = lead | plus: i
     assign dow = now_dow | plus: cursor | modulo: 7
-    if dow == 0 or dow == 6
+    assign dow_key = ',' | append: dow | append: ','
+    if rest_key contains dow_key
       continue
     endif
     assign counted = counted | plus: 1
@@ -79,7 +106,8 @@
       data-delivery-estimate
       data-cutoff="{{ cutoff }}"
       data-days-min="{{ days_min }}"
-      data-days-max="{{ days_max }}">
+      data-days-max="{{ days_max }}"
+      data-rest-days="{{ rest_days }}">
   {%- unless compact -%}<span class="mi" aria-hidden="true">event_available</span>{%- endunless -%}
   {%- comment -%}
     One range, not two dates with a label each: "Arrives Wed, 15 – Mon, 20

@@ -1513,7 +1513,14 @@ function initVariantPicker() {
    which on a freshly rendered page is never, so the common case costs one
    comparison and touches no DOM.
 
-   The working week is Monday–Friday, matching the UAE and the Liquid side.
+   Which days are not worked comes from the markup rather than being written
+   in here, so this and the Liquid that rendered the same dates cannot
+   disagree — they read one setting. It is a setting at all because the pair
+   of them were wrong together: both assumed a Monday–Friday week, the UAE
+   federal one, while this store's Shipping policy says handling runs Monday
+   to Saturday. Treating Saturday as a rest day put a day that does not exist
+   into every estimate.
+
    Deliberately the shopper's own clock rather than the store's: someone
    browsing from another timezone sees a date that matches the day they
    think it is, and the cutoff is an hour of the day either way. */
@@ -1524,6 +1531,14 @@ function initDeliveryEstimate() {
     var daysMax = parseInt(node.getAttribute('data-days-max'), 10);
     if (isNaN(cutoff) || isNaN(daysMin) || isNaN(daysMax)) return;
 
+    /* %w numbering, same as the Liquid side: 0 Sunday … 6 Saturday. An empty
+       attribute means every day is worked, which is not the same as a missing
+       one — so it is parsed, not defaulted. */
+    var restDays = (node.getAttribute('data-rest-days') || '')
+      .split(',')
+      .map(function (d) { return parseInt(d, 10); })
+      .filter(function (d) { return !isNaN(d); });
+
     var now = new Date();
     var cursor = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     /* Past the cutoff nothing is picked today, so the clock starts tomorrow. */
@@ -1532,8 +1547,7 @@ function initDeliveryEstimate() {
     var counted = 0, minDate = null, maxDate = null, guard = 0;
     while (counted < daysMax && guard++ < 60) {
       cursor.setDate(cursor.getDate() + 1);
-      var dow = cursor.getDay();
-      if (dow === 0 || dow === 6) continue;   // UAE weekend
+      if (restDays.indexOf(cursor.getDay()) !== -1) continue;
       counted++;
       if (counted === daysMin && !minDate) minDate = new Date(cursor);
       if (counted === daysMax) maxDate = new Date(cursor);
