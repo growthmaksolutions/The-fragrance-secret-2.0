@@ -152,9 +152,21 @@
     free. It is also outside the product form — a select inside it would be
     posted to /cart/add as a line-item property.
   {%- endcomment -%}
+  {%- comment -%}
+    The blank test is on an assigned variable, not written inline as
+    `if raw | strip != blank`. Liquid does not allow a filter inside a
+    condition, and Shopify's GitHub sync compiles each file before it accepts
+    it — so that version of this line did not fail at render time, it was
+    rejected on deploy and the previous copy of the snippet stayed live while
+    every other file in the commit went out. A partial deploy, from a line
+    that looks fine.
+  {%- endcomment -%}
   {%- assign zone_lines = settings.delivery_zones | default: '' | strip | newline_to_br | split: '<br />' -%}
   {%- assign zone_count = 0 -%}
-  {%- for raw in zone_lines -%}{%- if raw | strip != blank -%}{%- assign zone_count = zone_count | plus: 1 -%}{%- endif -%}{%- endfor -%}
+  {%- for raw in zone_lines -%}
+    {%- assign zone_line = raw | strip -%}
+    {%- if zone_line != blank -%}{%- assign zone_count = zone_count | plus: 1 -%}{%- endif -%}
+  {%- endfor -%}
 
   {%- if zone_count > 0 -%}
     <span class="de-zone-wrap">
