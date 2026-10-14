@@ -1,0 +1,136 @@
+{%- comment -%}
+  GA4 / GTM loader and page context.
+
+  Two jobs, in this order:
+
+    1. Open window.dataLayer and push the context for THIS page before any
+       tag loads, so the first event a container sees already knows what it
+       is looking at.
+    2. Load whichever tag the settings name. Either, neither or both — a
+       blank setting loads nothing, which is what a theme preview or an
+       unconfigured staging copy should do.
+
+  The event stream itself lives in analytics.js. This snippet only sets the
+  table: the page type, the currency, and — on a product, collection or
+  search page — the items on screen, server-rendered so the figures are the
+  same ones the shopper is reading rather than something scraped back out of
+  the DOM.
+
+  Deliberately in <head> and ahead of content_for_header. Shopify's own
+  analytics go in that tag, and a container that loads after the first
+  interaction misses it.
+{%- endcomment -%}
+
+{%- liquid
+  assign ga4_id = settings.ga4_measurement_id | strip
+  assign gtm_id = settings.gtm_container_id | strip
+  assign currency = cart.currency.iso_code | default: shop.currency
+-%}
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  window.TFSAnalytics = {
+    currency: {{ currency | json }},
+    debug: {{ settings.analytics_debug | default: false | json }},
+    pageType: {{ request.page_type | default: 'unknown' | json }},
+    {%- comment -%}
+      Which list a card was clicked in. GA4 ties select_item to view_item_list
+      through item_list_id/name, and without a name here every click on the
+      site would be attributed to one anonymous list.
+    {%- endcomment -%}
+    list: {
+      {%- case request.page_type -%}
+        {%- when 'collection' -%}
+          id: {{ collection.handle | json }}, name: {{ collection.title | json }}
+        {%- when 'search' -%}
+          id: "search", name: {{ search.terms | default: 'Search results' | json }}
+        {%- when 'index' -%}
+          id: "home", name: "Home page"
+        {%- else -%}
+          id: {{ request.path | json }}, name: {{ page_title | json }}
+      {%- endcase -%}
+    },
+    {%- comment -%}
+      Logged-in customers get a stable id so GA4 can stitch sessions across
+      devices. Never the email — that is personal data and GA4 forbids it in
+      a custom dimension. orders_count rides along because "has ordered
+      before" is the single most useful segment when reading a funnel.
+    {%- endcomment -%}
+    user: {
+      {%- if customer -%}
+        id: {{ customer.id | json }}, returning: {{ customer.orders_count | default: 0 | json }}
+      {%- else -%}
+        id: null, returning: 0
+      {%- endif -%}
+    }
+  };
+
+  {%- comment -%}
+    The item being viewed, built in Liquid rather than JS. The variant is
+    selected_or_first_available_variant, which is the one the form will post
+    and the price the page is showing.
+  {%- endcomment -%}
+  {%- if request.page_type == 'product' and product != blank -%}
+    {%- assign av = product.selected_or_first_available_variant -%}
+    window.TFSAnalytics.item = {
+      item_id: {{ product.id | json }},
+      item_name: {{ product.title | json }},
+      item_brand: {{ product.vendor | default: shop.name | json }},
+      item_category: {{ product.type | default: 'Perfume' | json }},
+      item_variant: {% if av.title != 'Default Title' %}{{ av.title | json }}{% else %}null{% endif %},
+      price: {{ av.price | default: product.price | divided_by: 100.0 | json }},
+      quantity: 1
+    };
+  {%- endif -%}
+
+  {%- comment -%}
+    Search needs its own two figures: the term and how many results came
+    back. A zero-result rate is one of the KPIs this is all being built for,
+    and it cannot be derived from anything else.
+  {%- endcomment -%}
+  {%- if request.page_type == 'search' and search.performed -%}
+    window.TFSAnalytics.search = {
+      term: {{ search.terms | json }},
+      results: {{ search.results_count | default: 0 | json }}
+    };
+  {%- endif -%}
+</script>
+
+{%- if gtm_id != blank -%}
+  <script>
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true; j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', {{ gtm_id | json }});
+  </script>
+{%- endif -%}
+
+{%- if ga4_id != blank -%}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id | url_encode }}"></script>
+  <script>
+    function gtag() { window.dataLayer.push(arguments); }
+    window.gtag = gtag;
+    gtag('js', new Date());
+    {%- comment -%}
+      Consent Mode defaults, set BEFORE the config call so the first page view
+      is already governed by them. Denied until something grants it — a
+      consent banner app, or Shopify's own customer-privacy API, which
+      analytics.js listens to. Tracking that survives a cookie banner is a P0
+      in the guide; tracking that ignores one is a liability.
+    {%- endcomment -%}
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      wait_for_update: 500
+    });
+    gtag('config', {{ ga4_id | json }}, {
+      send_page_view: true,
+      currency: {{ currency | json }}
+      {%- if customer %}, user_id: {{ customer.id | json }}{% endif -%}
+    });
+  </script>
+{%- endif -%}

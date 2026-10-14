@@ -39,6 +39,16 @@
     ]
   },
   {
+    "name": "Analytics",
+    "settings": [
+      { "type": "paragraph", "content": "Funnel tracking. Every CRO decision after this depends on seeing where shoppers drop off, so this is the one thing to fill in first. Paste a GA4 measurement ID, a GTM container ID, or both — leave both blank and nothing loads at all, which is the right default for a theme preview or a staging copy. The theme pushes the full GA4 ecommerce event set to window.dataLayer either way, so a GTM container can read the same events without a measurement ID here." },
+      { "type": "text", "id": "ga4_measurement_id", "label": "GA4 measurement ID", "info": "Starts G-. Loads gtag.js and sends events straight to GA4. Leave blank if a GTM container below is sending them instead — filling in both sends every event twice." },
+      { "type": "text", "id": "gtm_container_id", "label": "Google Tag Manager container ID", "info": "Starts GTM-. Loads the container, which then reads the dataLayer the theme writes." },
+      { "type": "paragraph", "content": "A theme cannot see the checkout, so begin_checkout is the last event this file can fire. purchase, add_shipping_info and add_payment_info have to come from a custom pixel in Settings › Customer events — the code to paste is in docs/ga4-purchase-pixel.js. Without it the funnel ends at the checkout button and conversion rate cannot be calculated." },
+      { "type": "checkbox", "id": "analytics_debug", "label": "Log events to the browser console", "default": false, "info": "For checking a release. Leave off in production." }
+    ]
+  },
+  {
     "name": "Order experience rating",
     "settings": [
       { "type": "paragraph", "content": "A theme cannot store a rating. The storefront has no database and cannot write to Shopify \u2014 only the Admin API can put a value on an order, and an Admin token in theme code would expose the whole shop. So Judge.me keeps the ratings and sends the request; the theme only asks. Paste the Judge.me shop-review form link below and a \"How was your experience?\" card appears on a customer's order once that order is fulfilled. Leave it blank and nothing renders, rather than five stars that lead nowhere. Find the link in Judge.me \u203a Shop reviews. Judge.me also sends its own request automatically after fulfilment \u2014 set the timing there, not here, and give the courier time to actually arrive before it goes out." },

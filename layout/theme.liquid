@@ -200,6 +200,22 @@
     })(window, document, "clarity", "script", "qypu7kamyp");
   </script>
 
+  {%- comment -%}
+    GA4 / GTM. Ahead of content_for_header so the container is already open
+    when Shopify's own analytics land, and so the dataLayer carries this
+    page's context before the first event is pushed.
+
+    Gated on an ID being set, here rather than inside the snippet: with
+    neither filled in the layout also skips analytics.js at the end of the
+    body, and the context block is only ever read by that file. Rendering it
+    anyway would put a kilobyte of inline script in the head of every page
+    for no reader — on a theme preview, a staging copy, or a store that has
+    not been given its measurement ID yet.
+  {%- endcomment -%}
+  {%- if settings.ga4_measurement_id != blank or settings.gtm_container_id != blank -%}
+    {% render 'analytics-init' %}
+  {%- endif -%}
+
   {{ content_for_header }}
 </head>
 
@@ -226,5 +242,15 @@
   {{ 'app.js' | asset_url | script_tag }}
   {{ 'collections.js' | asset_url | script_tag }}
   {{ 'wishlist.js' | asset_url | script_tag }}
+  {%- comment -%}
+    Last, and deliberately so. analytics.js decorates window.openCart to count
+    a mini-cart view, and reads the cart:updated events the three files above
+    dispatch — it has to run after they have defined and bound them. It is
+    also the one script on the page that nothing else depends on, so it is the
+    right thing to have arrive late.
+  {%- endcomment -%}
+  {%- if settings.ga4_measurement_id != blank or settings.gtm_container_id != blank -%}
+    {{ 'analytics.js' | asset_url | script_tag }}
+  {%- endif -%}
 </body>
 </html>

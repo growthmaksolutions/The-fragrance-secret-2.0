@@ -73,7 +73,20 @@
   wishlist and Quick Add buttons are raised above the stretched link, so
   they still work on their own.
 {%- endcomment -%}
-<div class="prod-card fade-up" data-handle="{{ product.handle }}"{% if card_variant %} data-variant="{{ card_variant.id }}"{% endif %}>
+{%- comment -%}
+  The data-ga-* attributes feed GA4's view_item_list and select_item. They are
+  discrete attributes rather than one JSON blob because a collection page
+  renders 24 of these and Liquid's json filter on a title containing a quote
+  would need escaping in an HTML attribute context — four small strings are
+  cheaper to emit and impossible to get wrong. analytics.js reads them; with
+  no analytics configured they cost four attributes and nothing else.
+{%- endcomment -%}
+<div class="prod-card fade-up" data-handle="{{ product.handle }}"{% if card_variant %} data-variant="{{ card_variant.id }}"{% endif %}
+     data-pid="{{ product.id }}"
+     data-ga-name="{{ card_title }}"
+     data-ga-brand="{{ product.vendor | escape }}"
+     data-ga-cat="{{ product.type | default: 'Perfume' | escape }}"
+     data-ga-price="{{ product.price | divided_by: 100.0 }}">
   <div class="prod-img-wrap">
     {%- if product.featured_image -%}
       <img class="prod-img" src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy" width="600" height="600">
