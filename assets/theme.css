@@ -8292,3 +8292,76 @@ html body .jdgm-form textarea:focus {
       .bis-row { flex-direction: column }
       .bis-submit { width: 100%; justify-content: center }
     }
+
+    /* ═══════════════════════════════════════
+       APPLIED FILTER CHIPS  (snippets/filter-chips.liquid)
+       Above the grid, so "12 products" is never a mystery. The sidebar is a
+       drawer on mobile and therefore closed exactly when this needs reading.
+    ═══════════════════════════════════════ */
+    .fchips {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--cream-dk)
+    }
+
+    .fchips-label {
+      font-family: var(--fb);
+      font-size: .7rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: 2px
+    }
+
+    .fchip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      /* 8px/14px with a 15px icon lands the whole chip just over 32px tall.
+         Chips sit in a dense row, so they are the one control here allowed
+         under the 44px tap minimum — the generous hit area is the row's
+         gap, and each chip has a far larger duplicate in the filter panel. */
+      padding: 8px 12px;
+      border: 1px solid var(--cream-dk);
+      border-radius: 999px;
+      background: var(--white);
+      font-family: var(--fb);
+      font-size: .78rem;
+      color: var(--ink);
+      text-decoration: none;
+      line-height: 1.2;
+      transition: border-color .2s, background .2s
+    }
+
+    .fchip:hover {
+      border-color: var(--gold);
+      background: rgba(201, 168, 76, .07)
+    }
+
+    .fchip:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+
+    .fchip-k { color: var(--muted) }
+    .fchip-v { font-weight: 600 }
+
+    .fchip-x {
+      font-size: 15px;
+      color: var(--muted);
+      transition: color .2s
+    }
+
+    .fchip:hover .fchip-x { color: var(--gold-dk) }
+
+    .fchip-clear {
+      font-family: var(--fb);
+      font-size: .76rem;
+      color: var(--gold-dk);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      padding: 8px 4px
+    }
+
+    .fchip-clear:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }

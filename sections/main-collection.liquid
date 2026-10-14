@@ -259,6 +259,14 @@
       </aside>
 
       <div class="shop-results">
+        {%- comment -%}
+          Applied filters, above the results. Rendered here rather than beside
+          the heading so the Section Rendering swap of .shop-results keeps it
+          in step with the grid it describes — and so it is read before the
+          products rather than after them. It renders nothing when no filter
+          is on.
+        {%- endcomment -%}
+        {% render 'filter-chips', collection: collection %}
         {%- if collection.products.size > 0 -%}
           {%- comment -%}
             "Oils last" reorders the page so concentrated oils and attars sit
@@ -526,7 +534,12 @@
     root.addEventListener('click', function (event) {
       var link = event.target.closest('a');
       if (!link || !link.getAttribute('href')) return;
-      if (link.classList.contains('sf-clear') || link.closest('.pagination')) {
+      /* .fchip is a chip above the results removing one filter value. It
+         carries Shopify's own url_to_remove, so it works as a plain link
+         with no JavaScript — intercepting it here only buys the same
+         in-place re-render the sidebar controls get, instead of a full
+         page load for what is a smaller change than ticking a box. */
+      if (link.classList.contains('sf-clear') || link.classList.contains('fchip') || link.closest('.pagination')) {
         event.preventDefault();
         render(link.getAttribute('href'), true);
       }

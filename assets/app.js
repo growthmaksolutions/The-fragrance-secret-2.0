@@ -1544,6 +1544,66 @@ function initDeliveryEstimate() {
   });
 }
 
+/* ── Listing scroll restore ──
+   Coming back from a product to the row it was in. Browsers restore scroll
+   on a back navigation by themselves, and usually get it right — but not
+   here, because this collection page filters through the Section Rendering
+   API. Filter, open a product, press back, and the browser restores a
+   position measured against a grid that is then refetched and replaced, so
+   the shopper lands somewhere arbitrary in a freshly swapped list. On a
+   filtered 300-product collection that means finding your place again by
+   hand, which is enough friction to end the session.
+
+   So the position is recorded on the way out and reapplied on the way back,
+   keyed to the exact URL including its filter query.
+
+   Only ever on a real back/forward navigation — checked through the
+   Navigation Timing entry — so arriving at the same collection fresh from
+   the menu still starts at the top, which is what that click means. */
+var PLP_SCROLL_KEY = 'tfs:plp-scroll';
+
+function initListingScrollMemory() {
+  var grid = document.getElementById('collGrid');
+  if (!grid) return;
+
+  /* Record on the way out. Capture phase, because the card's own handlers
+     (Quick Add, wishlist) call stopPropagation and would otherwise hide the
+     click — and a click on those is not a departure anyway, which is why
+     only real navigations are stored. */
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest && e.target.closest('.prod-card a[href]');
+    if (!link) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;  // opening a new tab is not leaving
+    try {
+      sessionStorage.setItem(PLP_SCROLL_KEY, JSON.stringify({
+        url: location.pathname + location.search,
+        y: window.scrollY || window.pageYOffset || 0
+      }));
+    } catch (err) { /* private mode: the browser's own restore is the fallback */ }
+  }, true);
+
+  var isBack = false;
+  try {
+    var nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+    if (nav) isBack = nav.type === 'back_forward';
+    else if (performance.navigation) isBack = performance.navigation.type === 2;
+  } catch (err) { /* treated as a fresh visit */ }
+  if (!isBack) return;
+
+  var saved;
+  try { saved = JSON.parse(sessionStorage.getItem(PLP_SCROLL_KEY) || 'null'); }
+  catch (err) { return; }
+  if (!saved || saved.url !== location.pathname + location.search) return;
+  try { sessionStorage.removeItem(PLP_SCROLL_KEY); } catch (err) { /* no-op */ }
+
+  /* After layout, not during it. Product images carry width and height so
+     the grid's height is known before they load, but the fade-up observer
+     and the sticky header both settle on the next frame. */
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () { window.scrollTo(0, saved.y); });
+  });
+}
+
 /* ── Back-in-stock confirmation ──
    Shopify answers a successful contact-form post with a redirect back to the
    same URL carrying ?contact_posted=true. That is a fresh page load, so the
@@ -1724,6 +1784,7 @@ function initApp() {
   initVariantPicker();
   initDeliveryEstimate();
   initNotifyConfirmation();
+  initListingScrollMemory();
   initStickyAtc();
   initCountdowns();
   initLegalToc();
