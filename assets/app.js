@@ -12,14 +12,16 @@
 ═══════════════════════════════════════ */
 const products = []; // populated from the live store by loadLiveCatalog()
 
-const reviews = [
-  { name: 'Fatima Al Rashid', loc: 'Dubai, UAE', text: 'Smells exactly like luxury brands — insane quality for the price! My whole office was asking what I was wearing.', prod: 'Bouquet of Oud EDP', init: 'F', rating: 5 },
-  { name: 'Mohammed Hassan', loc: 'Abu Dhabi, UAE', text: 'Finally found an authentic store in UAE. Packaging was perfect, scent is even better in person. Will definitely order again.', prod: 'Amber Oud Gold EDP', init: 'M', rating: 5 },
-  { name: 'Sara Al Zaabi', loc: 'Sharjah, UAE', text: 'The fragrance notes described on the site were spot on. Long-lasting, beautiful, and arrived within 24 hours. Highly recommend!', prod: 'Club de Nuit Précieux', init: 'S', rating: 5 },
-  { name: 'Khalid Ibrahim', loc: 'Dubai, UAE', text: 'Ordered 3 times now. Always authentic, always fast. Customer service on WhatsApp is incredible — super helpful.', prod: 'Badee Al Oud Honor & Glory', init: 'K', rating: 5 },
-  { name: 'Aisha Mohammed', loc: 'Ajman, UAE', text: 'Perfect gift for my husband. He loved it and keeps asking me where I bought it from. Fragrance Secrets is now my go-to.', prod: 'Shaghaf Oud Elixir', init: 'A', rating: 5 },
-  { name: 'Omar Al Mansouri', loc: 'Dubai, UAE', text: 'The quality guarantee gives me peace of mind. No more worrying about fakes. Fast delivery, great prices, genuine products.', prod: 'Hawas Fire EDP', init: 'O', rating: 5 },
-];
+/* The `reviews` array that stood here held six testimonials — names,
+   emirates, the products they had supposedly bought, five stars each and a
+   "Verified Purchase" tick — and they described nobody. It was placeholder
+   copy from the static build this theme was ported from; `products` and
+   `brands` above were both switched to live data during that port and this
+   was missed, so it went on rendering on ten surfaces, every collection page
+   among them.
+
+   Judge.me holds the store's real reviews. snippets/shop-reviews.liquid
+   renders them, and renders nothing when there are none. */
 
 const brands = []; // populated from live product vendors by loadLiveCatalog()
 
@@ -232,21 +234,6 @@ function productCardHTML(p) {
   </div>`;
 }
 
-function reviewCardHTML(r) {
-  return `<div class="rv-card fade-up">
-    <div class="rv-top">
-      <div class="rv-avatar">${r.init}</div>
-      <div>
-        <div class="rv-name">${esc(r.name)}</div>
-        <div class="rv-meta">${esc(r.loc)}</div>
-        <div class="rv-verify"><span class="mi" aria-hidden="true">check</span>Verified Purchase</div>
-      </div>
-      <div class="stars" style="margin-left:auto">${starsHTML(r.rating)}</div>
-    </div>
-    <div class="rv-text">${esc(r.text)}</div>
-    <div class="rv-prod"> ${esc(r.prod)}</div>
-  </div>`;
-}
 
 function kitCardHTML(k) {
   return `<div class="prod-card fade-up">
@@ -285,7 +272,6 @@ function hydrateRenderables() {
     const from = parseInt(node.getAttribute('data-from') || '0', 10);
     let list;
     if (kind === 'products') list = n ? products.slice(from, from + n) : products, node.innerHTML = list.map(productCardHTML).join('');
-    else if (kind === 'reviews') node.innerHTML = (n ? reviews.slice(0, n) : reviews).map(reviewCardHTML).join('');
     else if (kind === 'blogs') node.innerHTML = (n ? blogs.slice(0, n) : blogs).map(blogCardHTML).join('');
     else if (kind === 'brands') node.innerHTML = brandsIndexHTML();
     else if (kind === 'brand-track') {
@@ -1963,19 +1949,54 @@ document.addEventListener('keydown', e => {
 /* ═══════════════════════════════════════
    COUNTDOWN TIMER (deals)
 ═══════════════════════════════════════ */
+/* Counts down to a real moment, given as data-countdown-to.
+
+   It used to take a number of HOURS and count down from it — so every timer
+   on the Crazy Deals page restarted at 34 hours on every page load, and at 34
+   hours again on the next refresh, forever. Nothing ever ended. A shopper
+   watching the seconds fall was watching an animation.
+
+   That is the "false urgency" pattern the dark-pattern guidance names first,
+   and the fix is not a better animation: it is that a timer may only ever
+   count to a date someone actually set. If no end date is set in the theme
+   editor, the markup for the timer is not rendered at all — see
+   sections/page-crazy-deals.liquid — so there is nothing here to start.
+
+   Past its end the element is hidden rather than pinned at zeroes: a deal
+   whose timer reads 00:00:00 while the price is still showing is its own
+   kind of lie, and a merchant who lets the date lapse should lose the timer,
+   not gain a broken one. */
 function initCountdowns() {
-  document.querySelectorAll('[data-countdown]').forEach(node => {
-    const hrs = parseFloat(node.getAttribute('data-countdown')) || 12;
-    let remaining = hrs * 3600;
+  document.querySelectorAll('[data-countdown-to]').forEach(node => {
+    const ends = Date.parse(node.getAttribute('data-countdown-to'));
+    if (isNaN(ends)) { node.hidden = true; return; }
+
+    /* The label beside the timer ("This week's deals end in") has to go with
+       it — left behind it introduces a countdown that is not there. */
+    const scope = node.closest('[data-countdown-scope]') || node;
+    let timer = null;
+
     const tick = () => {
-      remaining = Math.max(0, remaining - 1);
-      const h = String(Math.floor(remaining / 3600)).padStart(2, '0');
+      let remaining = Math.floor((ends - Date.now()) / 1000);
+      if (remaining <= 0) {
+        if (timer) clearInterval(timer);
+        scope.hidden = true;
+        return;
+      }
+      const d = Math.floor(remaining / 86400);
+      const h = String(Math.floor((remaining % 86400) / 3600)).padStart(2, '0');
       const m = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
       const s = String(remaining % 60).padStart(2, '0');
-      node.innerHTML = `<span class="cd-unit"><b>${h}</b><small>Hrs</small></span><span class="cd-sep">:</span><span class="cd-unit"><b>${m}</b><small>Min</small></span><span class="cd-sep">:</span><span class="cd-unit"><b>${s}</b><small>Sec</small></span>`;
+      /* Days only once there are some. A three-day sale shown as 82 hours
+         reads as a mistake. */
+      const days = d > 0
+        ? `<span class="cd-unit"><b>${d}</b><small>${d === 1 ? 'Day' : 'Days'}</small></span><span class="cd-sep">:</span>`
+        : '';
+      node.innerHTML = `${days}<span class="cd-unit"><b>${h}</b><small>Hrs</small></span><span class="cd-sep">:</span><span class="cd-unit"><b>${m}</b><small>Min</small></span><span class="cd-sep">:</span><span class="cd-unit"><b>${s}</b><small>Sec</small></span>`;
     };
+
     tick();
-    setInterval(tick, 1000);
+    timer = setInterval(tick, 1000);
   });
 }
 

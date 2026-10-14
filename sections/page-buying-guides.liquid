@@ -101,6 +101,13 @@
     </section>
 
     <!-- TESTIMONIALS -->
+    {%- comment -%}
+      Real reviews, or no reviews section at all. Judge.me holds this store's
+      actual reviews; what used to fill this block was six invented customers
+      written into app.js. With none synced the whole section — heading
+      included — is absent, rather than a promise of testimonials over a gap.
+    {%- endcomment -%}
+    {%- if shop.metafields.judgeme.shop_reviews_count > 0 -%}
     <section class="section alt">
       <div class="container">
         <div class="sec-head center fade-up">
@@ -108,9 +115,10 @@
           <h2 class="sec-title">Shoppers Who Found <em>Their Match</em></h2>
           <p class="sec-sub">Real reviews from customers across the Emirates who used our guidance to choose with confidence.</p>
         </div>
-        <div class="rv-grid fade-up" data-render="reviews" data-count="3"></div>
+        {% render 'shop-reviews', show: 'carousel' %}
       </div>
     </section>
+    {%- endif -%}
 
     <!-- FULL GUIDE ARTICLES -->
     <section class="section">

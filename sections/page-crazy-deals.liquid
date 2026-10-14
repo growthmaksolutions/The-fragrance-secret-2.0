@@ -1,3 +1,77 @@
+{%- comment -%}
+  Crazy Deals.
+
+  ── What changed, and why ────────────────────────────────────────────────
+
+  This page was making five claims that were not true of anything.
+
+    · Three countdown timers that restarted on every page load. The old
+      initCountdowns took a number of hours and counted down from it, so
+      "this week's deals end in 34 hours" was 34 hours away on Monday and
+      34 hours away again on Friday. Nothing ever ended.
+    · "Only 14 left" with a stock bar fixed at 28%.
+    · "sold 62 this week".
+    · Five filled stars and "(1,102 reviews)", written into the markup.
+    · A Deal of the Week — a named product at AED 209, reduced from AED 380
+      — that was a picture and some text, not a product. It linked to the
+      catalogue rather than to itself, because there was no itself.
+
+  Those are the false-urgency and bait-and-switch patterns, and the first
+  item on the pre-launch compliance checklist is that a storefront carries
+  none of them. They are also, separately, bad trade: a timer that resets is
+  only persuasive until someone comes back, and the shopper it misleads is
+  the one who was ready to buy.
+
+  Everything on the page now comes from real data or is not rendered:
+
+    · The timer counts to a date set in the theme editor. No date, no timer
+      and no "ends in" label — not a timer with a default.
+    · Deal of the Week is a product picked in the editor. Its price, saving,
+      rating and stock are read from that product.
+    · "Only N left" appears only when Shopify is tracking inventory and the
+      number is genuinely at or under the threshold set below.
+    · Stars appear only when the product has reviews.
+
+  The discounts themselves were always real — they come from compare-at
+  prices on real products. It was the decoration around them that was not.
+{%- endcomment -%}
+
+{%- liquid
+  assign deal_product = section.settings.deal_product
+  assign deals_collection = section.settings.deals_collection | default: collections['crazy-deals']
+
+  # The timer is shown only while it is both set and still running. Liquid
+  # compares dates as strings here, so both sides go through %s — seconds
+  # since the epoch — which compares correctly as numbers.
+  assign deal_end = section.settings.deal_end_date | strip
+  assign show_timer = false
+  if deal_end != blank
+    assign ends_at = deal_end | date: '%s' | times: 1
+    assign now_at = 'now' | date: '%s' | times: 1
+    if ends_at > now_at
+      assign show_timer = true
+    endif
+  endif
+
+  assign dv = deal_product.selected_or_first_available_variant
+  assign deal_save_pct = 0
+  if dv.compare_at_price > dv.price
+    assign deal_save_pct = dv.compare_at_price | minus: dv.price | times: 100.0 | divided_by: dv.compare_at_price | round
+  endif
+
+  # Low stock, only when it is a fact. Shopify reports inventory_quantity as 0
+  # when it is not tracking the item at all, which is why "tracked" has to be
+  # tested separately — without it every untracked product would claim to be
+  # down to its last unit.
+  assign low_threshold = section.settings.low_stock_threshold | default: 10 | times: 1
+  assign show_low_stock = false
+  if dv.inventory_management != blank and dv.inventory_quantity > 0 and dv.inventory_quantity <= low_threshold
+    assign show_low_stock = true
+  endif
+
+  assign deal_rating = deal_product.metafields.reviews.rating.value.rating
+  assign deal_rating_count = deal_product.metafields.reviews.rating_count.value | plus: 0
+-%}
 
     <!-- DEAL HERO -->
     <section class="deal-hero">
@@ -6,10 +80,16 @@
         <span class="deal-flag"><span class="mi" aria-hidden="true">bolt</span>Limited-Time Offers</span>
         <h1 class="ph-title" style="margin-top:18px">Crazy <em>Deals</em></h1>
         <p class="ph-sub">Serious price drops on 100% authentic fragrances — while stock lasts. New deals every week, dispatched next-day across the UAE. When they're gone, they're gone.</p>
-        <div style="margin-top:30px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
-          <span style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6)">This week's deals end in</span>
-          <div class="countdown" data-countdown="34"></div>
-        </div>
+        {%- if show_timer -%}
+          {%- comment -%}
+            The label and the timer share one wrapper so they disappear
+            together when the deadline passes — see initCountdowns.
+          {%- endcomment -%}
+          <div data-countdown-scope style="margin-top:30px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+            <span style="font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.6)">This week's deals end in</span>
+            <div class="countdown" data-countdown-to="{{ deal_end | escape }}"></div>
+          </div>
+        {%- endif -%}
       </div>
     </section>
 
@@ -17,7 +97,7 @@
     <section class="section">
       <div class="container">
         <div class="usp-grid fade-up">
-          <div class="usp-card"><div class="usp-ic"><span class="mi" aria-hidden="true">sell</span></div><h3>Deep Discounts</h3><p>Up to 60% off recommended retail on genuine designer and Arabic-house fragrances — real markdowns, not inflated "was" prices.</p></div>
+          <div class="usp-card"><div class="usp-ic"><span class="mi" aria-hidden="true">sell</span></div><h3>Deep Discounts</h3><p>Real markdowns against recommended retail on genuine designer and Arabic-house fragrances — never inflated "was" prices.</p></div>
           <div class="usp-card"><div class="usp-ic"><span class="mi" aria-hidden="true">inventory</span></div><h3>Limited Stock</h3><p>Deal quantities are strictly capped. Once a run sells out it's removed — so the price you see is the price while it lasts.</p></div>
           <div class="usp-card"><div class="usp-ic"><span class="mi" aria-hidden="true">local_shipping</span></div><h3>Next-Day Delivery</h3><p>Order today, wear it tomorrow. Free UAE delivery over AED {{ settings.free_shipping_threshold | default: '250' }}, with Cash on Delivery available everywhere.</p></div>
         </div>
@@ -25,46 +105,114 @@
     </section>
 
     <!-- DEAL OF THE WEEK -->
+    {%- comment -%}
+      Rendered only when a product has been picked. An empty slot says
+      nothing; a slot filled with a product that does not exist says
+      something false, which is how this block got here.
+    {%- endcomment -%}
+    {%- if deal_product != blank -%}
     <section class="section alt">
       <div class="container">
         <div class="sec-head"><span class="label">Deal of the Week</span><h2 class="sec-title">The One to <em>Grab First</em></h2></div>
         <div class="deal-spotlight fade-up">
           <div class="ds-media">
-            <img src="{{ 'hero-oud.jpg' | asset_url }}" alt="Amber Oud Gold EDP" />
-            <div class="ds-savebadge"><b>-45%</b><small>Off</small></div>
+            {%- if deal_product.featured_image -%}
+              <img src="{{ deal_product.featured_image | image_url: width: 900 }}" alt="{{ deal_product.title | escape }}" width="900" height="900" loading="lazy">
+            {%- else -%}
+              <img src="{{ 'hero-oud.jpg' | asset_url }}" alt="{{ deal_product.title | escape }}" loading="lazy">
+            {%- endif -%}
+            {%- if deal_save_pct > 0 -%}
+              <div class="ds-savebadge"><b>-{{ deal_save_pct }}%</b><small>Off</small></div>
+            {%- endif -%}
           </div>
           <div class="ds-body">
-            <div class="prod-brand">Al Haramain</div>
-            <h2 class="sec-title" style="font-size:2rem;margin:4px 0 2px">Amber Oud Gold <em>EDP</em></h2>
-            <div class="prod-rating"><div class="stars"><span class="mi mi-f" style="color:var(--gold)" aria-hidden="true">star</span><span class="mi mi-f" style="color:var(--gold)" aria-hidden="true">star</span><span class="mi mi-f" style="color:var(--gold)" aria-hidden="true">star</span><span class="mi mi-f" style="color:var(--gold)" aria-hidden="true">star</span><span class="mi mi-f" style="color:var(--gold)" aria-hidden="true">star</span></div><span style="color:var(--warm);font-size:.82rem">(1,102 reviews)</span></div>
-            <div class="ds-price-row"><span class="ds-now">AED 209</span><span class="ds-was">AED 380</span><span class="price-save">Save AED 171</span></div>
-            <div class="ds-stock"><i style="width:28%"></i></div>
-            <p style="font-size:.8rem;color:var(--warm);margin-bottom:20px"><b style="color:var(--gold-dk)">Only 14 left</b> at this price · sold 62 this week</p>
+            {%- if deal_product.vendor != blank -%}<div class="prod-brand">{{ deal_product.vendor }}</div>{%- endif -%}
+            <h2 class="sec-title" style="font-size:2rem;margin:4px 0 2px">{{ deal_product.title }}</h2>
+
+            {%- comment -%}
+              Stars only with reviews behind them. The old markup drew five
+              filled stars and "(1,102 reviews)" on a product that had
+              neither — the single most load-bearing claim on the page, and
+              entirely invented.
+            {%- endcomment -%}
+            {%- if deal_rating_count > 0 and deal_rating != blank -%}
+              <div class="prod-rating">
+                {% render 'star-rating', rating: deal_rating %}
+                <span style="color:var(--warm);font-size:.82rem">({{ deal_rating_count }} review{% unless deal_rating_count == 1 %}s{% endunless %})</span>
+              </div>
+            {%- endif -%}
+
+            <div class="ds-price-row">
+              <span class="ds-now">{{ dv.price | money_with_currency }}</span>
+              {%- if dv.compare_at_price > dv.price -%}
+                <span class="ds-was">{{ dv.compare_at_price | money_with_currency }}</span>
+                <span class="price-save">Save {{ dv.compare_at_price | minus: dv.price | money_with_currency }}</span>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%}
+              The stock bar was fixed at 28% regardless of anything. It now
+              tracks the real remaining count against the threshold, and both
+              it and the line beneath it are absent unless Shopify is
+              actually counting this product's units.
+            {%- endcomment -%}
+            {%- if show_low_stock -%}
+              {%- assign stock_pct = dv.inventory_quantity | times: 100 | divided_by: low_threshold -%}
+              <div class="ds-stock"><i style="width:{{ stock_pct }}%"></i></div>
+              <p style="font-size:.8rem;color:var(--warm);margin-bottom:20px"><b style="color:var(--gold-dk)">Only {{ dv.inventory_quantity }} left</b> in stock</p>
+            {%- endif -%}
+
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-              <a class="btn-g" href="{{ routes.all_products_collection_url }}"><span class="mi" aria-hidden="true">shopping_bag</span>Grab This Deal</a>
-              <div class="countdown compact" data-countdown="11"></div>
+              {%- comment -%}
+                Goes to the product. The old button said "Grab This Deal" and
+                sent the shopper to the whole catalogue, because the deal it
+                described was not a page you could reach.
+              {%- endcomment -%}
+              <a class="btn-g" href="{{ deal_product.url }}"><span class="mi" aria-hidden="true">shopping_bag</span>Grab This Deal</a>
+              {%- if show_timer -%}
+                <div class="countdown compact" data-countdown-to="{{ deal_end | escape }}"></div>
+              {%- endif -%}
             </div>
           </div>
         </div>
       </div>
     </section>
+    {%- endif -%}
 
     <!-- ALL DEALS GRID -->
     <section class="section">
       <div class="container">
         <div class="results-head"><div><span class="label">On Sale Now</span><h2 class="sec-title" style="font-size:2rem">All <em>Crazy Deals</em></h2></div><a class="btn-ghost" href="/collections/all">Shop full catalogue <span class="mi" aria-hidden="true">arrow_forward</span></a></div>
-        {%- if collections['featured'].products.size > 0 -%}<div class="products-grid">{%- for product in collections['featured'].products limit: 8 -%}{% render 'product-card', product: product %}{%- endfor -%}</div>{%- else -%}<div class="products-grid" data-render="products" data-count="8"></div>{%- endif -%}
-        <div class="load-more-wrap"><a class="btn-ol" href="/collections/best-sellers">Load More Deals</a></div>
+        {%- if deals_collection.products.size > 0 -%}
+          <div class="products-grid">{%- for product in deals_collection.products limit: 8 -%}{% render 'product-card', product: product %}{%- endfor -%}</div>
+          {%- comment -%}
+            "Load More Deals" went to Best Sellers, which is a different set
+            of products. It goes to the rest of this collection now.
+          {%- endcomment -%}
+          {%- if deals_collection.products_count > 8 -%}
+            <div class="load-more-wrap"><a class="btn-ol" href="{{ deals_collection.url }}">See all {{ deals_collection.products_count }} deals</a></div>
+          {%- endif -%}
+        {%- else -%}
+          <div class="products-grid" data-render="products" data-count="8"></div>
+        {%- endif -%}
       </div>
     </section>
 
     <!-- TESTIMONIALS -->
+    {%- comment -%}
+      Real reviews, or no reviews section at all. Judge.me holds this store's
+      actual reviews; what used to fill this block was six invented customers
+      written into app.js. With none synced the whole section — heading
+      included — is absent, rather than a promise of testimonials over a gap.
+    {%- endcomment -%}
+    {%- if shop.metafields.judgeme.shop_reviews_count > 0 -%}
     <section class="reviews">
       <div class="reviews-inner">
         <div class="reviews-head fade-up"><span class="label">Happy Bargain-Hunters</span><h2 class="sec-title">Great Scents, <em>Great Prices</em></h2></div>
-        <div class="rv-grid" data-render="reviews" data-count="3"></div>
+        {% render 'shop-reviews', show: 'carousel' %}
       </div>
     </section>
+    {%- endif -%}
 
     <!-- FAQ -->
     <section class="faq">
@@ -79,20 +227,44 @@
       </div>
     </section>
 
-    <!-- URGENT CTA -->
+    <!-- CLOSING CTA -->
     <section class="section">
       <div class="container"><div class="cta-band">
-        <span class="deal-flag" style="margin-bottom:14px"><span class="mi" aria-hidden="true">timer</span>Ending Soon</span>
-        <h2 class="sec-title">Don't Miss Out — <em>Shop Before It's Gone</em></h2>
-        <p class="sec-sub">These prices disappear when the timer hits zero or stock runs out — whichever comes first.</p>
-        <div style="display:flex;justify-content:center;margin:22px 0 26px"><div class="countdown" data-countdown="34"></div></div>
+        {%- comment -%}
+          The flag, the heading and the line beneath them all asserted a
+          deadline. With a date set they still do and it is true; without
+          one they say what is true either way, which is that stock runs out.
+        {%- endcomment -%}
+        {%- if show_timer -%}
+          <span class="deal-flag" style="margin-bottom:14px"><span class="mi" aria-hidden="true">timer</span>Ending Soon</span>
+          <h2 class="sec-title">Don't Miss Out — <em>Shop Before It's Gone</em></h2>
+          <p class="sec-sub">These prices disappear when the timer hits zero or stock runs out — whichever comes first.</p>
+          <div data-countdown-scope style="display:flex;justify-content:center;margin:22px 0 26px"><div class="countdown" data-countdown-to="{{ deal_end | escape }}"></div></div>
+        {%- else -%}
+          <span class="deal-flag" style="margin-bottom:14px"><span class="mi" aria-hidden="true">bolt</span>While Stock Lasts</span>
+          <h2 class="sec-title">Don't Miss Out — <em>Shop Before It's Gone</em></h2>
+          <p class="sec-sub">Deal runs are capped by what we secured at that price. When a run sells out, the deal comes down.</p>
+        {%- endif -%}
         <div class="cta-actions">
-          <a class="btn-g" href="/collections/all"><span class="mi" aria-hidden="true">bolt</span>Shop All Deals Now</a>
+          <a class="btn-g" href="{{ deals_collection.url | default: '/collections/all' }}"><span class="mi" aria-hidden="true">bolt</span>Shop All Deals Now</a>
           <a class="btn-o" href="#" onclick="openReferral();return false">Get Deal Alerts</a>
         </div>
       </div></div>
     </section>
 
 {% schema %}
-{ "name": "Crazy Deals page", "settings": [] }
+{
+  "name": "Crazy Deals page",
+  "settings": [
+    { "type": "header", "content": "Sale deadline" },
+    { "type": "paragraph", "content": "The countdown only ever counts to the moment below. Leave it empty and no timer renders anywhere on the page — which is correct whenever there is no real deadline, and is why there is no default. A timer that restarts on every page load is the false-urgency pattern regulators name first, and it stops working on anyone who visits twice." },
+    { "type": "text", "id": "deal_end_date", "label": "Deals end at", "info": "YYYY-MM-DD HH:MM in store time, e.g. 2026-10-19 23:59. Clear it when the sale is over — past this moment the timer removes itself." },
+    { "type": "header", "content": "Deal of the week" },
+    { "type": "product", "id": "deal_product", "label": "Featured deal", "info": "Price, saving, rating and stock are all read from this product. Leave empty to hide the whole block." },
+    { "type": "range", "id": "low_stock_threshold", "label": "Call stock low at or below", "min": 1, "max": 50, "step": 1, "default": 10, "unit": "u", "info": "\"Only N left\" shows only when Shopify is tracking this product's inventory and the real count is at or under this. Untracked products never show it." },
+    { "type": "header", "content": "Deals grid" },
+    { "type": "collection", "id": "deals_collection", "label": "Collection to show", "info": "Defaults to the Crazy Deals collection." }
+  ],
+  "presets": [ { "name": "Crazy Deals page" } ]
+}
 {% endschema %}

@@ -1,0 +1,79 @@
+{%- comment -%}
+  Shop-wide reviews — the real ones.
+
+  Usage:
+    {% render 'shop-reviews', show: 'summary' %}   average + count
+    {% render 'shop-reviews', show: 'carousel' %}  the review cards
+
+  ── What this replaces ───────────────────────────────────────────────────
+
+  Six customer testimonials written into assets/app.js — names, emirates,
+  the products they had supposedly bought, five stars each and a "Verified
+  Purchase" tick — rendered on ten surfaces including every collection page.
+  Alongside them, "4.8, based on 10,284 verified reviews" typed into two
+  editorial sections.
+
+  None of it described anyone. It came from the static build the theme was
+  ported from, where it was placeholder copy; products and brands were both
+  switched to live data during that port and the testimonials were missed.
+
+  Invented reviews are the one piece of social proof that is worth less than
+  nothing: a store that fabricates them is making an unsubstantiated claim
+  about real named people, and a shopper who recognises one stops believing
+  the authenticity guarantee too — which is this store's whole proposition.
+
+  ── What it does instead ─────────────────────────────────────────────────
+
+  Reads Judge.me, which already holds the store's real reviews and already
+  renders them on the product page. Nothing is rendered unless Judge.me
+  reports at least one shop review, and the caller is told so through
+  data-reviews-empty, so a heading never sits above an empty space.
+
+  A store with no shop reviews yet therefore shows no reviews section. That
+  is the correct state: it is also the thing to fix, by turning on Judge.me's
+  shop-review requests — see docs/judgeme-review-requests.md.
+{%- endcomment -%}
+
+{%- liquid
+  assign sr_count = shop.metafields.judgeme.shop_reviews_count | plus: 0
+  assign sr_mode = show | default: 'carousel'
+-%}
+
+{%- if sr_count > 0 -%}
+  {%- if sr_mode == 'summary' -%}
+    {%- comment -%}
+      Judge.me publishes the count reliably. The average is not guaranteed to
+      be synced into a metafield on every plan, so the stars are rendered only
+      when there is a number behind them — a count on its own is still true,
+      where five stars on nothing is the thing being removed.
+    {%- endcomment -%}
+    {%- assign sr_rating = shop.metafields.judgeme.shop_rating | default: shop.metafields.judgeme.shop_average_rating -%}
+    <div class="rv-summary fade-up">
+      {%- if sr_rating != blank -%}
+        <div class="rv-big">{{ sr_rating | times: 1.0 | round: 1 }}</div>
+      {%- endif -%}
+      <div class="rv-details">
+        {%- if sr_rating != blank -%}
+          {% render 'star-rating', rating: sr_rating %}
+        {%- endif -%}
+        <p>Based on {{ sr_count }} verified review{% unless sr_count == 1 %}s{% endunless %}</p>
+      </div>
+    </div>
+  {%- else -%}
+    {%- comment -%}
+      Judge.me's own carousel widget. Its script finds this container and
+      fills it with real reviews; the theme does not render review cards of
+      its own any more, which is the point.
+    {%- endcomment -%}
+    <div style="clear:both"></div>
+    <div class="jdgm-carousel-wrapper">
+      <div class="jdgm-carousel jdgm-carousel--default" data-from-snippet="shop-reviews"></div>
+    </div>
+  {%- endif -%}
+{%- else -%}
+  {%- comment -%}
+    Nothing real to show. The marker lets the caller drop its own heading
+    rather than leaving "What Customers Say" above a gap.
+  {%- endcomment -%}
+  <span hidden data-reviews-empty></span>
+{%- endif -%}

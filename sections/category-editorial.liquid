@@ -157,26 +157,22 @@
 
 <!-- REVIEWS -->
 {%- if section.settings.show_reviews and editorial_muted != true -%}
+  {%- comment -%}
+    Real reviews, or no reviews section at all. Judge.me holds this store's
+    actual reviews; what used to fill this block was six invented customers
+    written into app.js. With none synced the whole section — heading
+    included — is absent, rather than a promise of testimonials over a gap.
+  {%- endcomment -%}
+  {%- if shop.metafields.judgeme.shop_reviews_count > 0 -%}
   <section class="reviews"><div class="reviews-inner">
     <div class="reviews-head fade-up">
       <span class="label">What Customers Say</span>
       <h2 class="sec-title">Loved by <em>Fragrance Lovers</em></h2>
     </div>
-    <div class="rv-summary fade-up">
-      <div class="rv-big">4.8</div>
-      <div class="rv-details">
-        <div class="stars">
-          <span class="mi mi-f" aria-hidden="true">star</span>
-          <span class="mi mi-f" aria-hidden="true">star</span>
-          <span class="mi mi-f" aria-hidden="true">star</span>
-          <span class="mi mi-f" aria-hidden="true">star</span>
-          <span class="mi mi-f" aria-hidden="true">star</span>
-        </div>
-        <p>Based on 10,284 verified reviews</p>
-      </div>
-    </div>
-    <div class="rv-grid" data-render="reviews" data-count="3"></div>
+    {% render 'shop-reviews', show: 'summary' %}
+    {% render 'shop-reviews', show: 'carousel' %}
   </div></section>
+  {%- endif -%}
 {%- endif -%}
 
 <!-- FAQ -->
