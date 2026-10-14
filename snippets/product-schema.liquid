@@ -31,6 +31,10 @@
   assign rating_value = product.metafields.reviews.rating.value.rating
   assign rating_count = product.metafields.reviews.rating_count.value | plus: 0
 
+  assign ship_rate = settings.shipping_flat_rate | default: 8 | times: 1
+  assign ship_days_min = settings.delivery_days_min | default: 1 | times: 1
+  assign ship_days_max = settings.delivery_days_max | default: 4 | times: 1
+
   assign title_check = product.title | downcase
   assign gender = ''
   if title_check contains 'unisex'
@@ -41,6 +45,43 @@
     assign gender = 'male'
   endif
 -%}
+
+{%- comment -%}
+  shippingDetails, built once and appended to every offers block below —
+  there are four of them (stored and fallback, each single-price and
+  multi-price) and a shipping block written out four times is a block that
+  will disagree with itself.
+
+  Why it is worth having: without it Google shows no delivery information in
+  a product rich result, and a listing that says nothing about shipping loses
+  to one beside it that says "free delivery". The figures come from the same
+  settings the PDP quotes, so the page, the structured data and checkout
+  cannot drift.
+
+  Emitted as one rate — the paid one — rather than two. Schema.org has no
+  property for "free above a threshold": expressing it needs a second
+  OfferShippingDetails whose rate is 0, and nothing in that second entry can
+  carry the condition, so it would read as unconditional free delivery on
+  every order. Understating by one flat rate is a small cost; a free-delivery
+  badge the checkout then contradicts is the bait-and-switch pattern the CCPA
+  guidelines name, and it gets items disapproved in Merchant Center.
+
+  handlingTime is 0–1 days because an order placed before the cutoff ships
+  the same day and one after it the next; transitTime is the delivery window
+  from the same settings the PDP's arrival date uses.
+
+  Deliberately no hasMerchantReturnPolicy. This store accepts returns only
+  for damaged, defective, incorrect or incomplete orders — faults, which are
+  a statutory right rather than a returns window. The only way to say that in
+  schema.org is MerchantReturnFiniteReturnWindow with merchantReturnDays,
+  which Google surfaces as a plain "2-day returns", and that promises a
+  change-of-mind window the store does not offer. Omitted on purpose; add it
+  if and only if the refund policy itself changes.
+{%- endcomment -%}
+{%- capture offer_shipping -%}
+,"shippingDetails":{"@type":"OfferShippingDetails","shippingRate":{"@type":"MonetaryAmount","value":{{ ship_rate | json }},"currency":{{ currency | json }}},"shippingDestination":{"@type":"DefinedRegion","addressCountry":"AE"},"deliveryTime":{"@type":"ShippingDeliveryTime","handlingTime":{"@type":"QuantitativeValue","minValue":0,"maxValue":1,"unitCode":"DAY"},"transitTime":{"@type":"QuantitativeValue","minValue":{{ ship_days_min | json }},"maxValue":{{ ship_days_max | json }},"unitCode":"DAY"}}}
+{%- endcapture -%}
+{%- assign offer_shipping = offer_shipping | strip -%}
 
 {%- assign stored_product = product.metafields.custom.product_schema.value | default: product.metafields.custom.product_schema -%}
 {%- if stored_product != blank -%}
@@ -65,9 +106,9 @@
 {%- endif -%}
 {%- if product.price > 0 -%}
   {%- if product.price_min != product.price_max -%}
-,"offers":{"@type":"AggregateOffer","offerCount":{{ product.variants.size }},"lowPrice":{{ product.price_min | divided_by: 100.0 | json }},"highPrice":{{ product.price_max | divided_by: 100.0 | json }},"priceCurrency":{{ currency | json }},"availability":{% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},"url":{{ product_url | json }},"seller":{"@type":"Organization","name":{{ shop.name | json }}}}
+,"offers":{"@type":"AggregateOffer","offerCount":{{ product.variants.size }},"lowPrice":{{ product.price_min | divided_by: 100.0 | json }},"highPrice":{{ product.price_max | divided_by: 100.0 | json }},"priceCurrency":{{ currency | json }},"availability":{% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},"url":{{ product_url | json }},"seller":{"@type":"Organization","name":{{ shop.name | json }}}{{ offer_shipping }}}
   {%- else -%}
-,"offers":{"@type":"Offer","url":{{ product_url | json }},"priceCurrency":{{ currency | json }},"price":{{ variant.price | default: product.price | divided_by: 100.0 | json }},"availability":{% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},"itemCondition":"https://schema.org/NewCondition","seller":{"@type":"Organization","name":{{ shop.name | json }}}}
+,"offers":{"@type":"Offer","url":{{ product_url | json }},"priceCurrency":{{ currency | json }},"price":{{ variant.price | default: product.price | divided_by: 100.0 | json }},"availability":{% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},"itemCondition":"https://schema.org/NewCondition","seller":{"@type":"Organization","name":{{ shop.name | json }}}{{ offer_shipping }}}
   {%- endif -%}
 {%- endif -%}
 }</script>
@@ -130,6 +171,7 @@
     "availability": {% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},
     "url": {{ product_url | json }},
     "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+    {{- offer_shipping -}}
   },
     {%- else %}
   "offers": {
@@ -140,6 +182,7 @@
     "availability": {% if product.available %}"https://schema.org/InStock"{% else %}"https://schema.org/OutOfStock"{% endif %},
     "itemCondition": "https://schema.org/NewCondition",
     "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+    {{- offer_shipping -}}
   },
     {%- endif %}
   {%- endif %}

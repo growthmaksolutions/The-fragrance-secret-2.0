@@ -462,7 +462,15 @@
               <!-- Shipping & Returns -->
               <div class="tab-pane" id="ship">
                 <h4>Shipping Information</h4>
-                <p>We deliver across the UAE within 1–4 business days. Orders placed after 6:00 PM (UAE Time) are processed the next business day. Delivery is free on orders of AED {{ settings.free_shipping_threshold | default: '250' }} or more, and AED 8 below that. Tracking details are shared once your order has been dispatched.</p>
+                {%- comment -%}
+                  Every figure in this paragraph is now a setting — the
+                  delivery window, the cutoff hour, the threshold and the
+                  rate. It was four numbers typed into a sentence, three of
+                  which are also quoted by the arrival date above it, and a
+                  shipping paragraph that disagrees with the delivery estimate
+                  two inches higher is worse than either alone.
+                {%- endcomment -%}
+                <p>We deliver across the UAE within {{ settings.delivery_days_min | default: 1 }}–{{ settings.delivery_days_max | default: 4 }} business days. Orders placed after {{ settings.dispatch_cutoff_hour | default: 18 }}:00 (UAE Time) are processed the next business day. Delivery is free on orders of AED {{ settings.free_shipping_threshold | default: '250' }} or more, and AED {{ settings.shipping_flat_rate | default: '8' }} below that. Tracking details are shared once your order has been dispatched.</p>
                 <h4>Return Policy</h4>
                 <p>Returns are accepted within 2 days only for damaged, defective, incorrect, or incomplete orders. Products must remain unused, sealed, and in their original packaging. Opened perfume bottles and change-of-mind returns cannot be accepted.</p>
               </div>
