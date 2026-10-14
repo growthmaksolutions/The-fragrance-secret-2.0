@@ -588,6 +588,17 @@ function toggleMobileNav() {
     b.setAttribute('aria-expanded', open ? 'true' : 'false');
     const ic = b.querySelector('.mi'); if (ic) ic.textContent = open ? 'close' : 'menu';
   }
+  /* Same contract as the cart drawer: while this is open the page behind it
+     is covered and must not be tabbable. Focus goes to the drawer's own
+     close button — the first thing a keyboard user needs — and comes back to
+     the burger when it shuts. */
+  if (open) {
+    TFSFocusTrap.start(n, b);
+    const close = n.querySelector('.nav-drawer-close');
+    if (close) close.focus();
+  } else {
+    TFSFocusTrap.stop();
+  }
 }
 function waChat() {
   if (window.WHATSAPP_NUMBER) {
@@ -854,7 +865,28 @@ function observeFadeUps() {
    CART + TOAST
 ═══════════════════════════════════════ */
 let cartCount = 0; // synced from the Liquid-rendered badge at init
-function bumpCart(n) { cartCount += (n || 1); document.querySelectorAll('.cbadge').forEach(b => b.textContent = cartCount); }
+/* One place that writes the bag count, so the badge, the link's accessible
+   name and the live announcement can never drift apart. `announce` is off by
+   default: syncing after a page load or a background read is not news, and a
+   live region that fires on arrival makes every page open by reading the
+   cart out. */
+function setCartCount(count, announce) {
+  cartCount = count;
+  document.querySelectorAll('.cbadge').forEach(function (b) { b.textContent = count; });
+  var label = count + ' item' + (count === 1 ? '' : 's') + ' in bag';
+  document.querySelectorAll('[data-cart-announce]').forEach(function (n) { n.textContent = label; });
+  if (!announce) return;
+  document.querySelectorAll('[data-cart-live]').forEach(function (n) {
+    /* Clear first: assigning the same string twice in a row is not a change
+       and most screen readers stay silent — which is exactly the case of
+       adding a second unit of something already in the bag. */
+    n.textContent = '';
+    setTimeout(function () { n.textContent = label; }, 80);
+  });
+}
+window.setCartCount = setCartCount;
+
+function bumpCart(n) { setCartCount(cartCount + (n || 1), true); }
 function toast(msg) {
   const t = document.createElement('div');
   t.textContent = msg;
@@ -894,8 +926,7 @@ function addLiveToCart(variantId, name, qty, properties) {
       return fetch('/cart.js', { headers: { 'Accept': 'application/json' } }).then(function (r) { return r.json(); });
     })
     .then(function (c) {
-      cartCount = c.item_count;
-      document.querySelectorAll('.cbadge').forEach(function (b) { b.textContent = cartCount; });
+      setCartCount(c.item_count, true);
       toast('✓ Added to cart — ' + name);
       /* The cart page listens for this so an add from its own cross-sell
          updates the lines above, instead of only moving the badge. */
@@ -1732,6 +1763,78 @@ function initNotifyConfirmation() {
   catch (e) { block.scrollIntoView(); }
 }
 
+/* ── Focus trap ──
+   What a dialog with aria-modal="true" promises and the cart drawer did not
+   deliver. The panel took focus when it opened and Escape closed it, but Tab
+   walked straight out of the back of it and into the page underneath — which
+   is still there, still focusable, and now invisible behind a scrim. For a
+   keyboard or screen-reader user that is the point the cart stops existing:
+   focus is somewhere they cannot see, and the way back is not obvious.
+
+   One trap at a time, which is all this theme ever needs — the drawer, the
+   nav drawer and the search panel are mutually exclusive.
+
+   Queried live on each Tab rather than cached at open: the drawer's contents
+   are replaced wholesale by the Section Rendering API after every cart
+   change, so a list captured when it opened would point at detached nodes
+   within one quantity step. */
+var TFSFocusTrap = (function () {
+  var FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),summary,[tabindex]:not([tabindex="-1"])';
+  var container = null;
+  var returnTo = null;
+
+  function visible(node) {
+    /* offsetParent is null for display:none and for anything inside it.
+       position:fixed elements report null too, hence the rect fallback —
+       the drawer panel itself is fixed. */
+    if (node.offsetParent !== null) return true;
+    var r = node.getBoundingClientRect();
+    return r.width > 0 || r.height > 0;
+  }
+
+  function items() {
+    if (!container) return [];
+    return [].slice.call(container.querySelectorAll(FOCUSABLE)).filter(visible);
+  }
+
+  function onKeydown(e) {
+    if (e.key !== 'Tab' || !container) return;
+    var list = items();
+    if (!list.length) { e.preventDefault(); return; }
+    var first = list[0], last = list[list.length - 1];
+    /* Focus sitting on the panel itself (tabindex="-1", so not in the list)
+       should enter the panel rather than escape it. */
+    if (!container.contains(document.activeElement)) {
+      e.preventDefault();
+      (e.shiftKey ? last : first).focus();
+      return;
+    }
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  document.addEventListener('keydown', onKeydown, true);
+
+  return {
+    start: function (node, restoreTo) {
+      if (!node) return;
+      container = node;
+      returnTo = restoreTo || document.activeElement;
+    },
+    /* Returning focus is half the contract: closing a dialog with focus left
+       on <body> drops a keyboard user back at the top of the document. */
+    stop: function () {
+      var back = returnTo;
+      container = null;
+      returnTo = null;
+      if (back && back.focus && document.contains(back)) {
+        try { back.focus(); } catch (e) { /* element went away with the panel */ }
+      }
+    },
+    current: function () { return container; }
+  };
+})();
+
 function initThumbs() {
   const list = el('thumblist'); if (!list) return;
   list.querySelectorAll('.thumb').forEach(t => {
@@ -1940,7 +2043,13 @@ else document.addEventListener('DOMContentLoaded', initApp);
     root.classList.add('is-open');
     document.documentElement.style.overflow = 'hidden';
     var panel = root.querySelector('.cd-panel');
-    if (panel) panel.focus();
+    if (panel) {
+      panel.focus();
+      /* aria-modal="true" on the panel is a promise to assistive technology
+         that the rest of the page is inert. Without a trap, Tab disproves it
+         on the first press. */
+      TFSFocusTrap.start(panel, lastFocus);
+    }
   }
 
   function closeCart() {
@@ -1949,7 +2058,10 @@ else document.addEventListener('DOMContentLoaded', initApp);
     document.documentElement.style.overflow = '';
     /* Wait out the slide before hiding, or it vanishes instead of sliding. */
     setTimeout(function () { if (root && !root.classList.contains('is-open')) root.hidden = true; }, 380);
-    if (lastFocus && lastFocus.focus) lastFocus.focus();
+    /* The trap owns the return: it was given lastFocus when the panel opened
+       and puts focus back there, so the bag icon is still the thing under the
+       cursor afterwards rather than the top of the document. */
+    TFSFocusTrap.stop();
   }
 
   /* Pull a freshly rendered drawer from Shopify and swap the parts that change. */
@@ -2009,10 +2121,12 @@ else document.addEventListener('DOMContentLoaded', initApp);
       });
   }
 
-  function syncBadges(count) {
+  /* announce: whether this change should be read out. True for an add or a
+     quantity step the shopper just made; false for a background sync, where
+     speaking would interrupt them to report something they did not do. */
+  function syncBadges(count, announce) {
     if (typeof count !== 'number') return;
-    cartCount = count;
-    document.querySelectorAll('.cbadge').forEach(function (b) { b.textContent = count; });
+    setCartCount(count, !!announce);
   }
 
   /* Shared by every add path: the product form, Quick Add, the concierge. */
@@ -2030,7 +2144,7 @@ else document.addEventListener('DOMContentLoaded', initApp);
       })
       .then(function () { return fetch('/cart.js', { headers: { 'Accept': 'application/json' } }).then(function (r) { return r.json(); }); })
       .then(function (cart) {
-        syncBadges(cart.item_count);
+        syncBadges(cart.item_count, true);
         document.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
         return refresh().then(function () { openCart(); return true; });
       })
@@ -2056,7 +2170,7 @@ else document.addEventListener('DOMContentLoaded', initApp);
     })
       .then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .then(function (cart) {
-        syncBadges(cart.item_count);
+        syncBadges(cart.item_count, true);
         document.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
         return refresh();
       })

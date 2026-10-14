@@ -184,7 +184,28 @@
       <a class="ni" href="{{ routes.cart_url }}" title="Cart">
         <span class="mi" aria-hidden="true">shopping_bag</span>
         <span class="cbadge">{{ cart_count }}</span>
+        {%- comment -%}
+          The badge is a bare number with no label, so this link announced
+          itself as "Cart, 3" — a digit with nothing to say what it counts.
+          This names it. Not a live region: it is the link's accessible name,
+          and announcing changes is the separate job below.
+        {%- endcomment -%}
+        <span class="visually-hidden" data-cart-announce>{{ cart_count }} item{% unless cart_count == 1 %}s{% endunless %} in bag</span>
       </a>
+      {%- comment -%}
+        Adding to the bag changed the badge from 3 to 4 and announced nothing,
+        because a silent text swap is not an event — so for a screen-reader
+        user the only confirmation an add had worked was the toast, which is
+        not in a live region either.
+
+        Deliberately empty at render and outside the link. Empty, because a
+        live region with content in it at page load is announced on arrival,
+        which would make every page open with "3 items in bag". Outside,
+        because a region nested in a link is read as part of that link by
+        some screen readers and re-announced whenever the badge repaints.
+        app.js writes to it only on a real change.
+      {%- endcomment -%}
+      <span class="visually-hidden" role="status" aria-live="polite" data-cart-live></span>
     </div>
   </div>
   {%- comment -%}
