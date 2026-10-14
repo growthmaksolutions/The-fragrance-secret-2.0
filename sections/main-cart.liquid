@@ -135,7 +135,15 @@
 
             <button type="submit" name="checkout" class="btn-g co-place" style="justify-content:center;margin-top:8px;width:100%"><span class="mi" aria-hidden="true">lock</span>Proceed to Checkout</button>
             <a class="btn-ghost" href="/collections/all" style="justify-content:center;margin-top:16px;display:flex"><span class="mi" aria-hidden="true">arrow_back</span>Continue shopping</a>
-            <p style="font-size:.72rem;color:var(--warm);text-align:center;margin-top:14px"><span class="mi" aria-hidden="true" style="font-size:14px;vertical-align:-2px">verified_user</span> 100% authentic · {{ settings.returns_window_days | default: '2' }}-day returns on faults · Secure checkout</p>
+            {%- comment -%}
+              This replaces a single centred line that read "100% authentic ·
+              2-day returns on faults · Secure checkout". Every clause was
+              true and not one of them was actionable: the returns terms were
+              described rather than linked, there was no arrival date, and no
+              way to ask a question. On Shopify Basic the checkout cannot
+              carry any of that, so the cart is the last place it can go.
+            {%- endcomment -%}
+            {% render 'checkout-reassurance', uid: 'cart' %}
           </div>
         </div>
       </aside>

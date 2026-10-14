@@ -131,6 +131,13 @@
         <form action="{{ routes.cart_url }}" method="post">
           <button type="submit" name="checkout" class="btn-g cd-checkout"><span class="mi" aria-hidden="true">lock</span>Checkout</button>
         </form>
+        {%- comment -%}
+          compact: the drawer already carries the free-delivery bar above the
+          lines, so it takes the returns link, the security line and the
+          WhatsApp contact without repeating an arrival date in a panel this
+          narrow. The cart page, which has the room, shows all four.
+        {%- endcomment -%}
+        {% render 'checkout-reassurance', uid: 'drawer', compact: true %}
         <a class="cd-viewcart" href="{{ routes.cart_url }}">View full cart</a>
       </footer>
     {%- endif -%}

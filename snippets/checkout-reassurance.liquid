@@ -1,0 +1,88 @@
+{%- comment -%}
+  The reassurances that belong next to the Checkout button.
+
+  Usage:
+    {% render 'checkout-reassurance', uid: 'cart' %}
+    {% render 'checkout-reassurance', uid: 'drawer', compact: true %}
+
+  ── Why they are here and not in the checkout ────────────────────────────
+
+  The guide asks for four things at the payment step: an order summary with
+  thumbnails and a full cost breakdown, a delivery date beside each shipping
+  option, security reassurance near the payment fields, and a returns link
+  and support contact.
+
+  This store is on Shopify Basic, where the checkout is not themeable at all
+  — no checkout.liquid, no checkout UI extensions, no branding API. Shopify's
+  own checkout already does the order summary and the security message, and
+  it links the policies in its footer. What it will not do on this plan is
+  carry a support contact, and what it cannot know is an arrival date.
+
+  So the cart carries them, because the cart is the last surface this theme
+  owns. Someone who leaves at checkout because they could not find the
+  returns terms, or could not see when the order lands, never had the answer
+  in front of them — and the cart is the last place we can put it.
+
+  ── What each line is ────────────────────────────────────────────────────
+
+  · The arrival date, from the same snippet and the same settings the
+    product page uses, so the promise does not change between the two.
+  · The returns window, linked to the real policy rather than described, and
+    saying what it covers — a bare "2-day returns" reads as change-of-mind,
+    which this store does not offer.
+  · WhatsApp and phone, because an unanswered question at the payment step
+    is an abandoned cart, and this is the plan's only chance to answer it.
+  · The secure-payment line, which repeats what Shopify's checkout says, on
+    the page where the decision to go there is actually made.
+
+  Params
+    uid      suffix for the delivery picker's input id, so the cart page and
+             the drawer can both render this without colliding.
+    compact  drops the arrival row — the drawer already carries a
+             free-delivery bar and has less room to spend.
+{%- endcomment -%}
+
+{%- liquid
+  assign cr_uid = uid | default: 'cart'
+  assign cr_wa = settings.whatsapp_number | strip
+  assign cr_days = settings.returns_window_days | default: '2'
+  assign cr_returns_url = shop.refund_policy.url | default: '/pages/return-policy'
+-%}
+
+<div class="co-assure">
+  {%- unless compact -%}
+    <div class="co-assure-row co-assure-eta">
+      {% render 'delivery-estimate', uid: cr_uid %}
+    </div>
+  {%- endunless -%}
+
+  <div class="co-assure-row">
+    <span class="mi" aria-hidden="true">lock</span>
+    <span>Secure checkout — card details go straight to Shopify, never to us.</span>
+  </div>
+
+  <div class="co-assure-row">
+    <span class="mi" aria-hidden="true">autorenew</span>
+    {%- comment -%}
+      Linked, and specific about what it covers. "2-day returns" on its own
+      is the sentence a shopper reads as a change-of-mind window, which is
+      the one thing this policy does not give them.
+    {%- endcomment -%}
+    <span><a href="{{ cr_returns_url }}">{{ cr_days }}-day returns</a> on damaged, wrong or incomplete orders.</span>
+  </div>
+
+  {%- if cr_wa != blank -%}
+    <div class="co-assure-row">
+      <span class="mi" aria-hidden="true">chat</span>
+      {%- comment -%}
+        A real link out, not a widget. At this point the shopper has a
+        specific question about their own order and wants a person — the
+        float in the corner opens the same conversation, but nothing on the
+        cart said it was there.
+      {%- endcomment -%}
+      <span>Question before you pay?
+        <a href="https://wa.me/{{ cr_wa }}" target="_blank" rel="noopener">WhatsApp us</a>
+        — daily 10am–7pm.</span>
+    </div>
+  {%- endif -%}
+</div>

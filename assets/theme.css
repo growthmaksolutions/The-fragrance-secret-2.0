@@ -8502,3 +8502,54 @@ html body .jdgm-form textarea:focus {
       /* Wraps to its own line rather than squeezing the date. */
       .de-zone-wrap { width: 100%; margin-top: 2px }
     }
+
+    /* ═══════════════════════════════════════
+       PRE-CHECKOUT REASSURANCE  (snippets/checkout-reassurance.liquid)
+       Shopify Basic cannot theme the checkout, so the answers a shopper
+       needs at the payment step have to sit on the last page we own.
+    ═══════════════════════════════════════ */
+    .co-assure {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--cream-dk);
+      display: flex;
+      flex-direction: column;
+      gap: 9px
+    }
+
+    .co-assure-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-family: var(--fb);
+      font-size: .74rem;
+      line-height: 1.5;
+      color: var(--warm)
+    }
+
+    .co-assure-row .mi {
+      font-size: 15px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--gold-dk)
+    }
+
+    .co-assure-row a {
+      color: var(--gold-dk);
+      text-decoration: underline;
+      text-underline-offset: 2px
+    }
+
+    .co-assure-row a:hover { color: var(--ink) }
+    .co-assure-row a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px }
+
+    /* The arrival row reuses the PDP's estimate component, which brings its
+       own green. Left alone rather than restyled: the same promise should
+       look the same on both pages. */
+    .co-assure-eta { padding-bottom: 2px }
+    .co-assure-eta .delivery-est { font-size: .78rem }
+
+    /* In the drawer the panel is narrow and the footer is already dense, so
+       the rows tighten rather than wrap awkwardly. */
+    .cd-foot .co-assure { margin-top: 12px; gap: 7px }
+    .cd-foot .co-assure-row { font-size: .72rem }
