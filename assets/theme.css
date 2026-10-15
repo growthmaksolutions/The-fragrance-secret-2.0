@@ -5338,6 +5338,41 @@ html body [data-widget] {
   --jdgm-border-radius: 3px !important
 }
 
+/* Carousel on a dark section.
+
+   .reviews is ink-to-charcoal, and Judge.me ships the carousel coloured for a
+   light page — so the stars, the product thumbnails and the arrows came
+   through while every word of the review did not. Dark text on a near-black
+   panel: present in the DOM, invisible on the screen.
+
+   Scoped to .reviews deliberately. The same carousel renders on
+   seasonal-trends, buying-guides and luxury-recommendations inside .section /
+   .section.alt, which are cream — Judge.me's own dark text is right there, and
+   lightening it globally would break the three to fix the seven.
+
+   The widget's CSS variables do not reach these: they cover links, stars and
+   the write-review button, not review body copy. So the elements are named
+   directly, with !important to match the specificity Judge.me ships. */
+html body .reviews .jdgm-carousel-item__review-body,
+html body .reviews .jdgm-carousel-item__review-content {
+  color: var(--cream) !important
+}
+
+html body .reviews .jdgm-carousel-item__review-title {
+  color: var(--white) !important
+}
+
+html body .reviews .jdgm-carousel-item__reviewer-name,
+html body .reviews .jdgm-carousel-item__reviewer-name-wrapper {
+  color: var(--gold-lt) !important
+}
+
+/* Secondary lines: readable, but they must not compete with the review itself. */
+html body .reviews .jdgm-carousel-item__timestamp,
+html body .reviews .jdgm-carousel-item__product-title {
+  color: var(--muted) !important
+}
+
 /* v3 empty state — one centered column, brand type */
 html body .jdgm-rev-widg__body--empty {
   display: flex;
