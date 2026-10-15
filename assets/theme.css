@@ -2435,9 +2435,12 @@
       padding: 0 48px
     }
 
+    /* 60px here plus the carousel's own leading gap ran to roughly 180px of
+       empty band between the heading and the first star. The cards carry
+       their own padding now, so the section does not need to space them. */
     .reviews-head {
       text-align: center;
-      margin-bottom: 60px
+      margin-bottom: 40px
     }
 
     /* head text sits directly on the dark band → lift to light */
@@ -5338,39 +5341,100 @@ html body [data-widget] {
   --jdgm-border-radius: 3px !important
 }
 
-/* Carousel on a dark section.
+/* Carousel on the dark review band.
 
-   .reviews is ink-to-charcoal, and Judge.me ships the carousel coloured for a
-   light page — so the stars, the product thumbnails and the arrows came
-   through while every word of the review did not. Dark text on a near-black
-   panel: present in the DOM, invisible on the screen.
+   Judge.me ships the carousel coloured for a light page, and .reviews is a
+   gradient from ink to charcoal — so the stars, thumbnails and arrows came
+   through while every word of the review did not. Rather than lighten the
+   text, the items become cards, which is what this band already does with
+   .rv-summary and .rv-card. Two pages — category-editorial and mens-editorial
+   — render a white summary card directly above this carousel, so dark cards
+   here would have been the odd one out on the same screen.
 
-   Scoped to .reviews deliberately. The same carousel renders on
-   seasonal-trends, buying-guides and luxury-recommendations inside .section /
-   .section.alt, which are cream — Judge.me's own dark text is right there, and
-   lightening it globally would break the three to fix the seven.
+   On white, Judge.me's own colours are correct and are left alone.
 
-   The widget's CSS variables do not reach these: they cover links, stars and
-   the write-review button, not review body copy. So the elements are named
-   directly, with !important to match the specificity Judge.me ships. */
-html body .reviews .jdgm-carousel-item__review-body,
-html body .reviews .jdgm-carousel-item__review-content {
-  color: var(--cream) !important
+   box-sizing matters: the widget measures its slides against the wrapper, and
+   padding added the other way would push each slide wider than the track. */
+html body .reviews .jdgm-carousel-item {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 30px 26px 26px;
+  background: var(--white);
+  border: 1px solid rgba(201, 168, 76, .14);
+  border-radius: 8px;
+  box-shadow: 0 16px 46px rgba(0, 0, 0, .42)
 }
 
-html body .reviews .jdgm-carousel-item__review-title {
-  color: var(--white) !important
+/* Equal height across the row: the slides are different lengths of prose, and
+   without this the name and thumbnail of a one-line review float halfway up
+   the card while its neighbour's sit at the bottom. */
+html body .reviews .jdgm-carousel__item-container,
+html body .reviews .jdgm-carousel__item-wrapper {
+  display: flex;
+  align-items: stretch
 }
 
-html body .reviews .jdgm-carousel-item__reviewer-name,
-html body .reviews .jdgm-carousel-item__reviewer-name-wrapper {
-  color: var(--gold-lt) !important
+html body .reviews .jdgm-carousel-item__review {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center
 }
 
-/* Secondary lines: readable, but they must not compete with the review itself. */
-html body .reviews .jdgm-carousel-item__timestamp,
-html body .reviews .jdgm-carousel-item__product-title {
+html body .reviews .jdgm-carousel-item__review-body {
+  font-size: .88rem;
+  line-height: 1.65;
+  color: var(--charcoal) !important
+}
+
+html body .reviews .jdgm-carousel-item__reviewer-name {
+  font-weight: 600;
+  color: var(--ink) !important
+}
+
+html body .reviews .jdgm-carousel-item__timestamp {
   color: var(--muted) !important
+}
+
+/* The product shot is the one piece that looked accidental: a bare bottle on
+   one card, a white-backgrounded crop on the next, both unframed and floating
+   below the name. One size, one frame, always on cream, so a supplier's white
+   cut-out and a lifestyle photo sit in the same box. */
+html body .reviews .jdgm-carousel-item__product-image {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  padding: 5px;
+  box-sizing: border-box;
+  background: var(--cream);
+  border: 1px solid var(--cream-dk);
+  border-radius: 6px
+}
+
+html body .reviews .jdgm-carousel-item__product {
+  margin-top: 16px
+}
+
+/* Arrows sat marooned below a tall empty gap. Pulled up against the track and
+   given the band's light-on-dark treatment, since they sit outside the cards. */
+html body .reviews .jdgm-carousel__arrows {
+  margin-top: 22px
+}
+
+html body .reviews .jdgm-carousel__left-arrow,
+html body .reviews .jdgm-carousel__right-arrow {
+  color: var(--cream) !important;
+  opacity: .72;
+  transition: opacity .2s
+}
+
+html body .reviews .jdgm-carousel__left-arrow:hover,
+html body .reviews .jdgm-carousel__right-arrow:hover {
+  opacity: 1
 }
 
 /* v3 empty state — one centered column, brand type */
