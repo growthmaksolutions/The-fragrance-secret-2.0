@@ -5361,7 +5361,20 @@ html body [data-widget] {
 html body .reviews .jdgm-carousel-item {
   position: relative;
   box-sizing: border-box;
-  padding: 30px 38px 28px
+  /* Horizontal only. The item is height:100% of a fixed-height track with
+     overflow:hidden, so vertical padding does not make the card taller — it
+     pushes the review down into the clip and cuts the end off it. Judge.me's
+     own value here is 24px; 36 leaves room for the card inset without
+     narrowing the text column much. */
+  padding: 0 36px
+}
+
+/* The track's own height is what truncates a long review: 200px, with the
+   review box inside it at calc(72% - 4em) and overflow hidden. Three lines of
+   a four-line review fitted; the fourth was cut. Raising the track raises the
+   review box with it, since that height is a percentage of this one. */
+html body .reviews .jdgm-carousel__item-wrapper {
+  height: 290px !important
 }
 
 html body .reviews .jdgm-carousel-item::before {
@@ -5379,12 +5392,6 @@ html body .reviews .jdgm-carousel-item::before {
 html body .reviews .jdgm-carousel-item > * {
   position: relative;
   z-index: 1
-}
-
-/* Cards match the tallest in the row, so the band reads as one shelf rather
-   than three. Only the track is touched — the slides keep their own widths. */
-html body .reviews .jdgm-carousel__item-wrapper {
-  align-items: stretch
 }
 
 html body .reviews .jdgm-carousel-item__review-body {
