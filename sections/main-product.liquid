@@ -23,6 +23,27 @@
   assign why_love = mf.why_youll_love.value
   assign best_for_details = mf.best_for_details.value
   assign faq = mf.faq.value
+
+  comment
+    Does THIS product ship free whatever the order is worth? Liquid cannot
+    answer that on its own — there is no product.delivery_profile, and the
+    product object says nothing about which rates apply to it. Product type
+    is not a stand-in either: the free-shipping profile is entirely type
+    Oil, but other Oil products sit in profiles with different rates.
+
+    So the answer is carried as data. scripts/sync-free-shipping-metafield.py
+    reads the real delivery profiles and stamps custom.free_shipping on the
+    products whose profile delivers to the UAE at zero cost with no minimum.
+    Re-run it after any change to Settings › Shipping and delivery.
+
+    Unset reads as false, which is the safe direction: the page then quotes
+    the threshold, which is the general rule and true of most of the
+    catalogue.
+  endcomment
+  assign ships_free = false
+  if product.metafields.custom.free_shipping.value == true
+    assign ships_free = true
+  endif
 -%}
 
 <main-product class="page active" id="product" data-product>
@@ -229,7 +250,18 @@
               country beside it was saying the same thing twice and less
               precisely.
             {%- endcomment -%}
-            <span class="de-note">free over AED {{ settings.free_shipping_threshold | default: '250' }}</span>
+            {%- comment -%}
+              The threshold is only the rule for products in a profile that
+              charges under it. On a free-shipping product this line used to
+              quote AED 250 anyway — understating the store's own offer, and
+              telling someone buying one AED 110 bottle they were about to
+              pay a delivery fee they would never be charged.
+            {%- endcomment -%}
+            {%- if ships_free -%}
+              <span class="de-note">free delivery, any order value</span>
+            {%- else -%}
+              <span class="de-note">free over AED {{ settings.free_shipping_threshold | default: '250' }}</span>
+            {%- endif -%}
           </div>
 
           <!-- CTA BLOCK (primary action — kept above the fold) -->
@@ -344,7 +376,16 @@
           <!-- TRUST -->
           <div class="pdp-trust">
             <div class="pt-item"><span class="mi" aria-hidden="true">verified_user</span><span><strong>100% Authentic Perfumes</strong> — Sourced from trusted suppliers</span></div>
-            <div class="pt-item"><span class="mi" aria-hidden="true">local_shipping</span><span><strong>Free Delivery</strong> — On orders above AED {{ settings.free_shipping_threshold | default: '250' }}</span></div>
+            {%- comment -%}
+              Same correction as the delivery row above: the trust list was
+              the other place quoting a threshold that does not apply to
+              every product.
+            {%- endcomment -%}
+            {%- if ships_free -%}
+              <div class="pt-item"><span class="mi" aria-hidden="true">local_shipping</span><span><strong>Free Delivery</strong> — On this product, whatever your order is worth</span></div>
+            {%- else -%}
+              <div class="pt-item"><span class="mi" aria-hidden="true">local_shipping</span><span><strong>Free Delivery</strong> — On orders above AED {{ settings.free_shipping_threshold | default: '250' }}</span></div>
+            {%- endif -%}
             <div class="pt-item"><span class="mi" aria-hidden="true">autorenew</span><span><strong>Easy Returns</strong> — Eligible damaged or incorrect orders only</span></div>
             <div class="pt-item"><span class="mi" aria-hidden="true">lock</span><span><strong>Secure Payments</strong> — Visa, Mastercard, Apple Pay &amp; Cash on Delivery</span></div>
             {%- comment -%}
