@@ -1,0 +1,139 @@
+{
+  "sections": {
+    "main": {
+      "type": "page-create-your-perfume",
+      "blocks": {
+        "fam_fresh": {
+          "type": "family",
+          "settings": {
+            "label": "Fresh & Citrus",
+            "notes": "Bergamot · Neroli · White Musk",
+            "tint": "#CBD98F",
+            "url": "/collections/fresh-citrus-perfumes"
+          }
+        },
+        "fam_floral": {
+          "type": "family",
+          "settings": {
+            "label": "Floral & Rose",
+            "notes": "Taif Rose · Peony · Soft Amber",
+            "tint": "#E3A9AE",
+            "url": "/collections/floral-rose-perfumes"
+          }
+        },
+        "fam_sweet": {
+          "type": "family",
+          "settings": {
+            "label": "Sweet & Gourmand",
+            "notes": "Vanilla · Tonka Bean · Caramel",
+            "tint": "#CE9450",
+            "url": "/collections/sweet-gourmand-perfumes"
+          }
+        },
+        "fam_spicy": {
+          "type": "family",
+          "settings": {
+            "label": "Spicy & Oriental",
+            "notes": "Cardamom · Incense · Labdanum",
+            "tint": "#A8492F",
+            "url": "/collections/spicy-oriental-perfumes"
+          }
+        },
+        "fam_oud": {
+          "type": "family",
+          "settings": {
+            "label": "Oud & Woody",
+            "notes": "Saffron · Cambodian Oud · Cedar",
+            "tint": "#6E4A28",
+            "url": "/collections/oud-woody-perfumes"
+          }
+        },
+        "how_1": {
+          "type": "how",
+          "settings": {
+            "icon": "category",
+            "title": "Pick Your Family",
+            "text": "Five houses, from bright citrus to deep Cambodian oud — each one lists the notes you will actually smell."
+          }
+        },
+        "how_2": {
+          "type": "how",
+          "settings": {
+            "icon": "water_drop",
+            "title": "Size & Strength",
+            "text": "50ml for the bag or 100ml for the shelf, then Eau de Toilette, Eau de Parfum or Extrait to set how long it lasts."
+          }
+        },
+        "how_3": {
+          "type": "how",
+          "settings": {
+            "icon": "draw",
+            "title": "Name It",
+            "text": "Your name, their name, or an inside joke. It goes on the label exactly as you type it."
+          }
+        },
+        "how_4": {
+          "type": "how",
+          "settings": {
+            "icon": "local_shipping",
+            "title": "We Blend & Ship",
+            "text": "Hand-blended to order and dispatched in 3–5 working days, with Cash on Delivery and Tabby or Tamara at checkout."
+          }
+        },
+        "faq_1": {
+          "type": "faq",
+          "settings": {
+            "q": "How long does a custom bottle take to arrive?",
+            "a": "<p>Every custom bottle is blended after you order, so it leaves us in <strong>3–5 working days</strong> and arrives shortly after anywhere in the UAE. Ready-made bottles from our shelves still arrive within 48 hours, so order those separately if you need something sooner.</p>"
+          }
+        },
+        "faq_2": {
+          "type": "faq",
+          "settings": {
+            "q": "What is the difference between Eau de Toilette, Eau de Parfum and Extrait?",
+            "a": "<p>The oil concentration, which is what decides how long it lasts and how far it travels. <strong>Eau de Toilette</strong> sits close to the skin for 4–6 hours. <strong>Eau de Parfum</strong> is our most popular at 7–9 hours. <strong>Extrait</strong> is the richest, holding 10–14 hours with the strongest sillage. The scent itself is identical — only the strength changes.</p>"
+          }
+        },
+        "faq_3": {
+          "type": "faq",
+          "settings": {
+            "q": "How does my name appear on the bottle?",
+            "a": "<p>It is applied to the bottle label in our house serif, exactly as you type it — so check your spelling and capitalisation on the preview before you add to cart. We keep it to a length that fits the label cleanly rather than shrinking it to squeeze more in.</p>"
+          }
+        },
+        "faq_4": {
+          "type": "faq",
+          "settings": {
+            "q": "Can I return a personalised bottle?",
+            "a": "<p>Because your bottle is blended and named for you specifically, custom builds fall outside our standard returns window. If anything arrives damaged, leaking, or different from what you chose, message us within 48 hours of delivery and we will replace it. Our full terms are on the <a href=\"/pages/return-policy\">returns page</a>.</p>"
+          }
+        },
+        "faq_5": {
+          "type": "faq",
+          "settings": {
+            "q": "Can I order more than one custom bottle?",
+            "a": "<p>Yes. Build the first bottle, add it to your cart, then start again — each build is its own cart line with its own family, size, strength and name, so a set of gifts can all be different.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "fam_fresh",
+        "fam_floral",
+        "fam_sweet",
+        "fam_spicy",
+        "fam_oud",
+        "how_1",
+        "how_2",
+        "how_3",
+        "how_4",
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4",
+        "faq_5"
+      ],
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

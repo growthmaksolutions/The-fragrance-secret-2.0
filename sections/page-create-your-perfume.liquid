@@ -1,0 +1,342 @@
+{%- comment -%}
+  CREATE YOUR PERFUME
+  ───────────────────
+  A five-step builder that ends in a real cart line.
+
+  The money comes from a real Shopify product and nothing else. Size and
+  Strength are its two variant options; the scent family and the name the
+  shopper types are line-item properties, because neither changes the price
+  and putting them in variants would multiply the matrix for nothing.
+
+  That is the same division the Mix-It-Into-a-Spray wizard already makes
+  (app.js / overlays.liquid), and it is the reason this page cannot quote a
+  total the cart then disagrees with — there is no price in the JavaScript to
+  drift out of date.
+
+  all_products returns nothing for a handle that is missing or unpublished.
+  Rather than walk someone through four steps to a dead button, the builder is
+  replaced by a short "not open yet" panel in that case, and the theme editor
+  additionally gets a loud setup notice telling the merchant exactly what to
+  create.
+{%- endcomment -%}
+
+{%- assign cyp_product = all_products[section.settings.product_handle] -%}
+{%- assign cyp_ready = false -%}
+{%- if cyp_product.handle != blank and cyp_product.available -%}
+  {%- assign cyp_ready = true -%}
+{%- endif -%}
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="breadcrumb"><a href="/">Home</a><span class="mi" aria-hidden="true">chevron_right</span><span>{{ section.settings.hero_crumb | default: 'Create Your Perfume' }}</span></div>
+    <span class="ph-eyebrow">{{ section.settings.hero_eyebrow }}</span>
+    <h1 class="ph-title">{{ section.settings.hero_heading }}</h1>
+    <p class="ph-sub">{{ section.settings.hero_sub }}</p>
+    <div class="ph-meta">
+      <span><span class="mi" aria-hidden="true">timer</span>{{ section.settings.meta_1 }}</span>
+      <span><span class="mi" aria-hidden="true">science</span>{{ section.settings.meta_2 }}</span>
+      <span><span class="mi" aria-hidden="true">draw</span>{{ section.settings.meta_3 }}</span>
+    </div>
+  </div>
+</section>
+
+<!-- BUILDER -->
+<section class="cyp" id="cypBuilder">
+  <div class="cyp-inner">
+
+    {%- if cyp_ready -%}
+
+      {%- comment -%}
+        Everything the builder needs, written by Liquid and read by app.js.
+
+        Variant options are emitted as a named list rather than assumed to be
+        option1 = Size and option2 = Strength. A merchant who creates the
+        product with the two options the other way round would otherwise get a
+        builder that silently matches nothing and a Continue button that never
+        enables — a support ticket with no visible cause. Resolving by name
+        costs four lines and removes that entirely.
+      {%- endcomment -%}
+      <script type="application/json" id="cypConfig">
+        {
+          "handle": {{ cyp_product.handle | json }},
+          "title": {{ cyp_product.title | json }},
+          "optionNames": [{%- for o in cyp_product.options -%}{{ o | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+          "variants": [
+            {%- for v in cyp_product.variants -%}
+            {
+              "id": {{ v.id }},
+              "options": [{%- for ov in v.options -%}{{ ov | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+              "price": {{ v.price }},
+              "available": {{ v.available }}
+            }{%- unless forloop.last -%},{%- endunless -%}
+            {%- endfor -%}
+          ],
+          {%- comment -%}
+            The separator is written before each entry except the first, not
+            after each except the last. forloop.last is useless here: this loop
+            runs over every block on the section, and the how-it-works and FAQ
+            blocks sort after the families — so the last family is never the
+            last iteration, and `unless forloop.last` would leave a trailing
+            comma that makes this whole script tag invalid JSON. The builder
+            would then fail to parse its config and render nothing at all.
+          {%- endcomment -%}
+          "families": [
+            {%- assign fam_first = true -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'family' -%}
+                {%- unless fam_first -%},{%- endunless -%}
+                {
+                  "label": {{ block.settings.label | json }},
+                  "notes": {{ block.settings.notes | json }},
+                  "tint": {{ block.settings.tint | default: '#C9A84C' | json }},
+                  "url": {{ block.settings.url | json }}
+                }
+                {%- assign fam_first = false -%}
+              {%- endif -%}
+            {%- endfor -%}
+          ],
+          "designMode": {{ request.design_mode | json }},
+          "nameMax": {{ section.settings.name_max | default: 18 }},
+          "namePlaceholder": {{ section.settings.name_placeholder | json }},
+          "nameHelp": {{ section.settings.name_help | json }},
+          "leadTime": {{ section.settings.lead_time | json }},
+          "brandLine": {{ section.settings.brand_line | json }}
+        }
+      </script>
+
+      <div class="cyp-grid">
+
+        <!-- LIVE PREVIEW -->
+        {%- comment -%}
+          The bottle is drawn in CSS, not shipped as artwork. Two reasons: it
+          has to re-tint and re-letter on every keystroke, which an image
+          cannot do without a sprite per family; and it means the page has no
+          asset dependency, so the feature cannot half-render because someone
+          removed a file from assets/.
+        {%- endcomment -%}
+        <div class="cyp-preview-col">
+          <div class="cyp-preview" id="cypPreview">
+            <div class="cyp-bottle">
+              <span class="cyp-cap"></span>
+              <span class="cyp-collar"></span>
+              <div class="cyp-body">
+                <span class="cyp-shine" aria-hidden="true"></span>
+                <div class="cyp-label">
+                  <span class="cyp-label-brand" id="cypBrand">{{ section.settings.brand_line }}</span>
+                  <span class="cyp-label-rule" aria-hidden="true"></span>
+                  <span class="cyp-label-name" id="cypBottleName">{{ section.settings.name_placeholder }}</span>
+                  <span class="cyp-label-meta" id="cypBottleMeta">Your blend</span>
+                </div>
+              </div>
+            </div>
+            <p class="cyp-preview-note" id="cypPreviewNote">Your bottle updates as you choose.</p>
+          </div>
+        </div>
+
+        <!-- STEPS -->
+        <div class="cyp-steps-col">
+          <div class="cyp-rail" id="cypRail" role="list"></div>
+          {%- comment -%}
+            A real form rather than a div, so the state app.js keeps is always
+            mirrored in inputs that would actually post. app.js intercepts the
+            submit and goes through the cart drawer; the inputs exist so the
+            posted line and the reviewed summary cannot describe two different
+            things.
+
+            The steps themselves are rendered by JavaScript, so this form has
+            nothing to collect without it — which is what the <noscript> block
+            below is for. Do not describe this one as a no-JS fallback; it
+            isn't, and the fallback is a separate, sibling form because
+            nesting forms is invalid and the browser drops the inner one.
+          {%- endcomment -%}
+          <form action="{{ routes.cart_add_url }}" method="post" id="cypForm" class="cyp-form" novalidate>
+            <input type="hidden" name="id" id="cypVariantId" value="">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="properties[Scent family]" id="cypPropFamily" value="">
+            <input type="hidden" name="properties[Bottle name]" id="cypPropName" value="">
+            <div id="cypStepArea" aria-live="polite"></div>
+          </form>
+
+          {%- comment -%}
+            Without JavaScript the five-step builder cannot run, but the
+            product can still be bought: every sellable variant is listed flat
+            with its real price, and the family and name travel as the same two
+            line-item properties the builder sends. Same product, same
+            properties, same order for whoever blends it — just no preview.
+          {%- endcomment -%}
+          <noscript>
+            <form action="{{ routes.cart_add_url }}" method="post" class="cyp-ns">
+              <p class="cyp-ns-note">Our step-by-step builder needs JavaScript. You can still order a custom bottle here — we will blend it exactly the same way.</p>
+
+              <label class="cyp-ns-label" for="cypNsFamily">Scent family</label>
+              <select class="cyp-ns-field" id="cypNsFamily" name="properties[Scent family]" required>
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'family' -%}
+                    <option value="{{ block.settings.label | escape }}">{{ block.settings.label }}{% if block.settings.notes != blank %} — {{ block.settings.notes }}{% endif %}</option>
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+
+              <label class="cyp-ns-label" for="cypNsVariant">Size &amp; strength</label>
+              <select class="cyp-ns-field" id="cypNsVariant" name="id" required>
+                {%- for v in cyp_product.variants -%}
+                  {%- if v.available -%}
+                    <option value="{{ v.id }}">{{ v.title }} — {{ v.price | money }}</option>
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+
+              <label class="cyp-ns-label" for="cypNsName">Name on the bottle</label>
+              <input class="cyp-ns-field" id="cypNsName" type="text" name="properties[Bottle name]" maxlength="{{ section.settings.name_max | default: 18 }}" placeholder="{{ section.settings.name_placeholder | escape }}" required>
+
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" name="add" class="btn-g">Add to Cart</button>
+            </form>
+          </noscript>
+        </div>
+
+      </div>
+
+    {%- else -%}
+
+      <div class="cyp-unavailable">
+        <span class="mi" aria-hidden="true">science</span>
+        <h2>{{ section.settings.closed_heading }}</h2>
+        <p>{{ section.settings.closed_text }}</p>
+        <a class="btn-g" href="{{ section.settings.closed_url | default: '/collections/all' }}">{{ section.settings.closed_cta | default: 'Browse the collection' }}</a>
+      </div>
+
+      {%- if request.design_mode -%}
+        <div class="cyp-setup">
+          <b>Setup needed — shoppers are seeing the fallback panel above.</b>
+          <p>This page needs a published product with the handle <code>{{ section.settings.product_handle }}</code>, two options named <b>Size</b> and <b>Strength</b>, and a variant for each combination you sell. Create it in <i>Products</i>, then price each variant — the builder reads every price from there, so you never edit the theme to change a price.</p>
+          <p>To preview against something that already exists, set <i>Product handle</i> below to <code>custom-mixed-spray</code>.</p>
+        </div>
+      {%- endif -%}
+
+    {%- endif -%}
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head center"><span class="label">{{ section.settings.how_eyebrow }}</span><h2 class="sec-title">{{ section.settings.how_heading }}</h2></div>
+    <div class="how-grid">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'how' -%}
+          <div class="how-step fade-up"><span class="mi" aria-hidden="true">{{ block.settings.icon | default: 'check' }}</span><h3>{{ block.settings.title }}</h3><p>{{ block.settings.text }}</p></div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+{%- assign faq_count = 0 -%}
+{%- for block in section.blocks -%}
+  {%- if block.type == 'faq' -%}{%- assign faq_count = faq_count | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+{%- if faq_count > 0 -%}
+<section class="section alt">
+  <div class="container-narrow">
+    <div class="sec-head center"><span class="label">{{ section.settings.faq_eyebrow }}</span><h2 class="sec-title">{{ section.settings.faq_heading }}</h2></div>
+    <div class="cyp-faq">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'faq' -%}
+          <details class="cyp-faq-item"{% if forloop.first %} open{% endif %}>
+            <summary>{{ block.settings.q }}<span class="mi" aria-hidden="true">expand_more</span></summary>
+            <div class="cyp-faq-a">{{ block.settings.a }}</div>
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+{%- endif -%}
+
+<!-- CTA -->
+<section class="section">
+  <div class="container"><div class="cta-band">
+    <span class="label" style="color:var(--gold)">{{ section.settings.cta_eyebrow }}</span>
+    <h2 class="sec-title">{{ section.settings.cta_heading }}</h2>
+    <p class="sec-sub">{{ section.settings.cta_text }}</p>
+    <div class="cta-actions">
+      <a class="btn-g" href="{{ section.settings.cta_url | default: '/pages/find-my-scent' }}"><span class="mi" aria-hidden="true">auto_awesome</span>{{ section.settings.cta_label | default: 'Find My Scent' }}</a>
+      <a class="btn-o" href="/collections/all">Shop All Products</a>
+    </div>
+  </div></div>
+</section>
+
+{% schema %}
+{
+  "name": "Create Your Perfume",
+  "settings": [
+    { "type": "header", "content": "Product" },
+    { "type": "text", "id": "product_handle", "label": "Product handle", "default": "create-your-perfume", "info": "A published product whose two options are named Size and Strength. Every price the builder quotes comes from its variants." },
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_crumb", "label": "Breadcrumb label", "default": "Create Your Perfume" },
+    { "type": "text", "id": "hero_eyebrow", "label": "Eyebrow", "default": "Blended To Order In The UAE" },
+    { "type": "text", "id": "hero_heading", "label": "Heading (H1)", "default": "Create <em>Your Perfume</em>", "info": "Wrap words in <em></em> for the gold italic accent." },
+    { "type": "textarea", "id": "hero_sub", "label": "Intro copy", "default": "Choose the family you love, the size you carry and the strength you wear — then put your name on the bottle. We blend it to order and ship it across the UAE." },
+    { "type": "text", "id": "meta_1", "label": "Fact 1", "default": "~90 Seconds" },
+    { "type": "text", "id": "meta_2", "label": "Fact 2", "default": "Blended To Order" },
+    { "type": "text", "id": "meta_3", "label": "Fact 3", "default": "Your Name On It" },
+    { "type": "header", "content": "Bottle preview" },
+    { "type": "text", "id": "brand_line", "label": "Brand line on the label", "default": "The Fragrance Secrets" },
+    { "type": "text", "id": "name_placeholder", "label": "Placeholder name", "default": "Your Name" },
+    { "type": "range", "id": "name_max", "label": "Maximum characters on the bottle", "min": 8, "max": 40, "step": 1, "default": 18, "info": "Keep this to what you can actually fit on the label." },
+    { "type": "text", "id": "name_help", "label": "Help text under the name field", "default": "Letters, numbers, spaces, &amp; and ’ only." },
+    { "type": "textarea", "id": "lead_time", "label": "Lead-time line on the review step", "default": "Blended to order and dispatched in 3–5 working days. We’ll WhatsApp you when it ships." },
+    { "type": "header", "content": "When the product is missing" },
+    { "type": "text", "id": "closed_heading", "label": "Heading", "default": "The perfume bar is being restocked" },
+    { "type": "textarea", "id": "closed_text", "label": "Text", "default": "Custom blending is paused for a few days while we restock our base oils. In the meantime, every scent family below is ready to ship today." },
+    { "type": "text", "id": "closed_cta", "label": "Button label", "default": "Browse the collection" },
+    { "type": "url", "id": "closed_url", "label": "Button link" },
+    { "type": "header", "content": "How it works" },
+    { "type": "text", "id": "how_eyebrow", "label": "Eyebrow", "default": "How It Works" },
+    { "type": "text", "id": "how_heading", "label": "Heading (H2)", "default": "Four Choices, <em>One Bottle</em>" },
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_eyebrow", "label": "Eyebrow", "default": "Before You Build" },
+    { "type": "text", "id": "faq_heading", "label": "Heading (H2)", "default": "Questions, <em>Answered</em>" },
+    { "type": "header", "content": "Closing CTA" },
+    { "type": "text", "id": "cta_eyebrow", "label": "Eyebrow", "default": "Not Sure Where To Start?" },
+    { "type": "text", "id": "cta_heading", "label": "Heading (H2)", "default": "Find Your <em>Family First</em>" },
+    { "type": "textarea", "id": "cta_text", "label": "Text", "default": "Three quick questions will tell you which family suits you — then come back and build the bottle." },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Find My Scent" },
+    { "type": "url", "id": "cta_url", "label": "Button link" }
+  ],
+  "blocks": [
+    {
+      "type": "family",
+      "name": "Scent family",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Family name" },
+        { "type": "text", "id": "notes", "label": "Notes", "info": "Shown under the name, e.g. Bergamot · Neroli · White Musk" },
+        { "type": "color", "id": "tint", "label": "Bottle tint", "default": "#C9A84C" },
+        { "type": "url", "id": "url", "label": "Matching collection", "info": "Linked from the review step so a shopper can see ready-made bottles in the same family." }
+      ]
+    },
+    {
+      "type": "how",
+      "name": "How-it-works step",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Material Symbols icon name", "default": "check" },
+        { "type": "text", "id": "title", "label": "Title" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "q", "label": "Question" },
+        { "type": "richtext", "id": "a", "label": "Answer" }
+      ]
+    }
+  ],
+  "presets": [ { "name": "Create Your Perfume" } ]
+}
+{% endschema %}

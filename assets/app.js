@@ -2314,3 +2314,387 @@ else document.addEventListener('DOMContentLoaded', initApp);
   window.cartDrawerAdd = addItems;
   window.refreshCartDrawer = refresh;
 })();
+
+/* ═══════════════════════════════════════
+   CREATE YOUR PERFUME
+   A five-step builder (family → size → strength → name → review) that ends in
+   a real cart line on a real product.
+
+   Every price here is read from window-side config that Liquid wrote from the
+   product's own variants — see sections/page-create-your-perfume.liquid. There
+   is deliberately no price literal in this file. The same rule the Mix wizard
+   follows, for the same reason: the storefront must not be able to quote a
+   total the cart then disagrees with.
+
+   Size and Strength are variant options. Scent family and the name on the
+   bottle are line-item properties, because neither moves the price and
+   folding them into variants would multiply the matrix by 5 × every name
+   anyone has ever typed.
+═══════════════════════════════════════ */
+(function () {
+  var cfg = null;
+  var CYP = { step: 1, family: null, size: null, strength: null, name: '' };
+  var STEPS = ['Family', 'Size', 'Strength', 'Name', 'Review'];
+
+  /* The shared esc() covers < and > only, which is right for text but not for
+     the attribute values below: a family label or a typed name carrying a
+     quote or an ampersand would otherwise end the attribute early. These
+     strings are merchant- and shopper-supplied, so escape them properly. */
+  function attr(v) {
+    return String(v == null ? '' : v)
+      .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  /* Copy for the strength options. Keyed by the product's own option value so
+     a merchant who sells only two strengths, or names them differently, gets
+     a plain button rather than a wrong description. The money is not here. */
+  var STRENGTH_META = {
+    'eau de toilette': { longevity: '4–6 hrs', sillage: 'Soft', note: 'Light & fresh' },
+    'eau de parfum': { longevity: '7–9 hrs', sillage: 'Moderate', note: 'Our most popular' },
+    'extrait': { longevity: '10–14 hrs', sillage: 'Strong', note: 'Maximum depth' },
+    'extrait de parfum': { longevity: '10–14 hrs', sillage: 'Strong', note: 'Maximum depth' }
+  };
+
+  /* Resolve the two options by name rather than trusting position. A product
+     built with Strength first would otherwise match no variant at all, and the
+     only symptom would be a Continue button that never enables. */
+  function optIndex(name, fallback) {
+    var names = (cfg.optionNames || []).map(function (n) { return String(n).trim().toLowerCase(); });
+    var i = names.indexOf(name);
+    return i === -1 ? fallback : i;
+  }
+  function sizeIdx() { return optIndex('size', 0); }
+  function strengthIdx() { return optIndex('strength', 1); }
+
+  function uniqueAt(idx) {
+    var seen = [];
+    cfg.variants.forEach(function (v) {
+      var val = v.options[idx];
+      if (val && seen.indexOf(val) === -1) seen.push(val);
+    });
+    return seen;
+  }
+  function findVariant(size, strength) {
+    var si = sizeIdx(), ti = strengthIdx();
+    return cfg.variants.filter(function (v) {
+      return v.options[si] === size && v.options[ti] === strength;
+    })[0] || null;
+  }
+  function variant() { return CYP.size && CYP.strength ? findVariant(CYP.size, CYP.strength) : null; }
+  function total() { var v = variant(); return v ? v.price : 0; }
+
+  /* Cheapest sellable variant in a size, for the "from" price on step 2. Sold-out
+     combinations are excluded so we never advertise a price nobody can buy. */
+  function sizeFrom(size) {
+    var si = sizeIdx();
+    var prices = cfg.variants.filter(function (v) { return v.options[si] === size && v.available; })
+      .map(function (v) { return v.price; });
+    return prices.length ? Math.min.apply(null, prices) : 0;
+  }
+  /* What a strength adds at the size already chosen. Derived, so a price edit in
+     admin moves the premium with it. */
+  function strengthPremium(strength) {
+    if (!CYP.size) return 0;
+    var v = findVariant(CYP.size, strength);
+    var base = sizeFrom(CYP.size);
+    return v && base ? v.price - base : 0;
+  }
+  function strengthAvailable(strength) {
+    if (!CYP.size) return true;
+    var v = findVariant(CYP.size, strength);
+    return !!(v && v.available);
+  }
+
+  /* The label is applied by hand from what lands on the order, so keep it to
+     characters a label can carry. Anything else is dropped as it is typed
+     rather than rejected on submit, which is the difference between a field
+     that feels firm and one that feels broken. */
+  function cleanName(raw) {
+    return String(raw || '').replace(/[^\p{L}\p{N} &'’-]/gu, '').replace(/\s{2,}/g, ' ').slice(0, cfg.nameMax);
+  }
+  function displayName() { return CYP.name.trim() || cfg.namePlaceholder || 'Your Name'; }
+
+  function familyByLabel(label) {
+    return (cfg.families || []).filter(function (f) { return f.label === label; })[0] || null;
+  }
+
+  /* ── preview ── */
+  function paintPreview() {
+    var wrap = document.getElementById('cypPreview');
+    if (!wrap) return;
+    var fam = CYP.family ? familyByLabel(CYP.family) : null;
+    wrap.style.setProperty('--cyp-tint', (fam && fam.tint) || '#C9A84C');
+    wrap.classList.toggle('is-named', !!CYP.name.trim());
+
+    var nameEl = document.getElementById('cypBottleName');
+    if (nameEl) nameEl.textContent = displayName();
+
+    var metaEl = document.getElementById('cypBottleMeta');
+    if (metaEl) {
+      var bits = [];
+      if (CYP.strength) bits.push(CYP.strength);
+      if (CYP.size) bits.push(CYP.size);
+      metaEl.textContent = bits.length ? bits.join(' · ') : (CYP.family || 'Your blend');
+    }
+
+    var note = document.getElementById('cypPreviewNote');
+    if (note) {
+      note.textContent = CYP.family
+        ? CYP.family + (fam && fam.notes ? ' — ' + fam.notes : '')
+        : 'Your bottle updates as you choose.';
+    }
+  }
+
+  /* ── rail ── */
+  function paintRail() {
+    var rail = document.getElementById('cypRail');
+    if (!rail) return;
+    rail.innerHTML = STEPS.map(function (label, i) {
+      var n = i + 1;
+      var state = n === CYP.step ? ' current' : (n < CYP.step ? ' done' : '');
+      /* Only completed steps are reachable by click; jumping forward past an
+         unanswered question is what produces a review screen with blanks. */
+      var tag = n < CYP.step ? 'button' : 'span';
+      var attrs = n < CYP.step ? ' type="button" data-cyp-goto="' + n + '"' : '';
+      return '<' + tag + ' class="cyp-rail-step' + state + '"' + attrs + ' role="listitem">' +
+        '<span class="cyp-rail-n">' + (n < CYP.step ? '<span class="mi" aria-hidden="true">check</span>' : n) + '</span>' +
+        '<span class="cyp-rail-l">' + label + '</span></' + tag + '>';
+    }).join('');
+  }
+
+  function foot(backLabel, nextLabel, nextAction, enabled) {
+    return '<div class="cyp-foot">' +
+      (CYP.step > 1 ? '<button type="button" class="cyp-back" data-cyp-back>' + (backLabel || 'Back') + '</button>' : '<span></span>') +
+      '<button type="button" class="cyp-next" data-cyp-action="' + nextAction + '"' + (enabled ? '' : ' disabled') + '>' +
+      nextLabel + ' ' + arrowSVG + '</button></div>';
+  }
+
+  function render() {
+    var area = document.getElementById('cypStepArea');
+    if (!area) return;
+    paintRail();
+    paintPreview();
+    var h = '';
+
+    if (CYP.step === 1) {
+      h = '<div class="cyp-step"><span class="cyp-step-label">Step 1 of 5</span>' +
+        '<h2 class="cyp-q">Which family do you love?</h2>' +
+        '<p class="cyp-hint">Pick the direction — we blend the rest.</p>' +
+        '<div class="cyp-opts cyp-opts-fam">' +
+        (cfg.families || []).map(function (f) {
+          return '<button type="button" class="cyp-opt' + (CYP.family === f.label ? ' selected' : '') + '" data-cyp-family="' + attr(f.label) + '">' +
+            '<span class="cyp-swatch" style="--s:' + attr(f.tint) + '"></span>' +
+            '<span class="cyp-opt-body"><span class="cyp-opt-title">' + attr(f.label) + '</span>' +
+            '<span class="cyp-opt-meta">' + attr(f.notes || '') + '</span></span></button>';
+        }).join('') +
+        '</div></div>' +
+        foot(null, 'Choose size', 'next', !!CYP.family);
+
+    } else if (CYP.step === 2) {
+      h = '<div class="cyp-step"><span class="cyp-step-label">Step 2 of 5</span>' +
+        '<h2 class="cyp-q">How much do you want?</h2>' +
+        '<p class="cyp-hint">50ml lives in a bag. 100ml lives on a shelf.</p>' +
+        '<div class="cyp-opts">' +
+        uniqueAt(sizeIdx()).map(function (s) {
+          var from = sizeFrom(s);
+          return '<button type="button" class="cyp-opt' + (CYP.size === s ? ' selected' : '') + '"' +
+            (from ? '' : ' disabled') + ' data-cyp-size="' + attr(s) + '">' +
+            '<span class="cyp-opt-ic"><span class="mi" aria-hidden="true">water_drop</span></span>' +
+            '<span class="cyp-opt-body"><span class="cyp-opt-title">' + attr(s) + '</span>' +
+            '<span class="cyp-opt-meta">' + (from ? 'Blended to order' : 'Sold out') + '</span></span>' +
+            '<span class="cyp-opt-price">' + (from ? formatMoney(from) + '<small>from</small>' : '—') + '</span></button>';
+        }).join('') +
+        '</div></div>' +
+        foot(null, 'Choose strength', 'next', !!CYP.size);
+
+    } else if (CYP.step === 3) {
+      h = '<div class="cyp-step"><span class="cyp-step-label">Step 3 of 5</span>' +
+        '<h2 class="cyp-q">How strong should it be?</h2>' +
+        '<p class="cyp-hint">Same scent either way — strength sets how long it stays with you.</p>' +
+        '<div class="cyp-opts">' +
+        uniqueAt(strengthIdx()).map(function (t) {
+          var meta = STRENGTH_META[String(t).trim().toLowerCase()];
+          var prem = strengthPremium(t);
+          var ok = strengthAvailable(t);
+          return '<button type="button" class="cyp-opt' + (CYP.strength === t ? ' selected' : '') + '"' +
+            (ok ? '' : ' disabled') + ' data-cyp-strength="' + attr(t) + '">' +
+            '<span class="cyp-opt-ic"><span class="mi" aria-hidden="true">air</span></span>' +
+            '<span class="cyp-opt-body"><span class="cyp-opt-title">' + attr(t) + '</span>' +
+            '<span class="cyp-opt-meta">' + (meta
+              ? 'Lasts <b>' + meta.longevity + '</b> · Sillage <b>' + meta.sillage + '</b>'
+              : (ok ? 'Blended to order' : 'Sold out')) + '</span></span>' +
+            '<span class="cyp-opt-price">' + (!ok ? '—' : (prem > 0 ? '+' + formatMoney(prem) : 'Included')) + '</span></button>';
+        }).join('') +
+        '</div></div>' +
+        foot(null, 'Name it', 'next', !!CYP.strength);
+
+    } else if (CYP.step === 4) {
+      h = '<div class="cyp-step"><span class="cyp-step-label">Step 4 of 5</span>' +
+        '<h2 class="cyp-q">What should we call it?</h2>' +
+        '<p class="cyp-hint">It goes on the label exactly as you type it — check it on the bottle.</p>' +
+        '<div class="cyp-namefield">' +
+        '<label class="visually-hidden" for="cypNameInput">Name on the bottle</label>' +
+        '<input id="cypNameInput" type="text" autocomplete="off" spellcheck="false"' +
+        ' maxlength="' + cfg.nameMax + '" placeholder="' + attr(cfg.namePlaceholder || 'Your Name') + '"' +
+        ' value="' + attr(CYP.name) + '">' +
+        '<span class="cyp-count"><b id="cypCount">' + CYP.name.length + '</b>/' + cfg.nameMax + '</span>' +
+        '</div>' +
+        '<p class="cyp-help">' + (cfg.nameHelp || '') + '</p></div>' +
+        foot(null, 'Review', 'next', !!CYP.name.trim());
+
+    } else {
+      var v = variant();
+      var fam = familyByLabel(CYP.family);
+      var sellable = !!(v && v.available);
+      h = '<div class="cyp-step"><span class="cyp-step-label">Step 5 of 5</span>' +
+        '<h2 class="cyp-q">Your bottle</h2>' +
+        '<div class="cyp-summary">' +
+        '<div class="cyp-sum-row"><span>Scent family</span><b>' + attr(CYP.family) + '</b></div>' +
+        (fam && fam.notes ? '<div class="cyp-sum-row"><span>Notes</span><b>' + attr(fam.notes) + '</b></div>' : '') +
+        '<div class="cyp-sum-row"><span>Size</span><b>' + attr(CYP.size) + '</b></div>' +
+        '<div class="cyp-sum-row"><span>Strength</span><b>' + attr(CYP.strength) + '</b></div>' +
+        '<div class="cyp-sum-row"><span>Name on bottle</span><b>' + attr(CYP.name.trim()) + '</b></div>' +
+        '<div class="cyp-sum-row total"><span>Total</span><b>' + formatMoney(total()) + '</b></div>' +
+        '</div>' +
+        (cfg.leadTime ? '<div class="cyp-eta"><span class="mi" aria-hidden="true">schedule</span><span>' + cfg.leadTime + '</span></div>' : '') +
+        '<p class="cyp-final-note">Personalised bottles are made for you, so they sit outside our standard returns window — please check the name above.</p>' +
+        (fam && fam.url ? '<a class="cyp-browse" href="' + attr(fam.url) + '">Or see ready-made ' + attr(CYP.family) + ' bottles ' + arrowSVG + '</a>' : '') +
+        '</div>' +
+        '<div class="cyp-foot">' +
+        '<button type="button" class="cyp-back" data-cyp-back>Back</button>' +
+        '<button type="button" class="cyp-next" data-cyp-action="add"' + (sellable ? '' : ' disabled') + '>' +
+        (sellable ? 'Add to Cart — ' + formatMoney(total()) : 'Combination sold out') + '</button></div>';
+    }
+
+    area.innerHTML = h;
+    syncHidden();
+    if (CYP.step === 4) {
+      var input = document.getElementById('cypNameInput');
+      if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+    }
+  }
+
+  /* Keep the real form inputs in step with the state, so the posted line and
+     the reviewed summary can never describe different things. */
+  function syncHidden() {
+    var v = variant();
+    var set = function (id, val) { var n = document.getElementById(id); if (n) n.value = val; };
+    set('cypVariantId', v ? v.id : '');
+    set('cypPropFamily', CYP.family || '');
+    set('cypPropName', CYP.name.trim());
+  }
+
+  function go(step) {
+    CYP.step = Math.min(Math.max(step, 1), STEPS.length);
+    render();
+    /* Only pull the page when the step area would otherwise be off-screen —
+       scrolling on every click fights someone working down a short list. */
+    var box = document.getElementById('cypBuilder');
+    if (box && box.getBoundingClientRect().top < 0) box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function addToCart() {
+    var v = variant();
+    if (!v || !v.available) { toast('That combination is unavailable — please pick another'); return; }
+    syncHidden();
+    addLiveToCart(v.id, CYP.name.trim() + ' — ' + CYP.size + ', ' + CYP.strength, 1, {
+      'Scent family': CYP.family,
+      'Bottle name': CYP.name.trim()
+    });
+  }
+
+  function onClick(e) {
+    var t = e.target.closest('[data-cyp-family],[data-cyp-size],[data-cyp-strength],[data-cyp-action],[data-cyp-back],[data-cyp-goto]');
+    if (!t) return;
+
+    if (t.hasAttribute('data-cyp-family')) {
+      CYP.family = t.getAttribute('data-cyp-family');
+      render();
+    } else if (t.hasAttribute('data-cyp-size')) {
+      CYP.size = t.getAttribute('data-cyp-size');
+      /* A strength chosen at the old size may be sold out at this one. Drop it
+         rather than carry a selection forward that the review step would then
+         price at zero. */
+      if (CYP.strength && !strengthAvailable(CYP.strength)) CYP.strength = null;
+      render();
+    } else if (t.hasAttribute('data-cyp-strength')) {
+      CYP.strength = t.getAttribute('data-cyp-strength');
+      render();
+    } else if (t.hasAttribute('data-cyp-back')) {
+      go(CYP.step - 1);
+    } else if (t.hasAttribute('data-cyp-goto')) {
+      go(parseInt(t.getAttribute('data-cyp-goto'), 10));
+    } else {
+      var action = t.getAttribute('data-cyp-action');
+      if (action === 'add') addToCart();
+      else go(CYP.step + 1);
+    }
+  }
+
+  function onInput(e) {
+    if (!e.target.matches || !e.target.matches('#cypNameInput')) return;
+    var cleaned = cleanName(e.target.value);
+    if (cleaned !== e.target.value) {
+      var pos = e.target.selectionStart - (e.target.value.length - cleaned.length);
+      e.target.value = cleaned;
+      try { e.target.setSelectionRange(pos, pos); } catch (err) { /* detached input */ }
+    }
+    CYP.name = cleaned;
+    var count = document.getElementById('cypCount');
+    if (count) count.textContent = cleaned.length;
+    var next = document.querySelector('#cypStepArea .cyp-next');
+    if (next) next.disabled = !cleaned.trim();
+    paintPreview();
+    syncHidden();
+  }
+
+  /* Enter in the name field should move on, not submit the form — the form has
+     no variant id until the review step resolves one. */
+  function onKeydown(e) {
+    if (e.key !== 'Enter' || !e.target.matches || !e.target.matches('#cypNameInput')) return;
+    e.preventDefault();
+    if (CYP.name.trim()) go(CYP.step + 1);
+  }
+
+  function init() {
+    var node = document.getElementById('cypConfig');
+    if (!node) return;
+    try { cfg = JSON.parse(node.textContent); } catch (err) { return; }
+    if (!cfg.variants || !cfg.variants.length || !cfg.families || !cfg.families.length) return;
+    cfg.nameMax = parseInt(cfg.nameMax, 10) || 18;
+
+    /* The builder assumes two axes. A product built with only one — or with
+       its options named something else entirely — would otherwise reach step
+       two or three, find nothing to list, and leave a Continue button that
+       can never enable: a dead end with no stated cause, which is the failure
+       mode this whole page was written to avoid. Say so instead. */
+    if (!uniqueAt(sizeIdx()).length || !uniqueAt(strengthIdx()).length) {
+      var area = document.getElementById('cypStepArea');
+      if (area) {
+        area.innerHTML = '<div class="cyp-step"><h2 class="cyp-q">Custom blending is briefly unavailable</h2>' +
+          '<p class="cyp-hint">We cannot take custom builds right now. Every scent family below is ready to ship today.</p>' +
+          (cfg.designMode
+            ? '<div class="cyp-setup"><b>Setup needed.</b><p>The product <code>' + attr(cfg.handle) +
+              '</code> needs two options named <b>Size</b> and <b>Strength</b>, each with at least one value. ' +
+              'It currently reports: <code>' + attr((cfg.optionNames || []).join(', ') || 'no options') + '</code>.</p></div>'
+            : '') +
+          '<div class="cyp-opts cyp-opts-fam">' + (cfg.families || []).map(function (f) {
+            return '<a class="cyp-opt" href="' + attr(f.url || '/collections/all') + '">' +
+              '<span class="cyp-swatch" style="--s:' + attr(f.tint) + '"></span>' +
+              '<span class="cyp-opt-body"><span class="cyp-opt-title">' + attr(f.label) + '</span>' +
+              '<span class="cyp-opt-meta">' + attr(f.notes || '') + '</span></span></a>';
+          }).join('') + '</div></div>';
+      }
+      return;
+    }
+
+    document.addEventListener('click', onClick);
+    document.addEventListener('input', onInput);
+    document.addEventListener('keydown', onKeydown);
+    render();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
