@@ -1438,11 +1438,33 @@
       object-fit: cover
     }
 
+    /* The scrim exists to keep the white label readable, and it was paying for
+       that over the whole tile: a tint from 40% down, ramping to .82. On the
+       lifestyle images — an office at dusk, candlelit tables, a grey gym — the
+       photo was already dark, so the two compounded and the tiles read as
+       murky brown rectangles until the hover lift made them feel lighter.
+       Nothing actually brightened on hover; the lift and the gold border just
+       made it seem so.
+
+       Now the top 44% carries no tint at all and the ramp is eased over
+       several stops rather than one long pull, so there is no visible band
+       where it starts. The base goes slightly DARKER than before (.88 against
+       .82) because that is the only part the label sits on — and it has to
+       survive Wedding & Formal, which is white fabric under white text.
+
+       The label also gets a shadow of its own below, so legibility no longer
+       rests on the gradient alone and the gradient is free to be lighter. */
     .moment-tile::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(13, 10, 6, .05) 40%, rgba(13, 10, 6, .82))
+      background: linear-gradient(180deg,
+        rgba(13, 10, 6, 0) 0%,
+        rgba(13, 10, 6, 0) 44%,
+        rgba(13, 10, 6, .14) 58%,
+        rgba(13, 10, 6, .46) 74%,
+        rgba(13, 10, 6, .74) 88%,
+        rgba(13, 10, 6, .88) 100%)
     }
 
     /* Anchored to the full width rather than offset from the left only. With
@@ -1464,6 +1486,10 @@
       font-weight: 600;
       line-height: 1.2;
       color: var(--white);
+      /* Carries its own contrast rather than leaning entirely on the scrim
+         above, which is what let that scrim be lightened. Tight and low-alpha
+         so it reads as weight on the letterforms, not a drop shadow. */
+      text-shadow: 0 1px 3px rgba(13, 10, 6, .7);
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 2;
