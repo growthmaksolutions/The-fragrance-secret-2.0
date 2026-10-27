@@ -1,0 +1,16 @@
+api_version = "2026-01"
+
+[[extensions]]
+name = "Same-day cutoff"
+handle = "same-day-cutoff"
+uid = "1d69efdf-1abb-e67c-07d6-ec4b2a4d8e072e84b248"
+type = "function"
+
+  [[extensions.targeting]]
+  target = "cart.delivery-options.transform.run"
+  input_query = "src/run.graphql"
+  export = "run"
+
+  [extensions.build]
+  command = ""
+  path = "dist/function.wasm"

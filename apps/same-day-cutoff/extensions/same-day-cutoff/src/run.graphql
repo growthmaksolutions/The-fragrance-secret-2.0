@@ -1,0 +1,26 @@
+# Input for cart.delivery-options.transform.run
+#
+# shop.localTime is evaluated by Shopify against the STORE's timezone, not the
+# server's and not the shopper's. That is the whole reason this function exists
+# rather than a scheduled job: the clock comparison happens inside Shopify, so
+# there is no cron to drift and no UTC offset to get wrong.
+#
+# The cutoff is a literal here because an input query is static — it cannot read
+# the time from a metafield and pass it to timeAfter. Changing 10:00 therefore
+# means editing this line and redeploying. That is the one thing a paid app
+# does better, and it is written down in the README rather than discovered.
+query RunInput {
+  shop {
+    localTime {
+      timeAfter(time: "10:00:00")
+    }
+  }
+  cart {
+    deliveryGroups {
+      deliveryOptions {
+        handle
+        title
+      }
+    }
+  }
+}

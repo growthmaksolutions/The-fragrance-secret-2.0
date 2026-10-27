@@ -1,0 +1,14 @@
+# Build output. `shopify app build` compiles src/index.js to WASM with Javy
+# and rewrites both of these every time, so committing them only produces
+# binary conflicts.
+extensions/*/dist/
+
+# Typegen output. Regenerated from schema.graphql by the CLI during the build.
+extensions/*/generated/
+
+# schema.graphql is deliberately NOT ignored. The CLI only validates that file
+# against the extension's api_version — it never fetches it during a build — so
+# a clone without it cannot build until someone runs `shopify app function
+# schema`, and the first symptom is a codegen failure rather than a missing
+# file. Committed, the build is reproducible offline. Refresh it with that
+# command whenever api_version changes.
