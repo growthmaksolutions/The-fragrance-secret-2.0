@@ -15,7 +15,7 @@
         "category1": {
           "type": "category",
           "settings": {
-            "handle": "mens",
+            "handle": "mens-perfumes",
             "title": "For Men",
             "image_asset": "mens-card.webp",
             "image_asset_sm": "mens-card-sm.webp"
@@ -24,7 +24,7 @@
         "category2": {
           "type": "category",
           "settings": {
-            "handle": "womens",
+            "handle": "womens-perfumes",
             "title": "For Women",
             "image_asset": "womens-card.webp",
             "image_asset_sm": "womens-card-sm.webp"
@@ -33,7 +33,7 @@
         "category3": {
           "type": "category",
           "settings": {
-            "handle": "unisex",
+            "handle": "unisex-perfumes",
             "title": "Unisex",
             "image_asset": "unisex-card.webp",
             "image_asset_sm": "unisex-card-sm.webp"
@@ -42,7 +42,7 @@
         "category4": {
           "type": "category",
           "settings": {
-            "handle": "kids",
+            "handle": "kids-perfumes",
             "title": "Kids Collection",
             "image_asset": "kids-card.webp",
             "image_asset_sm": "kids-card-sm.webp"
@@ -51,7 +51,7 @@
         "category5": {
           "type": "category",
           "settings": {
-            "handle": "arabic",
+            "handle": "arabic-perfumes",
             "title": "Arabic Perfumes",
             "sub": "Oud, musk & attar",
             "image_asset": "arabic-card.webp",
@@ -72,7 +72,7 @@
           "type": "moment",
           "settings": {
             "column": "lifestyle",
-            "handle": "office-wear",
+            "handle": "office-wear-perfumes",
             "image_asset": "office-wear-tile.webp",
             "image_asset_sm": "office-wear-tile-sm.webp"
           }
@@ -81,7 +81,7 @@
           "type": "moment",
           "settings": {
             "column": "lifestyle",
-            "handle": "date-night",
+            "handle": "date-night-perfumes",
             "image_asset": "date-night-tile.webp",
             "image_asset_sm": "date-night-tile-sm.webp"
           }
@@ -90,7 +90,7 @@
           "type": "moment",
           "settings": {
             "column": "lifestyle",
-            "handle": "wedding",
+            "handle": "wedding-perfumes",
             "image_asset": "wedding-tile.webp",
             "image_asset_sm": "wedding-tile-sm.webp"
           }
@@ -99,7 +99,7 @@
           "type": "moment",
           "settings": {
             "column": "lifestyle",
-            "handle": "gym",
+            "handle": "gym-perfumes",
             "image_asset": "gym-tile.webp",
             "image_asset_sm": "gym-tile-sm.webp"
           }
@@ -108,7 +108,7 @@
           "type": "moment",
           "settings": {
             "column": "lifestyle",
-            "handle": "travel-friendly",
+            "handle": "travel-perfumes",
             "image_asset": "travel-friendly-tile.webp",
             "image_asset_sm": "travel-friendly-tile-sm.webp"
           }
@@ -117,7 +117,7 @@
           "type": "moment",
           "settings": {
             "column": "lifestyle",
-            "handle": "dinner-evening",
+            "handle": "evening-wear-perfumes",
             "image_asset": "dinner-evening-tile.webp",
             "image_asset_sm": "dinner-evening-tile-sm.webp"
           }
@@ -126,7 +126,7 @@
           "type": "moment",
           "settings": {
             "column": "climate",
-            "handle": "summer-wear",
+            "handle": "summer-wear-perfumes",
             "image_asset": "summer-wear-tile.webp",
             "image_asset_sm": "summer-wear-tile-sm.webp"
           }
@@ -135,7 +135,7 @@
           "type": "moment",
           "settings": {
             "column": "climate",
-            "handle": "winter-holiday",
+            "handle": "winter-wear-perfumes",
             "image_asset": "winter-holiday-tile.webp",
             "image_asset_sm": "winter-holiday-tile-sm.webp"
           }
@@ -144,7 +144,7 @@
           "type": "moment",
           "settings": {
             "column": "climate",
-            "handle": "desert-climate",
+            "handle": "desert-climate-perfumes",
             "image_asset": "desert-climate-tile.webp",
             "image_asset_sm": "desert-climate-tile-sm.webp"
           }
@@ -153,7 +153,7 @@
           "type": "moment",
           "settings": {
             "column": "climate",
-            "handle": "humid-weather",
+            "handle": "humid-weather-perfumes",
             "image_asset": "humid-weather-tile.webp",
             "image_asset_sm": "humid-weather-tile-sm.webp"
           }
@@ -162,7 +162,7 @@
           "type": "moment",
           "settings": {
             "column": "climate",
-            "handle": "tropical-climate",
+            "handle": "tropical-climate-perfumes",
             "image_asset": "tropical-climate-tile.webp",
             "image_asset_sm": "tropical-climate-tile-sm.webp"
           }
@@ -171,7 +171,7 @@
           "type": "moment",
           "settings": {
             "column": "climate",
-            "handle": "rainy-day",
+            "handle": "rainy-day-perfumes",
             "image_asset": "rainy-day-tile.webp",
             "image_asset_sm": "rainy-day-tile-sm.webp"
           }
@@ -179,7 +179,7 @@
         "scent1": {
           "type": "scent",
           "settings": {
-            "handle": "oud-woody",
+            "handle": "oud-woody-perfumes",
             "title": "Oud & Woody",
             "sub": "Deep, warm, resinous",
             "icon": "park",
@@ -190,7 +190,7 @@
         "scent2": {
           "type": "scent",
           "settings": {
-            "handle": "fresh-citrus",
+            "handle": "fresh-citrus-perfumes",
             "title": "Fresh & Citrus",
             "sub": "Bright, clean, energetic",
             "icon": "water_drop",
@@ -201,7 +201,7 @@
         "scent3": {
           "type": "scent",
           "settings": {
-            "handle": "floral-rose",
+            "handle": "floral-rose-perfumes",
             "title": "Floral & Rose",
             "sub": "Elegant, soft, romantic",
             "icon": "local_florist",
@@ -212,7 +212,7 @@
         "scent4": {
           "type": "scent",
           "settings": {
-            "handle": "sweet-gourmand",
+            "handle": "sweet-gourmand-perfumes",
             "title": "Sweet & Gourmand",
             "sub": "Rich, indulgent, cosy",
             "icon": "cake",
@@ -223,7 +223,7 @@
         "scent5": {
           "type": "scent",
           "settings": {
-            "handle": "spicy-oriental",
+            "handle": "spicy-oriental-perfumes",
             "title": "Spicy & Oriental",
             "sub": "Bold, warm, exotic",
             "icon": "local_fire_department",
