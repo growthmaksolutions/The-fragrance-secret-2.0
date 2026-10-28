@@ -6170,6 +6170,16 @@ html body .jdgm-form textarea:focus {
         grid-template-columns: repeat(2, 1fr)
       }
 
+      /* The spec tiles are only rendered when the product actually carries
+         that fact, so the count varies — three is now common. In a fixed
+         two-column grid an odd count leaves the final cell empty, and because
+         the grid shows its own background through the 1px gaps that empty
+         cell reads as a blank tile rather than as nothing. The last item
+         spans the row instead when the count is odd. */
+      .key-info > .ki-item:last-child:nth-child(odd) {
+        grid-column: 1 / -1
+      }
+
       .pdp-gallery {
         grid-template-columns: 1fr
       }

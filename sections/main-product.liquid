@@ -10,10 +10,22 @@
   assign brand = product.vendor | default: 'The Fragrance Secrets'
   assign rating = product.metafields.reviews.rating.value.rating | default: product.metafields.custom.rating.value | default: 4.9
   assign review_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.review_count.value | default: 0
-  assign longevity = product.metafields.custom.longevity.value | default: '8–12 hours'
-  assign sillage = product.metafields.custom.sillage.value | default: 'Strong'
-  assign best_for = product.metafields.custom.best_for.value | default: 'Evening / Party'
-  assign origin = product.metafields.custom.origin.value | default: 'UAE'
+  comment
+    No defaults on these four. They used to fall back to '8–12 hours',
+    'Strong', 'Evening / Party' and 'UAE', which meant a product carrying no
+    metafields displayed four invented specifications as though they were
+    measured facts about it — and 103 of the 250 most recently added products
+    carry none. It was most obvious on the JABR bakhoor, a 40g jar of incense
+    described as lasting 8–12 hours with Strong projection, but the other 102
+    were saying something equally unfounded less visibly.
+
+    Absent now means the tile is not rendered. Three facts are better than
+    four facts and a guess, and the grid reflows to whatever is real.
+  endcomment
+  assign longevity = product.metafields.custom.longevity.value
+  assign sillage = product.metafields.custom.sillage.value
+  assign best_for = product.metafields.custom.best_for.value
+  assign origin = product.metafields.custom.origin.value
   assign notes_top = product.metafields.custom.notes_top.value
   assign notes_heart = product.metafields.custom.notes_heart.value
   assign notes_base = product.metafields.custom.notes_base.value
@@ -346,10 +358,10 @@
 
           <!-- KEY INFO -->
           <div class="key-info">
-            <div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">schedule</span></div><div class="ki-label">Longevity</div><div class="ki-val">{{ longevity }}</div></div>
-            <div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">air</span></div><div class="ki-label">Projection</div><div class="ki-val">{{ sillage }}</div></div>
-            <div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">person</span></div><div class="ki-label">Best For</div><div class="ki-val">{{ best_for }}</div></div>
-            <div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">public</span></div><div class="ki-label">Made In</div><div class="ki-val">{{ origin }}</div></div>
+            {%- if longevity != blank -%}<div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">schedule</span></div><div class="ki-label">Longevity</div><div class="ki-val">{{ longevity }}</div></div>{%- endif -%}
+            {%- if sillage != blank -%}<div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">air</span></div><div class="ki-label">Projection</div><div class="ki-val">{{ sillage }}</div></div>{%- endif -%}
+            {%- if best_for != blank -%}<div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">person</span></div><div class="ki-label">Best For</div><div class="ki-val">{{ best_for }}</div></div>{%- endif -%}
+            {%- if origin != blank -%}<div class="ki-item"><div class="ki-icon"><span class="mi" aria-hidden="true">public</span></div><div class="ki-label">Made In</div><div class="ki-val">{{ origin }}</div></div>{%- endif -%}
             {%- comment -%}
               No "Inspired By" tile. It used to sit here with the other key
               facts, and it repeated what the product title now says outright
