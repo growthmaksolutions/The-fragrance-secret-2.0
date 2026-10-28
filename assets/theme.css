@@ -3544,6 +3544,40 @@
         padding: 20px 14px
       }
 
+      /* The square was 23px too short for what sits in it. At 375px the tile is
+         about 164px, so after padding there are 124px for a 64px icon, a
+         two-line heading and a two-line line of copy — 148px of content. With
+         justify-content:flex-end the surplus goes out of the TOP, and
+         overflow:hidden takes the tops off the headings and the icons
+         altogether. Nothing looked broken enough to report as broken; the
+         icons simply were not there.
+
+         The icon goes rather than the words. It is decoration, the artwork
+         behind it already carries the character of each family, and it was the
+         first thing being clipped anyway — so removing it costs nothing that
+         was visible and buys back more room than the overflow needed. */
+      .scent-card.has-bg .scent-ic {
+        display: none
+      }
+
+      /* A little taller as well, so the two-line families are not sitting on
+         the bottom padding. */
+      .scent-card.has-bg {
+        aspect-ratio: 5/6
+      }
+
+      .scent-card h3 {
+        font-size: 1.02rem;
+        /* "Gourmand" is one unbreakable word in a 136px column: without this a
+           long family name runs out past the card edge rather than wrapping. */
+        overflow-wrap: anywhere
+      }
+
+      .scent-card p {
+        font-size: .7rem;
+        line-height: 1.45
+      }
+
       /* One tile per row on phones. At 3-up the tile is ~115px wide, which broke
          "Office Wear Fragrances" across three lines while "Gym" sat on one — the
          labels are kept in full, so the column count gives way instead.
