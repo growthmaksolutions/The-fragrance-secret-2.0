@@ -164,6 +164,20 @@
   {%- endif -%}
 </div></section>
 
+{%- comment -%}
+  Recently viewed, on the cart and on the empty cart both.
+
+  On a full cart it is the cross-sell that needs no catalogue logic: the
+  shopper picked these out themselves minutes ago.
+
+  On an empty one it does more. An empty cart page is otherwise a dead end
+  with two generic buttons on it, and a shopper who arrives here has either
+  just emptied the bag or come back to a cart that did not survive. Either
+  way the four bottles they were last comparing are the most useful thing
+  the page can offer, and the only thing on it that is about them.
+{%- endcomment -%}
+{% render 'recently-viewed' %}
+
 <script>
 (function () {
   var lines = document.getElementById('cartLines');

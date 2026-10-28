@@ -1726,6 +1726,103 @@ function initCartCoupon() {
   }
 }
 
+/* ── Recently viewed ──
+   The one recommendation strip on this site that is about the shopper rather
+   than the catalogue. Four fragrances compared before buying is normal here,
+   and this is the shortest route back to the one they liked.
+
+   Only HANDLES are stored — never a price, a title or an image. See
+   sections/recently-viewed-card.liquid for why: a cached price is a price the
+   cart can contradict, and a second copy of the card markup is a second copy
+   that drifts. The card is fetched fresh from Liquid instead.
+
+   Capped at twelve stored and four shown. The cap is on the store as well as
+   the display so the entry cannot grow without limit in a browser that never
+   clears it. */
+var RV_KEY = 'tfs:recently-viewed';
+var RV_STORE_MAX = 12;
+var RV_SHOW = 4;
+
+function rvRead() {
+  try {
+    var raw = localStorage.getItem(RV_KEY);
+    var list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list.filter(function (h) { return typeof h === 'string' && h; }) : [];
+  } catch (e) { return []; }            // private mode, or someone else's JSON
+}
+
+function rvRemember(handle) {
+  if (!handle) return;
+  try {
+    var list = rvRead().filter(function (h) { return h !== handle; });
+    list.unshift(handle);               // most recent first
+    localStorage.setItem(RV_KEY, JSON.stringify(list.slice(0, RV_STORE_MAX)));
+  } catch (e) { /* nothing to do; the strip simply stays empty */ }
+}
+
+function initRecentlyViewed() {
+  var root = document.querySelector('[data-recently-viewed]');
+  var current = root ? root.getAttribute('data-current') : null;
+
+  /* Record this visit BEFORE reading, then exclude the current product when
+     rendering. Recording first means the handle survives even on a page that
+     carries no strip of its own. */
+  if (document.body.classList.contains('template-product')) {
+    var m = location.pathname.match(/\/products\/([^/?#]+)/);
+    if (m) rvRemember(decodeURIComponent(m[1]));
+  }
+
+  if (!root) return;
+  var grid = root.querySelector('[data-recently-viewed-grid]');
+  if (!grid) return;
+
+  var handles = rvRead().filter(function (h) { return h !== current; }).slice(0, RV_SHOW);
+  if (!handles.length) return;          // stays hidden
+
+  /* Fetch every card in parallel but render in the stored order, so the strip
+     reads most-recent-first regardless of which request returns first. */
+  Promise.all(handles.map(function (h) {
+    return fetch('/products/' + encodeURIComponent(h) + '?section_id=recently-viewed-card',
+                 { headers: { Accept: 'text/html' } })
+      .then(function (r) { return r.ok ? r.text() : ''; })
+      .catch(function () { return ''; });   // a deleted product drops out quietly
+  })).then(function (chunks) {
+    var html = chunks.join('').trim();
+    if (!html) return;
+    grid.innerHTML = html;
+    root.hidden = false;
+
+    /* Cards injected after load miss the passes that run at init. */
+    if (window.TFSWishlist && window.TFSWishlist.sync) window.TFSWishlist.sync();
+    if (typeof observeFadeUps === 'function') observeFadeUps();
+  });
+}
+
+/* ── Complementary products ──
+   Shopify owns the pairings; this only asks for them. The strip renders
+   nothing at all until a human has paired something in the Search & Discovery
+   app, which is deliberate — see sections/complementary-products.liquid for
+   the order data behind that decision. */
+function initComplementary() {
+  var slot = document.querySelector('[data-complementary]');
+  if (!slot) return;
+  var pid = slot.getAttribute('data-product-id');
+  if (!pid) return;
+  fetch('/recommendations/products?section_id=complementary-products&limit=4' +
+        '&intent=complementary&product_id=' + encodeURIComponent(pid),
+        { headers: { Accept: 'text/html' } })
+    .then(function (r) { return r.ok ? r.text() : ''; })
+    .then(function (html) {
+      /* Shopify returns the section wrapper even when the section itself
+         rendered nothing, so test for a real card rather than for text. */
+      if (!html || html.indexOf('prod-card') === -1) return;
+      slot.innerHTML = html;
+      if (window.TFSWishlist && window.TFSWishlist.sync) window.TFSWishlist.sync();
+      if (typeof observeFadeUps === 'function') observeFadeUps();
+    })
+    .catch(function () { /* leave the slot empty */ });
+}
+
 /* ── Listing scroll restore ──
    Coming back from a product to the row it was in. Browsers restore scroll
    on a back navigation by themselves, and usually get it right — but not
@@ -2074,6 +2171,8 @@ function initApp() {
   initDeliveryEstimate();
   initNotifyConfirmation();
   initListingScrollMemory();
+  initRecentlyViewed();
+  initComplementary();
   initCartCoupon();
   initStickyAtc();
   initCountdowns();

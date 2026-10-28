@@ -1,0 +1,34 @@
+{%- comment -%}
+  One product card, on its own, for the Recently Viewed strip to fetch.
+
+  app.js requests /products/<handle>?section_id=recently-viewed-card and gets
+  back exactly the markup snippets/product-card.liquid produces for that
+  product — same badges, same wishlist button, same Quick Add, same GA4
+  attributes, same money formatting.
+
+  ── Why a fetch per card rather than rendering from JSON ─────────────────
+
+  The obvious alternative is to keep a snapshot of each product in
+  localStorage — title, image, price — and build the card in JavaScript.
+  Two things are wrong with that.
+
+  The price would be whatever it was when the shopper last looked. A strip
+  quoting a price the cart then disagrees with is the bait-and-switch
+  pattern the compliance section names, and it would be introduced by the
+  one feature that exists to re-sell something they already liked.
+
+  And the card markup would exist twice. The theme already carries a second,
+  older card renderer in app.js from the static build; it predates the GA4
+  attributes, so anything drawn with it is invisible to analytics. Adding a
+  third copy guarantees the three drift.
+
+  So only handles are stored, and the card is asked for fresh. Four small
+  requests, each cacheable by the browser, and the price is always the one
+  Shopify will charge.
+{%- endcomment -%}
+
+{%- if product != blank -%}{% render 'product-card', product: product %}{%- endif -%}
+
+{% schema %}
+{ "name": "Recently viewed card", "settings": [] }
+{% endschema %}

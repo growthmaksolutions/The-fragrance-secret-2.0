@@ -1,0 +1,43 @@
+{%- comment -%}
+  Recently viewed products.
+
+  Usage:
+    {% render 'recently-viewed' %}
+    {% render 'recently-viewed', heading: 'Pick up where you left off' %}
+
+  Renders the heading and an empty grid, both hidden. app.js reads the
+  handles this shopper has accumulated in localStorage, fetches a real card
+  for each through sections/recently-viewed-card.liquid, and reveals the
+  section only once at least one card is in it.
+
+  Hidden-until-filled matters more than it sounds. A returning shopper with
+  nothing stored, or one whose browser refuses localStorage, would otherwise
+  get a heading over an empty space — the same failure the fabricated
+  reviews left behind once their content was taken out.
+
+  ── What it is for ───────────────────────────────────────────────────────
+
+  The product page already carries four recommendation strips: more from the
+  brand, you may also like, best sellers, explore collections. All four are
+  about the catalogue. None of them is about this shopper. This is the only
+  one that is, and on a catalogue of 1,300 fragrances where people compare
+  several before deciding, "the four you just looked at" is the shortest
+  route back to the one they liked.
+
+  ── Where the current product goes ───────────────────────────────────────
+
+  Excluded. Showing someone the page they are already on, in a strip of
+  things they might want to return to, reads as a bug.
+{%- endcomment -%}
+
+<section class="related rv-recent" data-recently-viewed
+         {% if product %}data-current="{{ product.handle }}"{% endif %}
+         hidden>
+  <div class="related-inner">
+    <div class="related-head fade-up">
+      <span class="label">Pick Up Where You Left Off</span>
+      <h2 class="sec-title">{{ heading | default: 'Recently <em>Viewed</em>' }}</h2>
+    </div>
+    <div class="products-grid" data-recently-viewed-grid></div>
+  </div>
+</section>

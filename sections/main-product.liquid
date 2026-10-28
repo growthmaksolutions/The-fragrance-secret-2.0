@@ -642,6 +642,21 @@
     </div>
   </section>
 
+  {%- comment -%}
+    PAIRS WELL WITH — complementary products, fetched by app.js.
+    An empty slot until a human has paired something in Search & Discovery;
+    the section itself explains why this is curated and not computed.
+  {%- endcomment -%}
+  <div data-complementary data-product-id="{{ product.id }}"></div>
+
+  {%- comment -%}
+    RECENTLY VIEWED — the only strip on this page about the shopper rather
+    than the catalogue. Placed after the catalogue-driven rows so it is the
+    last thing before the brand and collection exploration, which is where
+    someone still deciding between a few bottles will be looking.
+  {%- endcomment -%}
+  {% render 'recently-viewed' %}
+
   <!-- EXPLORE OTHER BRANDS -->
   {%- liquid
     assign picked_brands = section.settings.brand_collections

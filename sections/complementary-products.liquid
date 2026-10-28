@@ -1,0 +1,55 @@
+{%- comment -%}
+  "Pairs well with" — complementary products, curated.
+
+  Fetched by app.js from
+    /recommendations/products?product_id=<id>&intent=complementary&section_id=complementary-products
+  which hands this section a `recommendations` object holding the products the
+  merchant has paired with this one.
+
+  ── Why curated and not computed ─────────────────────────────────────────
+
+  The guide asks for "frequently bought together, from order co-occurrence
+  data or manual curation". Co-occurrence was measured against this store's
+  real orders before building anything, and it is not there:
+
+      216 of 250 orders contain a single product   (86%)
+       33 orders contain two or more               (13%)
+      136 distinct product pairs in total
+        8 pairs occur twice
+        1 pair occurs three times or more
+
+  Across 1,308 products, a pair seen twice is noise. Recommending on it would
+  be asserting a relationship between two fragrances that nothing supports —
+  the same class of invention as the testimonials and the stock counters that
+  were removed from this theme, just harder to spot because it looks like a
+  recommendation engine.
+
+  So this reads Shopify's complementary products, which a human sets in the
+  Search & Discovery app (free, first-party) under a product's Related
+  products. Nothing renders until someone does. An empty strip here is the
+  correct state, not a broken one: it means no pairing has been asserted yet.
+
+  Worth revisiting once the catalogue has a few hundred multi-item orders.
+  The query to re-measure is in scripts/, and the test is simply whether
+  pairs start recurring.
+{%- endcomment -%}
+
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+  <section class="related">
+    <div class="related-inner">
+      <div class="related-head fade-up">
+        <span class="label">Wears Well Together</span>
+        <h2 class="sec-title">Pairs Well <em>With</em></h2>
+      </div>
+      <div class="products-grid">
+        {%- for product in recommendations.products limit: 4 -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{ "name": "Complementary products", "settings": [] }
+{% endschema %}
