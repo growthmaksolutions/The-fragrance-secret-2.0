@@ -44,6 +44,27 @@
   if product.metafields.custom.free_shipping.value == true
     assign ships_free = true
   endif
+
+  comment
+    "100% Authentic Perfumes" was written into the trust list for every
+    product, which is wrong the moment the catalogue holds something that is
+    not a perfume. On the JABR bakhoor it told a shopper the incense they
+    were buying was an authentic perfume.
+
+    Derived from the product's own type rather than set per product: the
+    catalogue already records what each thing is, and a metafield would be a
+    second place to say it that can disagree with the first. Anything
+    unrecognised keeps "Perfumes", which is true of all but a handful.
+  endcomment
+  assign type_l = product.type | downcase
+  assign authentic_noun = 'Perfumes'
+  if type_l contains 'bakhoor' or type_l contains 'bukhoor' or type_l contains 'incense'
+    assign authentic_noun = 'Bukhoor'
+  elsif type_l contains 'attar'
+    assign authentic_noun = 'Attars'
+  elsif type_l contains 'oil'
+    assign authentic_noun = 'Perfume Oils'
+  endif
 -%}
 
 <main-product class="page active" id="product" data-product>
@@ -375,7 +396,7 @@
           {%- endcomment -%}
           <!-- TRUST -->
           <div class="pdp-trust">
-            <div class="pt-item"><span class="mi" aria-hidden="true">verified_user</span><span><strong>100% Authentic Perfumes</strong> — Sourced from trusted suppliers</span></div>
+            <div class="pt-item"><span class="mi" aria-hidden="true">verified_user</span><span><strong>100% Authentic {{ authentic_noun }}</strong> — Sourced from trusted suppliers</span></div>
             {%- comment -%}
               Same correction as the delivery row above: the trust list was
               the other place quoting a threshold that does not apply to
