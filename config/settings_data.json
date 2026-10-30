@@ -9,6 +9,13 @@
  */
 {
   "current": {
+    "promos_enabled": true,
+    "cashback_enabled": true,
+    "cashback_partner": "Mimojo",
+    "cashback_percent": "7",
+    "cashback_sources": "mimojo",
+    "cashback_window_days": "30",
+    "cashback_exclusive": true,
     "color_cream": "#F7F2EA",
     "color_ink": "#0D0A06",
     "color_charcoal": "#1C1812",
