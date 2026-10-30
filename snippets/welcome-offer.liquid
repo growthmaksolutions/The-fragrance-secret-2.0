@@ -144,6 +144,16 @@
          page round that loop on every load. Once set, the visible Apply
          button above is the way back in. */
       (function () {
+        /* Never for a shopper the cashback partner sent. Hiding the offer in
+           CSS is enough for every surface a shopper has to click, but this one
+           acts on its own — without this guard a partner-referred shopper who
+           creates an account is silently handed the discount as well, which is
+           precisely the stacked order the exclusivity exists to prevent, and
+           the one we would be billed for twice. The class is set in the head
+           by snippets/cashback-attribution.liquid, so it is already on the
+           element by the time this runs. */
+        if (document.documentElement.classList.contains('cb-on')) return;
+
         var key = 'tfs_welcome_{{ wo_code | escape }}_{{ customer.id }}';
         try {
           if (localStorage.getItem(key)) return;
