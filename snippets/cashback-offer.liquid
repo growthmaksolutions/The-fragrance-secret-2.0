@@ -1,0 +1,49 @@
+{%- comment -%}
+  Cashback confirmation — "your 7% is tracking", on the cart and the drawer.
+
+  Usage: {% render 'cashback-offer' %}
+
+  Shown only to a shopper the partner sent. The gate is CSS against the
+  `cb-on` class that cashback-attribution puts on <html>, not Liquid: the
+  server has no idea which visit this is, and the markup is inert to
+  everyone else.
+
+  ── Why it is not a site-wide banner ─────────────────────────────────────
+
+  Because we would be buying our own traffic. A shopper who arrived from
+  search, from an ad we already paid for, or from the WhatsApp number on the
+  bag, and who is told here that there is cashback to be had, will leave,
+  find the partner, click back in and cost us the commission on an order we
+  already had. Cashback is a channel, and a channel is advertised on the
+  channel.
+
+  ── Why it says "tracking" and not a figure in dirhams ───────────────────
+
+  Because we do not pay it and cannot promise it. The partner decides what
+  clears, when it clears, and what a return does to it — all of which lives
+  in their terms, linked rather than restated so it cannot go stale here.
+  Naming an amount the shopper might not receive turns their complaint into
+  our support ticket.
+{%- endcomment -%}
+
+{%- liquid
+  assign cb_pct = settings.cashback_percent | default: '' | strip
+  assign cb_name = settings.cashback_partner | default: '' | strip
+
+  assign cb_show = false
+  if settings.cashback_enabled and cb_pct != blank and cb_name != blank
+    assign cb_show = true
+  endif
+-%}
+
+{%- if cb_show -%}
+  <div class="cb-row" data-cashback-row>
+    <span class="mi" aria-hidden="true">savings</span>
+    <span>
+      <b>{{ cb_pct }}% cashback</b> on this order is tracking through {{ cb_name }} — it is paid into your {{ cb_name }} account after delivery.
+      {%- if settings.cashback_terms_url != blank %}
+        <a href="{{ settings.cashback_terms_url }}" rel="nofollow noopener" target="_blank">{{ cb_name }}&rsquo;s terms</a>.
+      {%- endif -%}
+    </span>
+  </div>
+{%- endif -%}

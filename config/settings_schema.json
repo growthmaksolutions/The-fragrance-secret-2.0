@@ -79,5 +79,22 @@
       { "type": "text", "id": "welcome_offer_percent", "label": "Percentage shown in the copy", "default": "10", "info": "Digits only. This is wording, not the discount itself \u2014 change the real amount on the discount in admin and keep the two in step." },
       { "type": "text", "id": "welcome_offer_min", "label": "Minimum order value", "default": "150", "info": "Digits only, in store currency. Must match the discount's minimum purchase amount in admin, or the storefront promises a discount that checkout refuses. Leave blank if the discount has no minimum." }
     ]
+  },
+  {
+    "name": "Promotions & cashback",
+    "settings": [
+      { "type": "paragraph", "content": "One switch over everything the storefront offers a shopper on top of the shelf price. Turning it off removes the welcome-offer band above the footer, the welcome strips on the cart, the drawer and the account page, and the \u201cHave a discount code?\u201d box \u2014 all of it, in one place, so an exclusivity commitment to a cashback partner does not depend on remembering eighteen surfaces. It does not touch delivery, returns, cash on delivery or instalments: those are terms of service, not promotions, and no partner treats them as competing offers. It also cannot touch price \u2014 markdowns live on the products in admin, and the shelf price is not something a theme setting can retract." },
+      { "type": "checkbox", "id": "promos_enabled", "label": "Run our own promotions", "default": true, "info": "Off: no discount is offered or accepted anywhere on the storefront. Also delete or disable the codes themselves in admin \u203a Discounts \u2014 a code hidden here still works if someone types it at checkout." },
+
+      { "type": "header", "content": "Cashback partner" },
+      { "type": "paragraph", "content": "A cashback partner pays the shopper a percentage back after the order and bills us for it. Two rules follow from that, and both are enforced below. First, the cashback is confirmed only to shoppers the partner actually sent \u2014 announcing it to everyone would hand the partner commission on traffic that was already ours. Second, a shopper the partner sent is shown no other offer, because a stacked order is one we pay for twice." },
+      { "type": "checkbox", "id": "cashback_enabled", "label": "We have a cashback partner", "default": false },
+      { "type": "text", "id": "cashback_partner", "label": "Partner name", "default": "Mimojo" },
+      { "type": "text", "id": "cashback_percent", "label": "Cashback the shopper receives (%)", "default": "7", "info": "Digits only. Wording, not the payout itself \u2014 the partner pays the shopper, so this must match what their own site advertises or the cart contradicts the page they clicked from." },
+      { "type": "text", "id": "cashback_sources", "label": "Referral sources that count", "default": "mimojo", "info": "Comma-separated, lower-case. A visit arriving with utm_source, ref or source set to any of these is treated as the partner\u2019s. Must match exactly what the partner puts on their outbound links \u2014 ask them, do not guess." },
+      { "type": "text", "id": "cashback_window_days", "label": "Attribution window (days)", "default": "30", "info": "Digits only. How long a visit stays attributed to the partner on this device. Set it to the same window the partner tracks, or the storefront will promise cashback on an order their system no longer credits." },
+      { "type": "checkbox", "id": "cashback_exclusive", "label": "Hide every other offer from shoppers the partner sent", "default": true, "info": "Belt and braces over the switch above: holds even while our own promotions are running, so a partner order can never carry a discount code as well." },
+      { "type": "url", "id": "cashback_terms_url", "label": "Partner terms link", "info": "Linked from the cashback confirmation in the cart. The partner owns the payout, the timing and the disputes \u2014 point at their terms rather than restating them here, where they would go stale." }
+    ]
   }
 ]

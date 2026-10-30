@@ -1,0 +1,157 @@
+{%- comment -%}
+  Cashback attribution — who counts as a partner shopper, decided once per
+  visit, in the head.
+
+  Usage: {% render 'cashback-attribution' %} from layout/theme.liquid, before
+  anything paints.
+
+  ── Why this is JavaScript and why it is in the head ─────────────────────
+
+  Attribution arrives as a query parameter on the landing URL, and Liquid
+  cannot read one. It also has to outlive that landing page: the partner
+  sends a shopper to a product, and the thing that has to change is the cart
+  two pages later. So the parameter is read once, kept on the device for the
+  partner's own attribution window, and republished on every later page as a
+  class on <html>.
+
+  It is in the head, inline and synchronous, because the class gates whether
+  a shopper sees a discount-code box. Deferred, the box would paint, then
+  vanish — which is both an invitation to go and look for a code and a
+  flicker on every page of the session.
+
+  ── What the class is for ────────────────────────────────────────────────
+
+  Exclusivity. A partner pays the shopper a percentage of an order we have
+  also discounted ourselves, and we pay for both. Theme settings can switch
+  our own promotions off wholesale, but a store that later runs a weekend
+  code should not thereby break an exclusivity commitment. So the lock is
+  independent of that switch: `cb-on` hides every promotional surface from a
+  partner-referred shopper whatever the rest of the site is doing.
+
+  ── What this cannot do ──────────────────────────────────────────────────
+
+  Stop a determined shopper. Clearing site data, a different browser or a
+  private window drops the lock, and /discount/CODE still applies a code
+  that exists. The only enforcement that actually holds is in admin: if a
+  code is not supposed to be live, delete it, do not merely hide it. This is
+  the honest-shopper layer, and it is the layer that decides what almost
+  everyone sees.
+
+  ── The cart attribute ───────────────────────────────────────────────────
+
+  The partner will send an invoice listing the orders they claim. The only
+  way to check it is to have recorded, on our side, which orders arrived
+  through them — so the click id is written onto the cart as an attribute
+  and travels into the order in admin. It also makes double-payment visible:
+  an order tagged both `cashback_source` and a paid-ads click is one we are
+  being billed for twice.
+{%- endcomment -%}
+
+{%- liquid
+  assign cb_on = false
+  if settings.cashback_enabled and settings.cashback_exclusive
+    assign cb_on = true
+  endif
+-%}
+
+{%- if cb_on -%}
+  <script>
+    (function () {
+      /* Lower-cased here so the comparison below does not have to care how
+         the sources were typed into theme settings. */
+      var SOURCES = {{ settings.cashback_sources | default: '' | downcase | split: ',' | json }}
+        .map(function (s) { return s.trim(); })
+        .filter(Boolean);
+      var DAYS = {{ settings.cashback_window_days | default: 30 | times: 1 | json }};
+      var KEY = 'tfs_cashback';
+
+      if (!SOURCES.length) return;
+
+      var q;
+      try { q = new URLSearchParams(location.search); } catch (e) { return; }
+
+      /* utm_source is the conventional one, but partners are inconsistent and
+         some send only ?ref=. All three are checked rather than asking the
+         partner to change their links, which is the request that never gets
+         actioned. */
+      var src = '';
+      ['utm_source', 'ref', 'source'].forEach(function (p) {
+        if (src) return;
+        var v = (q.get(p) || '').trim().toLowerCase();
+        if (SOURCES.indexOf(v) > -1) src = v;
+      });
+
+      var stored = null;
+      try { stored = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+
+      if (src) {
+        /* A fresh click overwrites an older one: last click wins, which is
+           what every cashback platform's own attribution does. The click id
+           is whatever the partner appends — kept verbatim, because it is
+           their reference and ours is useless to them in a dispute. */
+        stored = {
+          src: src,
+          cid: (q.get('click_id') || q.get('clickid') || q.get('cid') || '').slice(0, 128),
+          at: Date.now()
+        };
+        try { localStorage.setItem(KEY, JSON.stringify(stored)); } catch (e) {}
+      } else if (stored && stored.at && (Date.now() - stored.at) > DAYS * 864e5) {
+        /* Past the window the partner no longer credits the order, so neither
+           may we: leaving the lock on would suppress our own offers in
+           exchange for a cashback that is never paid. */
+        try { localStorage.removeItem(KEY); } catch (e) {}
+        stored = null;
+      }
+
+      if (!stored || !stored.src) return;
+
+      document.documentElement.classList.add('cb-on');
+      window.CASHBACK = stored;
+
+      /* Written once per landing, not on every page: /cart/update.js is a
+         real request, and the attribute only has to be on the cart by the
+         time there is an order. Deferred to load so it never competes with
+         the first paint it was placed in the head to protect. */
+      if (!src) return;
+      addEventListener('load', function () {
+        fetch('{{ routes.cart_url }}/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            attributes: {
+              'cashback_source': stored.src,
+              'cashback_click_id': stored.cid || '',
+              'cashback_clicked_at': new Date(stored.at).toISOString()
+            }
+          })
+        }).catch(function () { /* attribution is not worth a broken cart */ });
+      });
+    })();
+  </script>
+{%- endif -%}
+
+{%- comment -%}
+  ── Where the partner's own tracking goes ────────────────────────────────
+
+  Not here, in all likelihood. Everything above is ours: it decides what the
+  storefront shows and records the click id on the cart so an invoice can be
+  checked. The partner's own conversion tracking is a separate thing, and
+  where it belongs depends entirely on what they issue:
+
+    · A Shopify app — install it in admin and add nothing here. This is the
+      usual case and the one to push for; it is the only route that sees the
+      real order rather than a guess at it.
+
+    · A checkout or thank-you pixel — Settings › Customer events in admin,
+      as a custom pixel. It cannot go in a theme file: Shopify does not
+      render checkout from this theme, so a tag placed here never fires on
+      the page that matters and will silently report nothing.
+
+    · A server-to-server postback on the order webhook — a private app or a
+      function, again outside the theme.
+
+  A storefront tag, if they insist on one, is the only variant that belongs
+  in this file, and it goes directly below. Nothing is placed here on a guess
+  — an attribution tag that fires on the wrong page is worse than none, since
+  it reports numbers that look plausible and are not.
+{%- endcomment -%}

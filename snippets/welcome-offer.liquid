@@ -51,8 +51,13 @@
     assign wo_spent = true
   endif
 
+  # Theme settings › Promotions & cashback is the switch over every offer on
+  # the storefront at once, so an exclusivity commitment to a cashback partner
+  # is one checkbox rather than a hunt through the surfaces that advertise a
+  # discount. Checked first because nothing below it matters if we are not
+  # running promotions at all.
   assign wo_on = false
-  if settings.welcome_offer_enabled and wo_code != blank and wo_spent == false
+  if settings.promos_enabled and settings.welcome_offer_enabled and wo_code != blank and wo_spent == false
     assign wo_on = true
   endif
 

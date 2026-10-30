@@ -968,6 +968,44 @@ a.wo-row:hover { background: rgba(201,168,76,.16); border-color: var(--gold); }
 .wo-active .mi { font-size: 19px; color: var(--gold-lt); }
 .wo-active b { color: var(--gold-lt); letter-spacing: .08em; }
 
+/* ── Cashback partner ─────────────────────────────────────────────
+   Two jobs, both keyed on the `cb-on` class that
+   snippets/cashback-attribution.liquid puts on <html> for a shopper the
+   partner sent.
+
+   First, exclusivity. Everything we offer on top of the shelf price is
+   hidden from that shopper, whatever Theme settings › Promotions says —
+   so a weekend code that goes live later cannot quietly break an
+   exclusivity commitment, and no order is ever paid for twice. Marked
+   !important because several of these surfaces are flex and set their own
+   display.
+
+   Second, the confirmation. The cashback row is in the markup on every
+   cart but displayed to nobody else: announcing cashback to traffic that
+   was already ours is how a store ends up paying commission on its own
+   customers. */
+.cb-row { display: none; }
+.cb-on .cb-row { display: flex; }
+
+.cb-on .ccoupon,
+.cb-on .wo-row,
+.cb-on .wo-active,
+.cb-on .member-band { display: none !important; }
+
+/* Green rather than the welcome offer's gold, and deliberately so: this is
+   not money off the total below it, and a shopper who reads it as a discount
+   will count it twice and query the bill. */
+.cb-row {
+  align-items: center; gap: 10px;
+  padding: 11px 14px; margin-bottom: 14px;
+  border: 1px solid rgba(107,150,90,.45); border-radius: 8px;
+  background: rgba(107,150,90,.10);
+  font-size: .82rem; color: var(--charcoal); line-height: 1.4;
+}
+.cb-row b { font-weight: 700; color: var(--ink); }
+.cb-row > .mi { font-size: 19px; color: #4F7A43; flex-shrink: 0; }
+.cb-row a { color: #4F7A43; text-decoration: underline; }
+
 /* Discount rows in the order summary */
 .co-trow.is-disc { color: var(--gold-dk); }
 .co-trow.is-disc span:first-child { display: inline-flex; align-items: center; gap: 7px; }

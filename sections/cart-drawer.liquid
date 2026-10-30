@@ -102,6 +102,7 @@
 
     {%- if cart.item_count > 0 -%}
       <footer class="cd-foot">
+        {% render 'cashback-offer' %}
         {% render 'welcome-offer', style: 'row' %}
         {%- comment -%}
           Collapsed by default — see the snippet for why an open, empty code

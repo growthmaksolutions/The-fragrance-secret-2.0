@@ -1,13 +1,28 @@
 {%- comment -%}
-  Membership band — "Enjoy 10% off your first perfume order".
-  Rendered globally above the footer by the customer-login-cta section.
+  Membership band, rendered globally above the footer by the
+  customer-login-cta section.
 
-  It used to be hidden from every signed-in customer, which meant the one
-  person who could actually claim the discount — someone who had just made an
-  account and not yet ordered — was the one person never shown it. It now
-  follows the offer: a guest is asked to join, a member who has not ordered is
-  given the button that puts the code on their bag, and a member carrying the
-  code is told so. It disappears only once the discount is spent.
+  It has two faces, and which one shows is decided by whether the store is
+  running its own promotions at all.
+
+  With the welcome offer on, the band is that offer: "Enjoy 10% off your
+  first perfume order". It used to be hidden from every signed-in customer,
+  which meant the one person who could actually claim the discount — someone
+  who had just made an account and not yet ordered — was the one person never
+  shown it. It now follows the offer: a guest is asked to join, a member who
+  has not ordered is given the button that puts the code on their bag, and a
+  member carrying the code is told so. It disappears once the discount is
+  spent.
+
+  With promotions off — the state an exclusivity commitment to a cashback
+  partner puts the store in — there is no discount to advertise, and the band
+  does not invent one. An account is still worth having on its own terms:
+  saved fragrances, order history, faster checkout. So the band keeps asking
+  guests to join and simply stops promising money off. It is hidden from
+  signed-in customers in that state, who already have everything it offers.
+
+  What it never does in either state is mention cashback. That is a channel,
+  advertised on the channel — the reasoning is in snippets/cashback-offer.liquid.
 
   The percentage and the code both come from Settings › Welcome offer, so the
   copy cannot drift away from the discount that Shopify will honour.
@@ -30,8 +45,15 @@
     endif
   endcapture
 
+  # The same three conditions welcome-offer tests, because the band and the
+  # control inside it have to agree about whether an offer exists.
+  assign wo_on = false
+  if settings.promos_enabled and settings.welcome_offer_enabled and settings.welcome_offer_code != blank
+    assign wo_on = true
+  endif
+
   assign show_band = false
-  if settings.welcome_offer_enabled and settings.welcome_offer_code != blank
+  if wo_on
     if customer
       if customer.orders_count == 0
         assign show_band = true
@@ -39,6 +61,10 @@
     else
       assign show_band = true
     endif
+  else
+    unless customer
+      assign show_band = true
+    endunless
   endif
 -%}
 
@@ -47,31 +73,49 @@
     <div class="cta-band member-band">
       <div class="member-copy">
         <span class="label" style="color:var(--gold)">Welcome to The Fragrance Secrets</span>
-        {%- if customer -%}
-          {%- comment -%}
-            Deliberately stateless copy: whether the code is already on the bag
-            is known inside welcome-offer, not here, and a headline that
-            guessed would tell half the members the wrong thing. The control
-            below carries the state; the heading just has to be true either
-            way.
-          {%- endcomment -%}
-          <h2 class="sec-title">Your {{ wo_pct }}% <em>Welcome Discount</em></h2>
-          <p class="sec-sub">You're a member, so the welcome discount is yours on your first order{{ wo_over }} — it comes off the total at checkout. It sits alongside everything else in your account: saved fragrances, faster checkout, full order history and member-only offers through the year.</p>
+
+        {%- if wo_on -%}
+          {%- if customer -%}
+            {%- comment -%}
+              Deliberately stateless copy: whether the code is already on the
+              bag is known inside welcome-offer, not here, and a headline that
+              guessed would tell half the members the wrong thing. The control
+              below carries the state; the heading just has to be true either
+              way.
+            {%- endcomment -%}
+            <h2 class="sec-title">Your {{ wo_pct }}% <em>Welcome Discount</em></h2>
+            <p class="sec-sub">You're a member, so the welcome discount is yours on your first order{{ wo_over }} — it comes off the total at checkout. It sits alongside everything else in your account: saved fragrances, faster checkout, full order history and member-only offers through the year.</p>
+          {%- else -%}
+            <h2 class="sec-title">Enjoy {{ wo_pct }}% Off <em>Your First Perfume Order</em></h2>
+            <p class="sec-sub">Create your free account and become part of The Fragrance Secrets community. Your {{ wo_pct }}% welcome discount is put on your bag the moment you join — no code to copy, no email to wait for{% if wo_min_cents > 0 %}, on any first order over {{ wo_min_cents | money_with_currency }}{% endif %}. Save your favourite fragrances, enjoy faster checkout, track every order, and unlock exclusive member-only offers throughout the year.</p>
+          {%- endif -%}
         {%- else -%}
-          <h2 class="sec-title">Enjoy {{ wo_pct }}% Off <em>Your First Perfume Order</em></h2>
-          <p class="sec-sub">Create your free account and become part of The Fragrance Secrets community. Your {{ wo_pct }}% welcome discount is put on your bag the moment you join — no code to copy, no email to wait for{% if wo_min_cents > 0 %}, on any first order over {{ wo_min_cents | money_with_currency }}{% endif %}. Save your favourite fragrances, enjoy faster checkout, track every order, and unlock exclusive member-only offers throughout the year.</p>
+          <h2 class="sec-title">Create Your <em>Fragrance Account</em></h2>
+          <p class="sec-sub">Join The Fragrance Secrets and keep your perfume life in one place. Save the fragrances you are deciding between, check out in a few taps with your details already filled in, and follow every order from dispatch to your door — across 218+ fragrance houses, all of them verified authentic.</p>
         {%- endif -%}
+
         <div class="cta-actions">
-          {% render 'welcome-offer', style: 'cta' %}
+          {%- if wo_on -%}
+            {% render 'welcome-offer', style: 'cta' %}
+          {%- else -%}
+            <a class="btn-g" href="{{ routes.account_register_url }}"><span class="mi" aria-hidden="true">person_add</span>Create your account</a>
+          {%- endif -%}
         </div>
       </div>
+
       <div class="member-card">
-        <div class="mc-disc"><b>{{ wo_pct }}%</b><span>Welcome Discount</span></div>
-        <div class="mc-perk"><span class="mi" aria-hidden="true">percent</span><div><b>Instant {{ wo_pct }}% welcome discount</b><span>{% if wo_min_cents > 0 %}On first orders over {{ wo_min_cents | money_with_currency }}{% else %}On your bag the moment you join{% endif %}</span></div></div>
+        {%- if wo_on -%}
+          <div class="mc-disc"><b>{{ wo_pct }}%</b><span>Welcome Discount</span></div>
+          <div class="mc-perk"><span class="mi" aria-hidden="true">percent</span><div><b>Instant {{ wo_pct }}% welcome discount</b><span>{% if wo_min_cents > 0 %}On first orders over {{ wo_min_cents | money_with_currency }}{% else %}On your bag the moment you join{% endif %}</span></div></div>
+        {%- endif -%}
         <div class="mc-perk"><span class="mi" aria-hidden="true">favorite</span><div><b>Save your favourite fragrances</b><span>Build your personal wishlist</span></div></div>
         <div class="mc-perk"><span class="mi" aria-hidden="true">local_shipping</span><div><b>Track every order</b><span>Full order history in one place</span></div></div>
         <div class="mc-perk"><span class="mi" aria-hidden="true">bolt</span><div><b>Faster checkout</b><span>Saved details, fewer steps</span></div></div>
-        <div class="mc-perk"><span class="mi" aria-hidden="true">star</span><div><b>Exclusive member-only offers</b><span>Member drops all year round</span></div></div>
+        {%- if wo_on -%}
+          <div class="mc-perk"><span class="mi" aria-hidden="true">star</span><div><b>Exclusive member-only offers</b><span>Member drops all year round</span></div></div>
+        {%- else -%}
+          <div class="mc-perk"><span class="mi" aria-hidden="true">verified</span><div><b>100% authentic, always</b><span>Verified sourcing on every bottle</span></div></div>
+        {%- endif -%}
       </div>
     </div>
   </div></section>

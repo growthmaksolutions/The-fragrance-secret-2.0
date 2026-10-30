@@ -154,6 +154,13 @@
     }
   </style>
 
+  {%- comment -%}
+    Before anything paints, because the class it sets decides whether a
+    discount-code box is on the page. Deferred, the box would paint and then
+    vanish on every page of a partner-referred session.
+  {%- endcomment -%}
+  {% render 'cashback-attribution' %}
+
   <script>
     /* Base URL for the flat Shopify assets/ folder, consumed by IMG() in app.js */
     window.ASSET_BASE = {{ 'logo.webp' | asset_url | split: 'logo.webp' | first | json }};
@@ -227,7 +234,7 @@
     {{ content_for_layout }}
   </main>
 
-  {%- comment -%} 10% membership band, above the footer on every page. {%- endcomment -%}
+  {%- comment -%} Membership band, above the footer on every page. Whether it carries the welcome discount is decided in snippets/member-band.liquid. {%- endcomment -%}
   {% section 'customer-login-cta' %}
   {% sections 'footer-group' %}
   {% sections 'overlay-group' %}

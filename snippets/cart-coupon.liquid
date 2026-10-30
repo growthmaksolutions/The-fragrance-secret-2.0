@@ -56,6 +56,21 @@
   assign cc_back = request.path | default: '/'
 -%}
 
+{%- comment -%}
+  Nothing to enter a code into when there are no codes. Theme settings ›
+  Promotions & cashback turns our own promotions off wholesale, and a field
+  left behind after that is worse than useless: it is a standing hint that a
+  discount exists somewhere, sending the shopper off to a coupon site to look
+  for one — exactly the leak a cashback partnership is meant to close, and the
+  route by which someone else's affiliate cookie gets attached to our order on
+  the way back.
+
+  A shopper the partner sent never sees it either, whatever this setting says.
+  That rule is CSS against the `cb-on` class rather than Liquid, because the
+  server cannot tell which visit it is serving — see
+  snippets/cashback-attribution.liquid.
+{%- endcomment -%}
+{%- if settings.promos_enabled -%}
 <div class="ccoupon" data-coupon data-applied="{{ cc_applied | escape }}" data-back="{{ cc_back | escape }}">
   <details class="ccoupon-fold">
     <summary class="ccoupon-summary">
@@ -101,3 +116,4 @@
     </div>
   </details>
 </div>
+{%- endif -%}
