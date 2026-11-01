@@ -9,13 +9,6 @@
  */
 {
   "current": {
-    "promos_enabled": true,
-    "cashback_enabled": true,
-    "cashback_partner": "Mimojo",
-    "cashback_percent": "7",
-    "cashback_sources": "mimojo",
-    "cashback_window_days": "30",
-    "cashback_exclusive": true,
     "color_cream": "#F7F2EA",
     "color_ink": "#0D0A06",
     "color_charcoal": "#1C1812",
@@ -25,12 +18,19 @@
     "whatsapp_number": "971547330534",
     "free_shipping_threshold": "250",
     "shipping_flat_rate": "12",
-    "delivery_zones": "",
     "returns_window_days": "2",
+    "delivery_zones": "",
     "welcome_offer_enabled": true,
     "welcome_offer_code": "WELCOME10",
     "welcome_offer_percent": "10",
     "welcome_offer_min": "150",
+    "promos_enabled": true,
+    "cashback_enabled": true,
+    "cashback_partner": "Mimojo",
+    "cashback_percent": "7",
+    "cashback_sources": "mimojo",
+    "cashback_window_days": "30",
+    "cashback_exclusive": true,
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
@@ -53,6 +53,11 @@
       },
       "2339102615225557431": {
         "type": "shopify://apps/apploy-mobile-app-builder/blocks/apploy/b1c49136-afa0-4125-ac0d-1f6b7aca1d88",
+        "disabled": false,
+        "settings": {}
+      },
+      "11975957138001710997": {
+        "type": "shopify://apps/smart-preorder/blocks/embed/01a15100-4973-793f-957d-cb4f1e8abdd8",
         "disabled": false,
         "settings": {}
       }
