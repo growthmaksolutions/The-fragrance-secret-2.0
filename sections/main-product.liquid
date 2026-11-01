@@ -353,8 +353,39 @@
             app.js shows it and fills in the variant when a sold-out size is
             picked, so the page always offers something to do instead of a
             dead "Sold Out" button.
+
+            The built-in version emails the store and someone sends the alert
+            by hand — a theme cannot watch inventory. An app can, so the
+            "Notify me" setting switches this off in favour of an app block
+            placed in the slot below. It is a setting rather than an automatic
+            swap because an app block here is not necessarily a stock alert:
+            a size chart or an upsell widget would be placed the same way, and
+            silently hiding the fallback because of one of those would leave
+            sold-out products with nothing at all.
           {%- endcomment -%}
-          {% render 'back-in-stock', product: product, variant: cv %}
+          {%- if section.settings.notify_source == 'builtin' -%}
+            {% render 'back-in-stock', product: product, variant: cv %}
+          {%- endif -%}
+
+          {%- comment -%}
+            App block slot. This section had none, so an installed app had
+            nowhere to render on the product page — the block simply did not
+            appear in the theme editor's "Add block" list. Anything the
+            merchant adds here renders in source order.
+
+            block.shopify_attributes is required: it is what lets the theme
+            editor find, select and highlight the block. Without it the block
+            renders on the live page but cannot be clicked in the editor.
+          {%- endcomment -%}
+          {%- if section.blocks.size > 0 -%}
+            <div class="pdp-app-blocks">
+              {%- for block in section.blocks -%}
+                {%- if block.type == '@app' -%}
+                  <div class="pdp-app-block" {{ block.shopify_attributes }}>{% render block %}</div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
 
           <!-- KEY INFO -->
           <div class="key-info">
@@ -870,10 +901,24 @@
 {
   "name": "Product page",
   "settings": [
+    { "type": "header", "content": "Sold-out \"Notify me\"" },
+    {
+      "type": "select",
+      "id": "notify_source",
+      "label": "\"Notify me\" form when sold out",
+      "default": "builtin",
+      "options": [
+        { "value": "builtin", "label": "Built-in — emails the store, you send the alert by hand" },
+        { "value": "app", "label": "App block — add the app's block below" },
+        { "value": "off", "label": "Off — show nothing" }
+      ],
+      "info": "The built-in form captures the request but cannot watch stock, so the alert is manual. Choose App block once a back-in-stock app is installed and its block added below, so customers are emailed automatically."
+    },
     { "type": "header", "content": "Explore other brands" },
     { "type": "collection_list", "id": "brand_collections", "label": "Brands to feature", "limit": 12, "info": "Leave empty to fall back to brand collections found automatically. The current product's own brand is always skipped." },
     { "type": "range", "id": "brand_limit", "label": "Brand cards to show", "min": 3, "max": 8, "step": 1, "default": 4 }
   ],
+  "blocks": [ { "type": "@app" } ],
   "presets": [ { "name": "Product page" } ]
 }
 {% endschema %}

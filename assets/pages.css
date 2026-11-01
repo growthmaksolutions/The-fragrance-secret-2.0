@@ -1894,3 +1894,11 @@ button.cyp-rail-step:hover .cyp-rail-l { color: var(--gold-lt); }
   .cyp-opt, .cyp-next, .cyp-body, .cyp-rail-n, .cyp-browse { transition: none; }
   .cyp-opt:hover:not(:disabled), .cyp-next:hover:not(:disabled) { transform: none; }
 }
+
+/* ── PDP app block slot (sections/main-product.liquid) ──
+   An app's own block brings its own styling, so this only gives it the
+   section's vertical rhythm and stops it sitting flush against the key-info
+   grid below. No margin when the merchant has added nothing: the wrapper is
+   not rendered at all in that case. */
+.pdp-app-blocks { margin: 18px 0 4px; }
+.pdp-app-block + .pdp-app-block { margin-top: 14px; }
