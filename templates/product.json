@@ -12,7 +12,6 @@
     "main": {
       "type": "main-product",
       "settings": {
-        "notify_source": "off",
         "brand_collections": [
           "lattafa",
           "rasasi",

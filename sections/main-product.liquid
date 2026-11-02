@@ -1,4 +1,3 @@
-<!-- tfs-deploy-probe-2 -->
 {%- comment -%}
   Product detail page — native Shopify port of product.html.
   Driven by the `product` object (gallery, variants, price, description,
@@ -354,25 +353,18 @@
             app.js shows it and fills in the variant when a sold-out size is
             picked, so the page always offers something to do instead of a
             dead "Sold Out" button.
-
-            Off by default, because this is now the second notify form on the
-            page and the weaker one. A theme cannot watch inventory, so all
-            this version can do is email the store and wait for a human to
-            send the alert. The SMART Preorder & Back in Stock app watches
-            stock and emails the customer itself, and it injects its own
-            button through its app embed — not through the block slot below —
-            so there is nothing here to render alongside. Leaving both on
-            stacked two signup boxes under the Sold Out button.
-
-            Kept rather than deleted, and kept switchable, because the app is
-            the only thing now capturing that demand: uninstall it and this is
-            what the page falls back to. The whole mechanism still works —
-            the snippet, its styles, and the reveal logic in app.js that fills
-            in the variant when a sold-out size is picked.
           {%- endcomment -%}
-          {%- if section.settings.notify_source == 'builtin' -%}
-            {% render 'back-in-stock', product: product, variant: cv %}
-          {%- endif -%}
+          {%- comment -%}
+            Not rendered. The SMART Preorder & Back in Stock app injects its
+            own "Email me when available" button through its app embed, and
+            this form underneath it made two signup boxes on every sold-out
+            product — and the weaker one, since a theme cannot watch stock:
+            all it does is email us and wait for someone to notice.
+
+            The snippet, its styles and the reveal logic in app.js are all
+            left in place. Put this line back if the app is ever removed.
+          {%- endcomment -%}
+          <!-- tfs-deploy-probe-3 -->
 
           <!-- KEY INFO -->
           <div class="key-info">
@@ -888,19 +880,6 @@
 {
   "name": "Product page",
   "settings": [
-    { "type": "header", "content": "Sold-out \"Notify me\"" },
-    {
-      "type": "select",
-      "id": "notify_source",
-      "label": "\"Notify me\" form when sold out",
-      "default": "off",
-      "options": [
-        { "value": "off", "label": "Off — the SMART app's own button handles it" },
-        { "value": "builtin", "label": "Built-in — emails the store, you send the alert by hand" },
-        { "value": "app", "label": "App block — an app block placed below" }
-      ],
-      "info": "Off is correct while the SMART Preorder & Back in Stock app is installed: it injects its own \"Email me when available\" button through its app embed, watches inventory and emails the customer automatically. Switch to Built-in only if that app is removed — that form still captures the request, but it emails the store and someone has to send the alert by hand."
-    },
     { "type": "header", "content": "Explore other brands" },
     { "type": "collection_list", "id": "brand_collections", "label": "Brands to feature", "limit": 12, "info": "Leave empty to fall back to brand collections found automatically. The current product's own brand is always skipped." },
     { "type": "range", "id": "brand_limit", "label": "Brand cards to show", "min": 3, "max": 8, "step": 1, "default": 4 }
