@@ -1471,6 +1471,15 @@ function initVariantPicker() {
       atcMini.textContent = label;
     }
 
+    /* The dynamic checkout button — "Buy with G Pay" and "More payment
+       options". Add to Cart only goes disabled on a sold-out variant, but
+       these go all the way to a checkout, so hide them rather than grey
+       them: there is nothing to buy. main-product.liquid renders the
+       wrapper hidden when the first variant is sold out, so this restores
+       it when the shopper picks a size that is in stock. */
+    var pay = document.querySelector('.pdp-pay');
+    if (pay) pay.hidden = !sellable;
+
     if (v && v.img) {
       var main = el('mainimg');
       if (main) main.src = v.img;

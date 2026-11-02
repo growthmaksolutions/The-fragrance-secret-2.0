@@ -320,7 +320,19 @@
                       aria-label="Save {{ product.title | escape }} to wishlist"
                       onclick="TFSWishlist.toggle(this.dataset.wish, this.dataset.wishLabel)"><span class="mi" aria-hidden="true">favorite</span></button>
             </div>
-            {{ form | payment_button }}
+            {%- comment -%}
+              Shopify's dynamic checkout button — "Buy with G Pay" and the
+              "More payment options" link under it. Offering either on a
+              sold-out variant invites someone to start a checkout for
+              something that cannot be bought.
+
+              Rendered and hidden rather than skipped: on a product with
+              several sizes, app.js switches variants without reloading, so
+              there has to be an element already on the page to bring back
+              when the shopper picks one that is in stock. Skipping it
+              server-side would mean a sellable variant with no buy button.
+            {%- endcomment -%}
+            <div class="pdp-pay"{% unless cv.available %} hidden{% endunless %}>{{ form | payment_button }}</div>
             {% render 'pay-icons' %}
             <p class="pay-note">Pay later, interest-free in 4 with <span class="pay-chip pay-chip-inline pay-tabby" title="Tabby">tabby</span> &amp; <span class="pay-chip pay-chip-inline pay-tamara" title="Tamara">tamara</span> · <span class="pay-chip pay-chip-inline pay-cod" title="Cash on Delivery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/></svg>COD</span> available UAE-wide</p>
             {%- comment -%}
@@ -364,7 +376,6 @@
             The snippet, its styles and the reveal logic in app.js are all
             left in place. Put this line back if the app is ever removed.
           {%- endcomment -%}
-          <!-- tfs-deploy-probe-3 -->
 
           <!-- KEY INFO -->
           <div class="key-info">
