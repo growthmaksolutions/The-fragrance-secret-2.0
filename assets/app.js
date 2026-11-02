@@ -2442,7 +2442,12 @@ else document.addEventListener('DOMContentLoaded', initApp);
 (function () {
   var cfg = null;
   var CYP = { step: 1, family: null, size: null, strength: null, name: '' };
-  var STEPS = ['Family', 'Size', 'Strength', 'Name', 'Review'];
+  /* Built in init(), not fixed here: a product that sells one strength — or
+     none, because the merchant created it with Size alone — gets a four-step
+     flow instead of five rather than a dead Strength step with nothing to
+     pick. The step machine indexes this array, so everything else follows. */
+  var STEPS = [];
+  var HAS_STRENGTH = false;
 
   /* The shared esc() covers < and > only, which is right for text but not for
      the attribute values below: a family label or a typed name carrying a
@@ -2486,10 +2491,16 @@ else document.addEventListener('DOMContentLoaded', initApp);
   function findVariant(size, strength) {
     var si = sizeIdx(), ti = strengthIdx();
     return cfg.variants.filter(function (v) {
-      return v.options[si] === size && v.options[ti] === strength;
+      if (v.options[si] !== size) return false;
+      /* Size is the only axis on a single-option product, so there is no
+         second value to match and every strength argument is irrelevant. */
+      return !HAS_STRENGTH || v.options[ti] === strength;
     })[0] || null;
   }
-  function variant() { return CYP.size && CYP.strength ? findVariant(CYP.size, CYP.strength) : null; }
+  function variant() {
+    if (!CYP.size || (HAS_STRENGTH && !CYP.strength)) return null;
+    return findVariant(CYP.size, CYP.strength);
+  }
   function total() { var v = variant(); return v ? v.price : 0; }
 
   /* Cheapest sellable variant in a size, for the "from" price on step 2. Sold-out
@@ -2585,8 +2596,11 @@ else document.addEventListener('DOMContentLoaded', initApp);
     paintPreview();
     var h = '';
 
-    if (CYP.step === 1) {
-      h = '<div class="cyp-step"><span class="cyp-step-label">Step 1 of 5</span>' +
+    var stepName = STEPS[CYP.step - 1];
+    var stepLabel = '<div class="cyp-step"><span class="cyp-step-label">Step ' + CYP.step + ' of ' + STEPS.length + '</span>';
+
+    if (stepName === 'Family') {
+      h = stepLabel +
         '<h2 class="cyp-q">Which family do you love?</h2>' +
         '<p class="cyp-hint">Pick the direction — we blend the rest.</p>' +
         '<div class="cyp-opts cyp-opts-fam">' +
@@ -2599,8 +2613,8 @@ else document.addEventListener('DOMContentLoaded', initApp);
         '</div></div>' +
         foot(null, 'Choose size', 'next', !!CYP.family);
 
-    } else if (CYP.step === 2) {
-      h = '<div class="cyp-step"><span class="cyp-step-label">Step 2 of 5</span>' +
+    } else if (stepName === 'Size') {
+      h = stepLabel +
         '<h2 class="cyp-q">How much do you want?</h2>' +
         '<p class="cyp-hint">50ml lives in a bag. 100ml lives on a shelf.</p>' +
         '<div class="cyp-opts">' +
@@ -2614,10 +2628,10 @@ else document.addEventListener('DOMContentLoaded', initApp);
             '<span class="cyp-opt-price">' + (from ? formatMoney(from) + '<small>from</small>' : '—') + '</span></button>';
         }).join('') +
         '</div></div>' +
-        foot(null, 'Choose strength', 'next', !!CYP.size);
+        foot(null, HAS_STRENGTH ? 'Choose strength' : 'Name it', 'next', !!CYP.size);
 
-    } else if (CYP.step === 3) {
-      h = '<div class="cyp-step"><span class="cyp-step-label">Step 3 of 5</span>' +
+    } else if (stepName === 'Strength') {
+      h = stepLabel +
         '<h2 class="cyp-q">How strong should it be?</h2>' +
         '<p class="cyp-hint">Same scent either way — strength sets how long it stays with you.</p>' +
         '<div class="cyp-opts">' +
@@ -2637,8 +2651,8 @@ else document.addEventListener('DOMContentLoaded', initApp);
         '</div></div>' +
         foot(null, 'Name it', 'next', !!CYP.strength);
 
-    } else if (CYP.step === 4) {
-      h = '<div class="cyp-step"><span class="cyp-step-label">Step 4 of 5</span>' +
+    } else if (stepName === 'Name') {
+      h = stepLabel +
         '<h2 class="cyp-q">What should we call it?</h2>' +
         '<p class="cyp-hint">It goes on the label exactly as you type it — check it on the bottle.</p>' +
         '<div class="cyp-namefield">' +
@@ -2655,13 +2669,17 @@ else document.addEventListener('DOMContentLoaded', initApp);
       var v = variant();
       var fam = familyByLabel(CYP.family);
       var sellable = !!(v && v.available);
-      h = '<div class="cyp-step"><span class="cyp-step-label">Step 5 of 5</span>' +
+      h = stepLabel +
         '<h2 class="cyp-q">Your bottle</h2>' +
         '<div class="cyp-summary">' +
         '<div class="cyp-sum-row"><span>Scent family</span><b>' + attr(CYP.family) + '</b></div>' +
         (fam && fam.notes ? '<div class="cyp-sum-row"><span>Notes</span><b>' + attr(fam.notes) + '</b></div>' : '') +
         '<div class="cyp-sum-row"><span>Size</span><b>' + attr(CYP.size) + '</b></div>' +
-        '<div class="cyp-sum-row"><span>Strength</span><b>' + attr(CYP.strength) + '</b></div>' +
+        /* Shown whenever a strength is settled, not only when the shopper
+           picked it: on a product that sells one strength it is chosen for
+           them, and they should still see what is in the bottle they are
+           buying. The row is dropped only when there is no strength at all. */
+        (CYP.strength ? '<div class="cyp-sum-row"><span>Strength</span><b>' + attr(CYP.strength) + '</b></div>' : '') +
         '<div class="cyp-sum-row"><span>Name on bottle</span><b>' + attr(CYP.name.trim()) + '</b></div>' +
         '<div class="cyp-sum-row total"><span>Total</span><b>' + formatMoney(total()) + '</b></div>' +
         '</div>' +
@@ -2677,7 +2695,7 @@ else document.addEventListener('DOMContentLoaded', initApp);
 
     area.innerHTML = h;
     syncHidden();
-    if (CYP.step === 4) {
+    if (stepName === 'Name') {
       var input = document.getElementById('cypNameInput');
       if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
     }
@@ -2772,12 +2790,22 @@ else document.addEventListener('DOMContentLoaded', initApp);
     if (!cfg.variants || !cfg.variants.length || !cfg.families || !cfg.families.length) return;
     cfg.nameMax = parseInt(cfg.nameMax, 10) || 18;
 
-    /* The builder assumes two axes. A product built with only one — or with
-       its options named something else entirely — would otherwise reach step
-       two or three, find nothing to list, and leave a Continue button that
-       can never enable: a dead end with no stated cause, which is the failure
-       mode this whole page was written to avoid. Say so instead. */
-    if (!uniqueAt(sizeIdx()).length || !uniqueAt(strengthIdx()).length) {
+    /* Shape the flow to the product rather than assuming it.
+
+       Strength is optional. Two or more values and it earns a step; exactly
+       one and it is chosen for the shopper, because a question with a single
+       answer is not a question; none at all — a product created with Size
+       alone — and the axis does not exist, so findVariant matches on size.
+
+       Size is not optional: with nothing to pick there is no variant and no
+       price, and that is a dead end with no stated cause. Say so instead,
+       which is the failure this whole page was written to avoid. */
+    var strengths = uniqueAt(strengthIdx());
+    HAS_STRENGTH = strengths.length > 1;
+    if (strengths.length === 1) CYP.strength = strengths[0];
+    STEPS = ['Family', 'Size'].concat(HAS_STRENGTH ? ['Strength'] : [], ['Name', 'Review']);
+
+    if (!uniqueAt(sizeIdx()).length) {
       var area = document.getElementById('cypStepArea');
       if (area) {
         area.innerHTML = '<div class="cyp-step"><h2 class="cyp-q">Custom blending is briefly unavailable</h2>' +

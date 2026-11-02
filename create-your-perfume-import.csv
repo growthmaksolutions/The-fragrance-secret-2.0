@@ -1,0 +1,7 @@
+Handle,Title,Body (HTML),Vendor,Type,Tags,Published,Option1 Name,Option1 Value,Option2 Name,Option2 Value,Variant SKU,Variant Grams,Variant Inventory Tracker,Variant Inventory Qty,Variant Inventory Policy,Variant Fulfillment Service,Variant Price,Variant Requires Shipping,Variant Taxable,Status
+create-your-perfume,Create Your Perfume,"<p>Build your own fragrance: choose a scent family, a bottle size and a strength, then put your name on the label. Blended to order in the UAE and dispatched in 3–5 working days.</p>",The Fragrance Secrets,Perfume,"custom, made to order, create your perfume",FALSE,Size,50ml,Strength,Eau de Toilette,CYP-EDT-50,120,,,continue,manual,0.00,TRUE,TRUE,draft
+create-your-perfume,,,,,,,Size,50ml,Strength,Eau de Parfum,CYP-EDP-50,120,,,continue,manual,0.00,TRUE,TRUE,
+create-your-perfume,,,,,,,Size,50ml,Strength,Extrait,CYP-EXT-50,120,,,continue,manual,0.00,TRUE,TRUE,
+create-your-perfume,,,,,,,Size,100ml,Strength,Eau de Toilette,CYP-EDT-100,190,,,continue,manual,0.00,TRUE,TRUE,
+create-your-perfume,,,,,,,Size,100ml,Strength,Eau de Parfum,CYP-EDP-100,190,,,continue,manual,0.00,TRUE,TRUE,
+create-your-perfume,,,,,,,Size,100ml,Strength,Extrait,CYP-EXT-100,190,,,continue,manual,0.00,TRUE,TRUE,
