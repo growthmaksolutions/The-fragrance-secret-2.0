@@ -1,4 +1,4 @@
-<!-- tfs-deploy-probe-1 -->
+<!-- tfs-deploy-probe-2 -->
 {%- comment -%}
   Product detail page — native Shopify port of product.html.
   Driven by the `product` object (gallery, variants, price, description,
@@ -372,26 +372,6 @@
           {%- endcomment -%}
           {%- if section.settings.notify_source == 'builtin' -%}
             {% render 'back-in-stock', product: product, variant: cv %}
-          {%- endif -%}
-
-          {%- comment -%}
-            App block slot. This section had none, so an installed app had
-            nowhere to render on the product page — the block simply did not
-            appear in the theme editor's "Add block" list. Anything the
-            merchant adds here renders in source order.
-
-            block.shopify_attributes is required: it is what lets the theme
-            editor find, select and highlight the block. Without it the block
-            renders on the live page but cannot be clicked in the editor.
-          {%- endcomment -%}
-          {%- if section.blocks.size > 0 -%}
-            <div class="pdp-app-blocks">
-              {%- for block in section.blocks -%}
-                {%- if block.type == '@app' -%}
-                  <div class="pdp-app-block" {{ block.shopify_attributes }}>{% render block %}</div>
-                {%- endif -%}
-              {%- endfor -%}
-            </div>
           {%- endif -%}
 
           <!-- KEY INFO -->
@@ -925,7 +905,6 @@
     { "type": "collection_list", "id": "brand_collections", "label": "Brands to feature", "limit": 12, "info": "Leave empty to fall back to brand collections found automatically. The current product's own brand is always skipped." },
     { "type": "range", "id": "brand_limit", "label": "Brand cards to show", "min": 3, "max": 8, "step": 1, "default": 4 }
   ],
-  "blocks": [ { "type": "@app" } ],
   "presets": [ { "name": "Product page" } ]
 }
 {% endschema %}
