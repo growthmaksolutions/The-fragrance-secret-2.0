@@ -1902,3 +1902,196 @@ button.cyp-rail-step:hover .cyp-rail-l { color: var(--gold-lt); }
    not rendered at all in that case. */
 .pdp-app-blocks { margin: 18px 0 4px; }
 .pdp-app-block + .pdp-app-block { margin-top: 14px; }
+
+/* ══════════════════════════════════════════════════════════════
+   SMART PREORDER — "NOTIFY ME" WIDGET, RESTYLED TO THE HOUSE
+   The app draws a black, 8px-radius, bold-sans button and a white
+   popup. Left alone it reads as a third-party bolt-on sitting under
+   a gold-on-ink buy button.
+
+   It tries to adopt the theme's button automatically — preorder.js
+   copies the add-to-cart button's class names — but its filter drops
+   anything matching /(^|[-_])(submit|add|cart|atc|buy|checkout)/i and
+   our button's only class is .atc-btn. Nothing survives the filter, so
+   it falls back to the hardcoded dark look. Renaming .atc-btn to dodge
+   that filter would be the tail wagging the dog, so we restyle instead.
+
+   Two things make this fiddlier than a normal override:
+
+   1. The app's stylesheet is injected through content_for_header
+      (theme.liquid:226), which is BELOW this file's link tag — so on
+      equal specificity the app wins and we must out-specify it, not
+      merely match it. Repeating a class is the cheapest way to do that
+      without inventing wrapper elements, and it is the same trick the
+      app's own CSS uses to defend its close button against themes.
+
+      Two of its rules are already (0,2,0) and need three classes, not
+      two, to beat: `.etp-restock-btn:not(.etp-restock-btn--theme)`,
+      because the argument to :not() counts toward specificity, and
+      `.etp-restock-close.etp-restock-close`, which is doubled for the
+      same reason ours is. At (0,2,0) the !important colours would have
+      landed while padding and font-weight silently did not — a button
+      in the right colours and the wrong shape.
+
+   2. Colours and radii are applied as INLINE styles from the merchant's
+      app settings (preorder.js: style.background = t.formBg, and the
+      same for color, borderRadius, fontSize, border). No stylesheet
+      rule beats an inline style, so those specific properties — and
+      only those — carry !important.
+
+   Class names belong to the app and could change when it updates. If
+   the widget ever reverts to black, check these selectors against the
+   current preorder.css before assuming something else broke.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── trigger button: matches .btn-g ── */
+.etp-restock-btn.etp-restock-btn.etp-restock-btn {
+  background: var(--gold) !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--gold) !important;
+  border-radius: 3px !important;
+  font-size: .74rem !important;
+  font-family: var(--fb);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 14px 30px;
+  transition: all .3s var(--snap);
+}
+.etp-restock-btn.etp-restock-btn.etp-restock-btn:hover {
+  background: transparent !important;
+  /* --gold on white is about 2.2:1. The house .btn-g does exactly that,
+     but this button is new and sits on cream, so use the dark gold and
+     clear AA instead of inheriting a contrast problem. */
+  color: var(--gold-dk) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(201, 168, 76, .22);
+}
+.etp-restock-btn.etp-restock-btn.etp-restock-btn:focus-visible {
+  outline: 2px solid var(--gold-dk);
+  outline-offset: 2px;
+}
+.etp-restock .etp-restock-note {
+  font-family: var(--fb);
+  font-size: .76rem;
+  color: var(--warm);
+  opacity: 1;
+}
+
+/* ── popup: matches .tfs-overlay / .tfs-modal ── */
+.etp-restock-overlay.etp-restock-overlay {
+  background: rgba(13, 10, 6, .62);
+  backdrop-filter: blur(5px);
+}
+.etp-restock-modal.etp-restock-modal {
+  background: var(--cream) !important;
+  color: var(--ink) !important;
+  border-radius: 14px !important;
+  max-width: 440px;
+  padding: 30px 28px 26px;
+  box-shadow: 0 30px 70px rgba(13, 10, 6, .4);
+}
+.etp-restock-modal .etp-restock-header {
+  font-family: var(--fd);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.etp-restock-modal .etp-restock-desc {
+  font-family: var(--fb);
+  font-size: .84rem;
+  line-height: 1.65;
+  color: var(--warm);
+  opacity: 1;
+  margin-top: 8px;
+}
+
+/* ── close: matches .tfs-close ── */
+.etp-restock-close.etp-restock-close.etp-restock-close {
+  width: 34px;
+  height: 34px;
+  margin: -6px -8px 0 0;
+  border-radius: 50%;
+  background: rgba(13, 10, 6, .06);
+  color: var(--warm);
+  transition: all .3s var(--ease);
+}
+.etp-restock-close.etp-restock-close.etp-restock-close:hover {
+  background: var(--ink);
+  color: var(--gold);
+  transform: rotate(90deg);
+}
+
+/* ── fields: match .bis-input ── */
+.etp-restock-modal .etp-restock-email.etp-restock-email,
+.etp-restock-modal .etp-restock-name.etp-restock-name,
+.etp-restock-modal .etp-restock-variant.etp-restock-variant {
+  border: 1px solid var(--cream-dk);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--fb);
+  padding: 13px 14px;
+  /* 16px floor, or iOS Safari zooms the page on focus. The app sets this
+     too, at .etp-restock-overlay .etp-restock-email — same (0,2,0) as a
+     plain descendant rule here, and its sheet loads later, so matching it
+     was not enough to own the value. Hence the repeated class above: the
+     floor is now ours to keep, and a padding change here cannot quietly
+     reintroduce the zoom. */
+  font-size: 16px;
+}
+.etp-restock-modal .etp-restock-email::placeholder,
+.etp-restock-modal .etp-restock-name::placeholder { color: var(--muted); }
+.etp-restock-modal .etp-restock-email:focus-visible,
+.etp-restock-modal .etp-restock-name:focus-visible,
+.etp-restock-modal .etp-restock-variant:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold);
+}
+
+/* ── submit: matches .btn-g ── */
+.etp-restock-modal .etp-restock-submit,
+.etp-restock-submit.etp-restock-submit {
+  background: var(--gold) !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--gold) !important;
+  border-radius: 3px !important;
+  font-size: .74rem !important;
+  font-family: var(--fb);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  padding: 14px 30px;
+  margin-top: 4px;
+  transition: all .3s var(--snap);
+}
+.etp-restock-submit.etp-restock-submit:hover {
+  background: transparent !important;
+  color: var(--gold-dk) !important;
+  transform: translateY(-2px);
+}
+
+.etp-restock-modal .etp-restock-terms,
+.etp-restock-modal .etp-restock-msg {
+  font-family: var(--fb);
+  font-size: .72rem;
+  line-height: 1.6;
+  color: var(--muted);
+  opacity: 1;
+}
+.etp-restock-modal .etp-restock-consent {
+  font-family: var(--fb);
+  font-size: .78rem;
+  color: var(--warm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etp-restock-btn.etp-restock-btn.etp-restock-btn,
+  .etp-restock-submit.etp-restock-submit,
+  .etp-restock-close.etp-restock-close.etp-restock-close { transition: none; }
+  .etp-restock-btn.etp-restock-btn.etp-restock-btn:hover,
+  .etp-restock-submit.etp-restock-submit:hover { transform: none; }
+  .etp-restock-close.etp-restock-close.etp-restock-close:hover { transform: none; }
+}
