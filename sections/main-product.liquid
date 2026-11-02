@@ -354,14 +354,20 @@
             picked, so the page always offers something to do instead of a
             dead "Sold Out" button.
 
-            The built-in version emails the store and someone sends the alert
-            by hand — a theme cannot watch inventory. An app can, so the
-            "Notify me" setting switches this off in favour of an app block
-            placed in the slot below. It is a setting rather than an automatic
-            swap because an app block here is not necessarily a stock alert:
-            a size chart or an upsell widget would be placed the same way, and
-            silently hiding the fallback because of one of those would leave
-            sold-out products with nothing at all.
+            Off by default, because this is now the second notify form on the
+            page and the weaker one. A theme cannot watch inventory, so all
+            this version can do is email the store and wait for a human to
+            send the alert. The SMART Preorder & Back in Stock app watches
+            stock and emails the customer itself, and it injects its own
+            button through its app embed — not through the block slot below —
+            so there is nothing here to render alongside. Leaving both on
+            stacked two signup boxes under the Sold Out button.
+
+            Kept rather than deleted, and kept switchable, because the app is
+            the only thing now capturing that demand: uninstall it and this is
+            what the page falls back to. The whole mechanism still works —
+            the snippet, its styles, and the reveal logic in app.js that fills
+            in the variant when a sold-out size is picked.
           {%- endcomment -%}
           {%- if section.settings.notify_source == 'builtin' -%}
             {% render 'back-in-stock', product: product, variant: cv %}
@@ -906,13 +912,13 @@
       "type": "select",
       "id": "notify_source",
       "label": "\"Notify me\" form when sold out",
-      "default": "builtin",
+      "default": "off",
       "options": [
+        { "value": "off", "label": "Off — the SMART app's own button handles it" },
         { "value": "builtin", "label": "Built-in — emails the store, you send the alert by hand" },
-        { "value": "app", "label": "App block — add the app's block below" },
-        { "value": "off", "label": "Off — show nothing" }
+        { "value": "app", "label": "App block — an app block placed below" }
       ],
-      "info": "The built-in form captures the request but cannot watch stock, so the alert is manual. Choose App block once a back-in-stock app is installed and its block added below, so customers are emailed automatically."
+      "info": "Off is correct while the SMART Preorder & Back in Stock app is installed: it injects its own \"Email me when available\" button through its app embed, watches inventory and emails the customer automatically. Switch to Built-in only if that app is removed — that form still captures the request, but it emails the store and someone has to send the alert by hand."
     },
     { "type": "header", "content": "Explore other brands" },
     { "type": "collection_list", "id": "brand_collections", "label": "Brands to feature", "limit": 12, "info": "Leave empty to fall back to brand collections found automatically. The current product's own brand is always skipped." },
