@@ -110,6 +110,22 @@
         }
       </script>
 
+      {%- comment -%}
+        The product handle defaults to a stand-in so the page can go live
+        before the real one exists. That is only safe while nothing can be
+        bought — turn selling on without repointing the handle and every
+        custom bottle becomes an order for Custom Mixed Spray, at Custom
+        Mixed Spray's prices, with the shopper's scent family and name
+        attached to the wrong product. Editor-only: it is a merchant
+        mistake to catch in the editor, not a message for a shopper.
+      {%- endcomment -%}
+      {%- if request.design_mode and section.settings.checkout_enabled and section.settings.product_handle != 'create-your-perfume' -%}
+        <div class="cyp-setup">
+          <b>Check the product before you sell.</b>
+          <p>Adding to cart is on, but this page is still pointed at <code>{{ section.settings.product_handle }}</code>. Every order placed here will be for that product, at its prices. Import and publish <code>create-your-perfume</code>, set <i>Product handle</i> to match, and then leave selling on.</p>
+        </div>
+      {%- endif -%}
+
       <div class="cyp-grid">
 
         <!-- LIVE PREVIEW -->
@@ -292,7 +308,7 @@
     { "type": "text", "id": "soft_cta", "label": "Button label", "default": "Message us on WhatsApp" },
     { "type": "url", "id": "soft_url", "label": "Button link" },
     { "type": "header", "content": "Product" },
-    { "type": "text", "id": "product_handle", "label": "Product handle", "default": "create-your-perfume", "info": "A published product whose two options are named Size and Strength. Every price the builder quotes comes from its variants." },
+    { "type": "text", "id": "product_handle", "label": "Product handle", "default": "custom-mixed-spray", "info": "A published product whose two options are named Size and Strength \u2014 every price the builder quotes comes from its variants. Defaults to custom-mixed-spray, which already has that exact shape, so the page works before the real product exists. Point this at create-your-perfume once that product is imported and published." },
     { "type": "header", "content": "Hero" },
     { "type": "text", "id": "hero_crumb", "label": "Breadcrumb label", "default": "Create Your Perfume" },
     { "type": "text", "id": "hero_eyebrow", "label": "Eyebrow", "default": "Blended To Order In The UAE" },
