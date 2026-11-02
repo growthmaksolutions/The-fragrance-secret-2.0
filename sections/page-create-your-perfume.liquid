@@ -97,6 +97,11 @@
             {%- endfor -%}
           ],
           "designMode": {{ request.design_mode | json }},
+          "checkout": {{ section.settings.checkout_enabled | json }},
+          "softTitle": {{ section.settings.soft_title | json }},
+          "softText": {{ section.settings.soft_text | json }},
+          "softCta": {{ section.settings.soft_cta | json }},
+          "softUrl": {{ section.settings.soft_url | json }},
           "nameMax": {{ section.settings.name_max | default: 18 }},
           "namePlaceholder": {{ section.settings.name_placeholder | json }},
           "nameHelp": {{ section.settings.name_help | json }},
@@ -165,6 +170,11 @@
             line-item properties the builder sends. Same product, same
             properties, same order for whoever blends it — just no preview.
           {%- endcomment -%}
+          {%- comment -%}
+            Gated too. With orders off this form would be the one way left to
+            create a real cart line, which is exactly what is being withheld.
+          {%- endcomment -%}
+          {%- if section.settings.checkout_enabled -%}
           <noscript>
             <form action="{{ routes.cart_add_url }}" method="post" class="cyp-ns">
               <p class="cyp-ns-note">Our step-by-step builder needs JavaScript. You can still order a custom bottle here — we will blend it exactly the same way.</p>
@@ -194,6 +204,7 @@
               <button type="submit" name="add" class="btn-g">Add to Cart</button>
             </form>
           </noscript>
+          {%- endif -%}
         </div>
 
       </div>
@@ -274,6 +285,12 @@
 {
   "name": "Create Your Perfume",
   "settings": [
+    { "type": "header", "content": "Taking orders" },
+    { "type": "checkbox", "id": "checkout_enabled", "label": "Allow adding to cart", "default": false, "info": "Off while the page is being shown around before blending can fulfil real orders. The builder still runs and still quotes a price; the last step offers the message below instead of Add to Cart." },
+    { "type": "text", "id": "soft_title", "label": "Heading when orders are off", "default": "Opening soon" },
+    { "type": "textarea", "id": "soft_text", "label": "Message when orders are off", "default": "We are not taking custom orders just yet \u2014 tell us what you built and we will hold it for you the day we open." },
+    { "type": "text", "id": "soft_cta", "label": "Button label", "default": "Message us on WhatsApp" },
+    { "type": "url", "id": "soft_url", "label": "Button link" },
     { "type": "header", "content": "Product" },
     { "type": "text", "id": "product_handle", "label": "Product handle", "default": "create-your-perfume", "info": "A published product whose two options are named Size and Strength. Every price the builder quotes comes from its variants." },
     { "type": "header", "content": "Hero" },

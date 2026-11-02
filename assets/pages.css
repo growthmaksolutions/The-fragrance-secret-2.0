@@ -2095,3 +2095,22 @@ button.cyp-rail-step:hover .cyp-rail-l { color: var(--gold-lt); }
   .etp-restock-submit.etp-restock-submit:hover { transform: none; }
   .etp-restock-close.etp-restock-close.etp-restock-close:hover { transform: none; }
 }
+
+/* Review step while orders are off — see the checkout gate in app.js.
+   Deliberately not styled as an error: this is a planned state, so it reads
+   like the gold lead-time note above it rather than a warning. */
+.cyp-softclose {
+  display: flex; gap: 12px; margin-top: 16px; padding: 15px 16px;
+  border: 1px solid rgba(201, 168, 76, .3); border-radius: 10px;
+  background: rgba(201, 168, 76, .09);
+}
+.cyp-softclose .mi { flex-shrink: 0; font-size: 20px; color: var(--gold); }
+.cyp-softclose strong {
+  display: block; margin-bottom: 4px;
+  font-family: var(--fb); font-size: .8rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--gold-lt);
+}
+.cyp-softclose p { font-size: .8rem; line-height: 1.65; color: rgba(255, 255, 255, .62); }
+/* The replacement CTA is an <a>, so it needs the anchor reset .cyp-next
+   never did and the centring a flex child does not inherit. */
+a.cyp-next { text-decoration: none; justify-content: center; }

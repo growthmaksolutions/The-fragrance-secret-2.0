@@ -2686,8 +2686,32 @@ else document.addEventListener('DOMContentLoaded', initApp);
         (cfg.leadTime ? '<div class="cyp-eta"><span class="mi" aria-hidden="true">schedule</span><span>' + cfg.leadTime + '</span></div>' : '') +
         '<p class="cyp-final-note">Personalised bottles are made for you, so they sit outside our standard returns window — please check the name above.</p>' +
         (fam && fam.url ? '<a class="cyp-browse" href="' + attr(fam.url) + '">Or see ready-made ' + attr(CYP.family) + ' bottles ' + arrowSVG + '</a>' : '') +
-        '</div>' +
-        '<div class="cyp-foot">' +
+        '</div>';
+
+      /* Checkout off: the whole builder still runs, the bottle is still
+         quoted, but the last click does not create a cart line. This is for
+         the window where the page is live and being shown around before the
+         blending operation is ready to take real orders — the alternative
+         is a shopper paying for something nobody can make yet.
+
+         The button is replaced, not disabled. A greyed-out Add to Cart reads
+         as something broken; a sentence saying it opens soon, with a way to
+         register interest, reads as deliberate. */
+      if (!cfg.checkout) {
+        h += '<div class="cyp-softclose">' +
+          '<span class="mi" aria-hidden="true">schedule</span>' +
+          '<div><strong>' + (cfg.softTitle || 'Opening soon') + '</strong>' +
+          '<p>' + (cfg.softText || 'Custom blending is not taking orders just yet.') + '</p></div></div>' +
+          '<div class="cyp-foot">' +
+          '<button type="button" class="cyp-back" data-cyp-back>Back</button>' +
+          (cfg.softUrl
+            ? '<a class="cyp-next" href="' + attr(cfg.softUrl) + '">' + attr(cfg.softCta || 'Talk to us') + ' ' + arrowSVG + '</a>'
+            : '') +
+          '</div>';
+        return void (area.innerHTML = h, paintRail(), paintPreview(), syncHidden());
+      }
+
+      h += '<div class="cyp-foot">' +
         '<button type="button" class="cyp-back" data-cyp-back>Back</button>' +
         '<button type="button" class="cyp-next" data-cyp-action="add"' + (sellable ? '' : ' disabled') + '>' +
         (sellable ? 'Add to Cart — ' + formatMoney(total()) : 'Combination sold out') + '</button></div>';
@@ -2721,6 +2745,10 @@ else document.addEventListener('DOMContentLoaded', initApp);
   }
 
   function addToCart() {
+    /* Checked here as well as at render: the button is not supposed to exist
+       with checkout off, and if it somehow does, this is what stops a line
+       being created for an order nobody can fulfil. */
+    if (!cfg.checkout) { toast(cfg.softTitle || 'Not taking orders yet'); return; }
     var v = variant();
     if (!v || !v.available) { toast('That combination is unavailable — please pick another'); return; }
     syncHidden();
