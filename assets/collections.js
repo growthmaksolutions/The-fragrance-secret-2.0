@@ -10,10 +10,10 @@
 /* ── Shared content pools ────────────────────────────────────────── */
 /* The free-delivery threshold, as the store currently promises it, set from
    Theme settings in layout/theme.liquid. The fallback keeps this file honest
-   if it is ever loaded without that global. Written "AED 250" to match how
-   the rest of the site says it in prose — money_with_currency's "250.00 AED"
+   if it is ever loaded without that global. Written "AED 300" to match how
+   the rest of the site says it in prose — money_with_currency's "300.00 AED"
    reads wrong mid-sentence. */
-const FREE_SHIP_LABEL = 'AED ' + (window.FREE_SHIPPING_THRESHOLD || 250);
+const FREE_SHIP_LABEL = 'AED ' + (window.FREE_SHIPPING_THRESHOLD || 300);
 
 /* The return window, from the same settings. The wording around it is fixed
    rather than generated: this store accepts returns only on faulty, wrong or
