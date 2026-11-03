@@ -31,6 +31,25 @@
 {%- liquid
   assign wo_code = settings.welcome_offer_code | default: '' | strip | upcase
   assign wo_pct = settings.welcome_offer_percent | default: '10' | strip
+
+  # The offer is either a percentage or a flat amount, and every line of copy
+  # below needs to say whichever it is. One label, built once: a percentage
+  # capped at a maximum is not a thing Shopify can express, so a capped offer
+  # is set up as the flat amount it always resolves to above the minimum, and
+  # the storefront has to be able to say "AED 20" where it used to say "10%".
+  # Trailing zeros dropped — "AED 20" is what the discount is called, "AED
+  # 20.00" is what a receipt calls it.
+  assign wo_kind = settings.welcome_offer_kind | default: 'percent'
+  assign wo_amt = settings.welcome_offer_amount | default: '' | strip
+  capture wo_label
+    if wo_kind == 'amount' and wo_amt != blank
+      assign wo_amt_cents = wo_amt | times: 100
+      echo wo_amt_cents | money_without_trailing_zeros
+    else
+      echo wo_pct
+      echo '%'
+    endif
+  endcapture
   assign wo_style = style | default: 'row'
 
   # Cart-level applications carry the code as their title, so this is what
@@ -95,13 +114,13 @@
   {%- if wo_style == 'cta' -%}
     {%- if customer -%}
       {%- if wo_applied -%}
-        <span class="wo-active"><span class="mi" aria-hidden="true">check_circle</span>Your {{ wo_pct }}% welcome discount is on the bag — <b>{{ wo_code }}</b>{% if wo_min_cents > 0 %}, from {{ wo_min_cents | money_with_currency }}{% endif %}</span>
+        <span class="wo-active"><span class="mi" aria-hidden="true">check_circle</span>Your {{ wo_label }} welcome discount is on the bag — <b>{{ wo_code }}</b>{% if wo_min_cents > 0 %}, from {{ wo_min_cents | money_with_currency }}{% endif %}</span>
         <a class="btn-o" href="{{ routes.all_products_collection_url }}"><span class="mi" aria-hidden="true">storefront</span>Start shopping</a>
       {%- else -%}
-        <a class="btn-g" href="{{ wo_apply_url | strip }}"><span class="mi" aria-hidden="true">redeem</span>Apply my {{ wo_pct }}% discount</a>
+        <a class="btn-g" href="{{ wo_apply_url | strip }}"><span class="mi" aria-hidden="true">redeem</span>Apply my {{ wo_label }} discount</a>
       {%- endif -%}
     {%- else -%}
-      <a class="btn-g" href="{{ routes.account_register_url }}"><span class="mi" aria-hidden="true">person_add</span>Claim {{ wo_pct }}% Discount</a>
+      <a class="btn-g" href="{{ routes.account_register_url }}"><span class="mi" aria-hidden="true">person_add</span>Claim {{ wo_label }} Discount</a>
     {%- endif -%}
 
   {%- comment -%}
@@ -118,18 +137,18 @@
         {%- endcomment -%}
         <div class="wo-row is-wait">
           <span class="mi" aria-hidden="true">schedule</span>
-          <span><b>{{ wo_code }}</b> is on your bag — {{ wo_pct }}% comes off at {{ wo_min_cents | money_with_currency }}. Add <b>{{ wo_short | money_with_currency }}</b> more.</span>
+          <span><b>{{ wo_code }}</b> is on your bag — {{ wo_label }} comes off at {{ wo_min_cents | money_with_currency }}. Add <b>{{ wo_short | money_with_currency }}</b> more.</span>
         </div>
       {%- else -%}
         <div class="wo-row is-on">
           <span class="mi" aria-hidden="true">check_circle</span>
-          <span>Welcome discount <b>{{ wo_code }}</b> applied — {{ wo_pct }}% off this order.</span>
+          <span>Welcome discount <b>{{ wo_code }}</b> applied — {{ wo_label }} off this order.{% if settings.welcome_offer_excludes_shipping %} Delivery is charged at the standard rate on this order.{% endif %}</span>
         </div>
       {%- endif -%}
     {%- else -%}
       <a class="wo-row" href="{{ wo_apply_url | strip }}">
         <span class="mi" aria-hidden="true">redeem</span>
-        <span>You have <b>{{ wo_pct }}% off</b> your first order{% if wo_min_cents > 0 %} over {{ wo_min_cents | money_with_currency }}{% endif %} — apply it</span>
+        <span>You have <b>{{ wo_label }} off</b> your first order{% if wo_min_cents > 0 %} over {{ wo_min_cents | money_with_currency }}{% endif %} — apply it{% if settings.welcome_offer_excludes_shipping %} instead of free delivery{% endif %}</span>
         <span class="mi wo-go" aria-hidden="true">arrow_forward</span>
       </a>
     {%- endif -%}

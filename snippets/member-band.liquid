@@ -31,6 +31,22 @@
 {%- liquid
   assign wo_pct = settings.welcome_offer_percent | default: '10' | strip
 
+  # Same label the control inside the band uses, built the same way, so the
+  # headline and the button cannot name two different offers. See
+  # snippets/welcome-offer.liquid for why a capped percentage is stored as a
+  # flat amount.
+  assign wo_kind = settings.welcome_offer_kind | default: 'percent'
+  assign wo_amt = settings.welcome_offer_amount | default: '' | strip
+  capture wo_label
+    if wo_kind == 'amount' and wo_amt != blank
+      assign wo_amt_cents = wo_amt | times: 100
+      echo wo_amt_cents | money_without_trailing_zeros
+    else
+      echo wo_pct
+      echo '%'
+    endif
+  endcapture
+
   # The discount has a floor, so the band that advertises it says so. Kept as
   # cents for the money filter, exactly as welcome-offer does.
   assign wo_min = settings.welcome_offer_min | default: '' | strip
@@ -83,11 +99,11 @@
               below carries the state; the heading just has to be true either
               way.
             {%- endcomment -%}
-            <h2 class="sec-title">Your {{ wo_pct }}% <em>Welcome Discount</em></h2>
+            <h2 class="sec-title">Your {{ wo_label }} <em>Welcome Discount</em></h2>
             <p class="sec-sub">You're a member, so the welcome discount is yours on your first order{{ wo_over }} — it comes off the total at checkout. It sits alongside everything else in your account: saved fragrances, faster checkout, full order history and member-only offers through the year.</p>
           {%- else -%}
-            <h2 class="sec-title">Enjoy {{ wo_pct }}% Off <em>Your First Perfume Order</em></h2>
-            <p class="sec-sub">Create your free account and become part of The Fragrance Secrets community. Your {{ wo_pct }}% welcome discount is put on your bag the moment you join — no code to copy, no email to wait for{% if wo_min_cents > 0 %}, on any first order over {{ wo_min_cents | money_with_currency }}{% endif %}. Save your favourite fragrances, enjoy faster checkout, track every order, and unlock exclusive member-only offers throughout the year.</p>
+            <h2 class="sec-title">Enjoy {{ wo_label }} Off <em>Your First Perfume Order</em></h2>
+            <p class="sec-sub">Create your free account and become part of The Fragrance Secrets community. Your {{ wo_label }} welcome discount is put on your bag the moment you join — no code to copy, no email to wait for{% if wo_min_cents > 0 %}, on any first order over {{ wo_min_cents | money_with_currency }}{% endif %}. Save your favourite fragrances, enjoy faster checkout, track every order, and unlock exclusive member-only offers throughout the year.</p>
           {%- endif -%}
         {%- else -%}
           <h2 class="sec-title">Create Your <em>Fragrance Account</em></h2>
@@ -105,8 +121,8 @@
 
       <div class="member-card">
         {%- if wo_on -%}
-          <div class="mc-disc"><b>{{ wo_pct }}%</b><span>Welcome Discount</span></div>
-          <div class="mc-perk"><span class="mi" aria-hidden="true">percent</span><div><b>Instant {{ wo_pct }}% welcome discount</b><span>{% if wo_min_cents > 0 %}On first orders over {{ wo_min_cents | money_with_currency }}{% else %}On your bag the moment you join{% endif %}</span></div></div>
+          <div class="mc-disc"><b>{{ wo_label }}</b><span>Welcome Discount</span></div>
+          <div class="mc-perk"><span class="mi" aria-hidden="true">percent</span><div><b>Instant {{ wo_label }} welcome discount</b><span>{% if wo_min_cents > 0 %}On first orders over {{ wo_min_cents | money_with_currency }}{% else %}On your bag the moment you join{% endif %}</span></div></div>
         {%- endif -%}
         <div class="mc-perk"><span class="mi" aria-hidden="true">favorite</span><div><b>Save your favourite fragrances</b><span>Build your personal wishlist</span></div></div>
         <div class="mc-perk"><span class="mi" aria-hidden="true">local_shipping</span><div><b>Track every order</b><span>Full order history in one place</span></div></div>
