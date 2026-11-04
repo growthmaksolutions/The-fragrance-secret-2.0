@@ -1,0 +1,39 @@
+{%- comment -%}
+  The welcome offer, named — "AED 10" or "10%", whichever it currently is.
+
+  Usage: {% render 'welcome-offer-label' %}
+
+  Outputs the label and nothing else, so it drops straight into a sentence:
+      Claim {% render 'welcome-offer-label' %} off your first order
+
+  ── Why it is its own file ───────────────────────────────────────────────
+
+  The offer can be a percentage or a flat amount, and every line of copy that
+  mentions it has to say whichever is set. That decision was written out
+  twice — in welcome-offer.liquid and member-band.liquid — and skipped
+  entirely in two more places, which simply printed the percentage with a %
+  after it. So when the offer changed from 5% to a flat AED 10, the cart and
+  the membership band updated and the sign-up page went on promising "your 5%
+  welcome discount" against a discount that no longer existed.
+
+  One copy now, rendered everywhere. A snippet rather than a shared assign
+  because render is scoped: a variable set in one file cannot be read in
+  another, and a capture in each caller is how the duplication started.
+
+  Trailing zeros are dropped deliberately — "AED 10" is what the discount is
+  called; "AED 10.00" is what a receipt calls it.
+{%- endcomment -%}
+
+{%- liquid
+  assign wol_kind = settings.welcome_offer_kind | default: 'percent'
+  assign wol_amt = settings.welcome_offer_amount | default: '' | strip
+  assign wol_pct = settings.welcome_offer_percent | default: '10' | strip
+
+  if wol_kind == 'amount' and wol_amt != blank
+    assign wol_cents = wol_amt | times: 100
+    echo wol_cents | money_without_trailing_zeros
+  else
+    echo wol_pct
+    echo '%'
+  endif
+-%}

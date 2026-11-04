@@ -27,7 +27,7 @@
               assign reg_min_cents = reg_min | times: 100
             endif
           -%}
-          <span>Your <b>{{ settings.welcome_offer_percent | default: '10' | strip }}% welcome discount</b> goes on your bag as soon as the account is created{% if reg_min_cents > 0 %}, and comes off any first order over {{ reg_min_cents | money_with_currency }}{% endif %}.</span>
+          <span>Your <b>{% render 'welcome-offer-label' %} welcome discount</b> goes on your bag as soon as the account is created{% if reg_min_cents > 0 %}, and comes off any first order over {{ reg_min_cents | money_with_currency }}{% endif %}.</span>
         </div>
       {%- endif -%}
       {%- form 'create_customer' -%}

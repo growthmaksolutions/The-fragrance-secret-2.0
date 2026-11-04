@@ -30,7 +30,6 @@
 
 {%- liquid
   assign wo_code = settings.welcome_offer_code | default: '' | strip | upcase
-  assign wo_pct = settings.welcome_offer_percent | default: '10' | strip
 
   # The offer is either a percentage or a flat amount, and every line of copy
   # below needs to say whichever it is. One label, built once: a percentage
@@ -39,17 +38,10 @@
   # the storefront has to be able to say "AED 20" where it used to say "10%".
   # Trailing zeros dropped — "AED 20" is what the discount is called, "AED
   # 20.00" is what a receipt calls it.
-  assign wo_kind = settings.welcome_offer_kind | default: 'percent'
-  assign wo_amt = settings.welcome_offer_amount | default: '' | strip
   capture wo_label
-    if wo_kind == 'amount' and wo_amt != blank
-      assign wo_amt_cents = wo_amt | times: 100
-      echo wo_amt_cents | money_without_trailing_zeros
-    else
-      echo wo_pct
-      echo '%'
-    endif
+    render 'welcome-offer-label'
   endcapture
+  assign wo_label = wo_label | strip
   assign wo_style = style | default: 'row'
 
   # Cart-level applications carry the code as their title, so this is what

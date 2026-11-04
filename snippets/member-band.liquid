@@ -29,23 +29,15 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign wo_pct = settings.welcome_offer_percent | default: '10' | strip
 
   # Same label the control inside the band uses, built the same way, so the
   # headline and the button cannot name two different offers. See
   # snippets/welcome-offer.liquid for why a capped percentage is stored as a
   # flat amount.
-  assign wo_kind = settings.welcome_offer_kind | default: 'percent'
-  assign wo_amt = settings.welcome_offer_amount | default: '' | strip
   capture wo_label
-    if wo_kind == 'amount' and wo_amt != blank
-      assign wo_amt_cents = wo_amt | times: 100
-      echo wo_amt_cents | money_without_trailing_zeros
-    else
-      echo wo_pct
-      echo '%'
-    endif
+    render 'welcome-offer-label'
   endcapture
+  assign wo_label = wo_label | strip
 
   # The discount has a floor, so the band that advertises it says so. Kept as
   # cents for the money filter, exactly as welcome-offer does.

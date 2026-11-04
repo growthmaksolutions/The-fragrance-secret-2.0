@@ -464,7 +464,7 @@
               endif
             -%}
             {%- if wo_show -%}
-              <div class="pt-item"><span class="mi" aria-hidden="true">redeem</span><span><strong>Claim {{ settings.welcome_offer_percent | default: '10' }}% Discount</strong> — Get {{ settings.welcome_offer_percent | default: '10' }}% off your first order above AED {{ settings.welcome_offer_min | default: '150' }}</span></div>
+              <div class="pt-item"><span class="mi" aria-hidden="true">redeem</span><span><strong>Claim {% render 'welcome-offer-label' %} Off</strong> — Get {% render 'welcome-offer-label' %} off your first order above AED {{ settings.welcome_offer_min | default: '150' }}</span></div>
             {%- endif -%}
           </div>
 
