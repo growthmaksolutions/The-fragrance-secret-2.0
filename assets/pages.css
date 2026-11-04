@@ -1580,6 +1580,65 @@ body.jdgm-modal-open .sticky-atc {
   .oer-star:hover { transform: none; }
 }
 
+/* ── Welcome offer popup ─────────────────────────────────────────────────
+   "Get AED 10 off your first order". Markup in snippets/welcome-popup.liquid,
+   timing in app.js. Bottom-left like the review prompt, and for the same
+   reason — the WhatsApp float and the chat launcher both own bottom-right.
+   The two never appear together: the review prompt needs a delivered order,
+   this one disappears the moment there is one. */
+.wpop {
+  position: fixed; left: 22px; bottom: 22px; z-index: 900;
+  width: 340px; max-width: calc(100vw - 32px); box-sizing: border-box;
+  background: var(--white); border: 1px solid var(--cream-dk); border-radius: 12px;
+  padding: 18px 20px 16px; box-shadow: 0 18px 44px -14px rgba(13,10,6,.3);
+  opacity: 0; transform: translateY(14px);
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+}
+.wpop.is-up { opacity: 1; transform: translateY(0); }
+
+.wpop-x {
+  position: absolute; top: 8px; right: 8px; border: 0; background: none;
+  color: var(--warm); cursor: pointer; padding: 5px; line-height: 1; border-radius: 50%;
+}
+.wpop-x:hover { color: var(--ink); background: var(--cream); }
+.wpop-x .mi { font-size: 18px; }
+
+.wpop-body { display: flex; gap: 12px; align-items: flex-start; margin-right: 20px; }
+.wpop-icon { font-size: 26px; color: var(--gold-dk); flex: none; margin-top: 1px; }
+/* min-width:0 so the copy can shrink inside the flex row rather than pushing
+   the card past its own max-width. */
+.wpop-copy { min-width: 0; }
+.wpop-title { font-size: .95rem; font-weight: 600; color: var(--ink); margin: 0 0 3px; line-height: 1.35; }
+.wpop-sub { font-size: .76rem; color: var(--warm); margin: 0; line-height: 1.45; }
+
+.wpop-go {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin: 14px 0 0; padding: 11px 14px; border-radius: 8px;
+  background: var(--gold); color: var(--ink);
+  font-family: var(--fb); font-size: .8rem; font-weight: 700; letter-spacing: .02em;
+  transition: background .16s;
+}
+.wpop-go:hover { background: var(--gold-dk); }
+.wpop-go .mi { font-size: 18px; }
+.wpop-go:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.wpop-no {
+  display: block; width: 100%; margin: 8px 0 0; padding: 6px;
+  border: 0; background: none; cursor: pointer;
+  font-size: .74rem; color: var(--muted); text-decoration: underline;
+}
+.wpop-no:hover { color: var(--ink); }
+
+@media (max-width: 560px) {
+  /* Above the floating buttons rather than beside them: at this width there
+     is no beside. */
+  .wpop { left: 16px; right: 16px; width: auto; bottom: 86px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wpop { transition: none; }
+}
+
 /* ── Review prompt ────────────────────────────────────────────────────────
    The storefront popup asking about something already delivered. Markup in
    snippets/review-prompt.liquid, timing in app.js. Bottom-left on desktop so

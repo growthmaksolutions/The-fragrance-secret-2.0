@@ -1,0 +1,112 @@
+{%- comment -%}
+  "Get AED 10 off your first order" — the storefront popup.
+
+  Usage: {% render 'welcome-popup' %} from overlays, so it is on every
+  template that renders the overlay group.
+
+  ── What it does, and what it deliberately does not ──────────────────────
+
+  It applies the discount. /discount/CODE?redirect= is the same documented
+  route the membership band and the cart strip use — see
+  snippets/welcome-offer.liquid for why that is a real navigation rather than
+  a background fetch. It does not print the code for the shopper to copy and
+  it does not ask for an email: the code already exists and is already
+  claimable, so a form here would collect an address in exchange for
+  something the next click gives away anyway.
+
+  ── Who never sees it ────────────────────────────────────────────────────
+
+  Decided in Liquid wherever Liquid can decide, so the markup is absent
+  rather than hidden. A customer who has ordered cannot use a first-order
+  discount. A bag already carrying the code has nothing to offer. Promotions
+  switched off, or the offer switched off, removes it with everything else.
+
+  The rest is in app.js, because it depends on where the shopper is and what
+  they have already dismissed, and Liquid knows neither: not over the cart,
+  the checkout or the account pages — interrupting someone on their way to
+  paying, or in the middle of the sign-up that was going to apply this
+  anyway, is the one thing this must never do.
+
+  ── Why the offer is not written out here ────────────────────────────────
+
+  {% render 'welcome-offer-label' %} names it, and the minimum comes from the
+  same setting the discount in admin is kept in step with. A popup is the
+  loudest promise on the site; it is the last place that should be repeating
+  a figure by hand.
+{%- endcomment -%}
+
+{%- liquid
+  assign wp_code = settings.welcome_offer_code | default: '' | strip | upcase
+
+  # Already on the bag: the cart-level applications carry the code as their
+  # title, the same test welcome-offer makes.
+  assign wp_applied = false
+  for wp_d in cart.cart_level_discount_applications
+    assign wp_title = wp_d.title | upcase
+    if wp_title == wp_code
+      assign wp_applied = true
+    endif
+  endfor
+
+  assign wp_spent = false
+  if customer and customer.orders_count > 0
+    assign wp_spent = true
+  endif
+
+  assign wp_on = false
+  if settings.welcome_popup_enabled and settings.promos_enabled and settings.welcome_offer_enabled and wp_code != blank and wp_spent == false and wp_applied == false
+    assign wp_on = true
+  endif
+
+  assign wp_min = settings.welcome_offer_min | default: '' | strip
+  assign wp_min_cents = 0
+  if wp_min != blank
+    assign wp_min_cents = wp_min | times: 100
+  endif
+
+  assign wp_back = request.path | default: '/'
+-%}
+
+{%- if wp_on -%}
+  {%- capture wp_url -%}/discount/{{ wp_code | url_encode }}?redirect={{ wp_back | url_encode }}{%- endcapture -%}
+
+  {%- comment -%}
+    hidden until app.js decides, so it cannot flash on first paint — the same
+    contract the review prompt uses. role="dialog" rather than alertdialog:
+    nothing here is urgent, and alertdialog asks a screen reader to interrupt.
+    It is not modal and does not trap focus, because it does not cover the
+    page: a shopper can ignore it and carry on reading, which is the whole
+    reason it sits in a corner rather than over the middle.
+  {%- endcomment -%}
+  <div class="wpop" id="welcomePopup" role="dialog" aria-labelledby="wpopTitle" data-wpop hidden>
+    <button type="button" class="wpop-x" data-wpop-dismiss aria-label="No thanks, close this offer">
+      <span class="mi" aria-hidden="true">close</span>
+    </button>
+
+    <div class="wpop-body">
+      <span class="mi wpop-icon" aria-hidden="true">redeem</span>
+      <div class="wpop-copy">
+        <p class="wpop-title" id="wpopTitle">Get {% render 'welcome-offer-label' %} off your first order</p>
+        <p class="wpop-sub">
+          {%- if wp_min_cents > 0 -%}
+            On your first order over {{ wp_min_cents | money_with_currency }}. Applied to your bag in one tap — no code to copy.
+          {%- else -%}
+            Applied to your bag in one tap — no code to copy.
+          {%- endif -%}
+        </p>
+      </div>
+    </div>
+
+    {%- comment -%}
+      A real href, so it works before app.js has bound anything and for anyone
+      navigating by keyboard. app.js only records the dismissal on the way
+      out; it never has to intercept the click.
+    {%- endcomment -%}
+    <a class="wpop-go" href="{{ wp_url | strip }}" data-wpop-go>
+      <span class="mi" aria-hidden="true">local_offer</span>
+      Apply my {% render 'welcome-offer-label' %} discount
+    </a>
+
+    <button type="button" class="wpop-no" data-wpop-dismiss>No thanks</button>
+  </div>
+{%- endif -%}

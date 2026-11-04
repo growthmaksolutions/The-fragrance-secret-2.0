@@ -1133,6 +1133,76 @@ function selectQuiz(node, val) {
 })();
 
 /* ═══════════════════════════════════════
+   WELCOME OFFER POPUP
+   snippets/welcome-popup.liquid has the reasoning and every gate Liquid can
+   apply — it writes no markup at all for a customer who has ordered, a bag
+   already carrying the code, or promotions switched off. This decides the
+   two things Liquid cannot see: where the shopper is standing, and whether
+   they have already said no.
+═══════════════════════════════════════ */
+(function () {
+  var DELAY = 6000;
+  var KEY = 'tfs_welcome_popup';
+
+  function init() {
+    var pop = document.querySelector('[data-wpop]');
+    if (!pop) return;
+
+    /* A failure to read is treated as "already shown", exactly as the review
+       prompt treats it: a popup that cannot remember being closed is a popup
+       on every page load, which is worse than never showing it at all. */
+    try { if (window.localStorage.getItem(KEY)) return; }
+    catch (e) { return; }
+
+    /* Not where someone is paying, and not where they are signing up. The
+       account pages already put this discount on the bag by themselves, so a
+       popup offering it there is both redundant and in front of the form that
+       was about to deliver it. */
+    var path = location.pathname.replace(/\/$/, '');
+    if (/\/(cart|checkout|account)/.test(path)) return;
+
+    /* A shopper the cashback partner sent is shown no offer of ours, whatever
+       the settings say — snippets/cashback-attribution.liquid sets this class
+       in the head, so it is already on the element by now. */
+    if (document.documentElement.classList.contains('cb-on')) return;
+
+    function done() {
+      try { window.localStorage.setItem(KEY, '1'); } catch (e) {}
+    }
+
+    function hide() {
+      pop.classList.remove('is-up');
+      setTimeout(function () { pop.hidden = true; }, 320);
+    }
+
+    pop.addEventListener('click', function (e) {
+      if (e.target.closest('[data-wpop-dismiss]')) { e.preventDefault(); done(); hide(); return; }
+      /* Apply is a real link and is left to navigate on its own; this only
+         stops the popup returning on the page it lands on. */
+      if (e.target.closest('[data-wpop-go]')) done();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !pop.hidden) { done(); hide(); }
+    });
+
+    /* Dismissed for good rather than for a week. The band above the footer and
+       the cart strip both still carry this offer; the popup is the only one of
+       the three that interrupts, so it gets one chance to be ignored. */
+    setTimeout(function () {
+      pop.hidden = false;
+      /* Force the reflow so the entrance runs from its start value, the same
+         way the cart drawer and the review prompt do. */
+      void pop.offsetWidth;
+      pop.classList.add('is-up');
+    }, DELAY);
+  }
+
+  if (document.readyState !== 'loading') init();
+  else document.addEventListener('DOMContentLoaded', init);
+})();
+
+/* ═══════════════════════════════════════
    FIND MY SCENT → CHAT APP BRIDGE
    The in-theme concierge was removed; chat is handled by the Chizy AI chatbot
    app, which injects its own launcher. Every "Find My Scent" action in the
