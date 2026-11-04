@@ -22,6 +22,12 @@
 
   Trailing zeros are dropped deliberately — "AED 10" is what the discount is
   called; "AED 10.00" is what a receipt calls it.
+
+  Every file that renders this one depends on it existing. Shopify validates
+  a theme on upload and refuses a template whose snippet is absent, so on a
+  deploy that splits them the callers are rejected and the previous versions
+  stay live — wrong copy, no error anywhere. Keep this file in the same
+  commit as anything that starts rendering it.
 {%- endcomment -%}
 
 {%- liquid

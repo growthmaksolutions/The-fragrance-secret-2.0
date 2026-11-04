@@ -16,6 +16,14 @@
         survive the trip. Static copy rather than the welcome-offer snippet:
         this page is only ever seen logged out, where that snippet's job is to
         render the button that got them here.
+
+        The offer is named by welcome-offer-label, which must exist in the
+        theme before this file does. A deploy that carried this page without
+        that snippet was rejected by Shopify and silently left the October
+        version live, still printing a percentage against an offer that had
+        become a flat amount — the page went on promising 5% for a day after
+        the discount stopped being a percentage at all. If this line is ever
+        moved to a new snippet, ship the snippet first.
       {%- endcomment -%}
       {%- if settings.welcome_offer_enabled and settings.welcome_offer_code != blank -%}
         <div class="wo-row">
