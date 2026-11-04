@@ -21,6 +21,31 @@
   # surface — and into sixteen sentences that quoted it in prose.
   assign free_ship_threshold = settings.free_shipping_threshold | default: 250 | times: 100
   assign remaining = free_ship_threshold | minus: cart.total_price
+
+  comment
+    A discounted bag does not also get free delivery. The store gives one or
+    the other, and Shopify enforces it through the automatic free-delivery
+    discount, which is set not to combine with an order discount — so a bag
+    carrying a code pays the standard rate however large it is.
+
+    The bar has to say the same thing or it promises something checkout then
+    refuses. cart_level_discount_applications is the test because that is
+    exactly what the automatic discount refuses to sit alongside; a line-level
+    or product discount is not an order discount and does not block anything.
+
+    Gated on the setting so a store that lets the two stack keeps the plain
+    threshold behaviour.
+  endcomment
+  assign fd_blocked = false
+  if settings.welcome_offer_excludes_shipping and cart.cart_level_discount_applications.size > 0
+    assign fd_blocked = true
+  endif
+
+  assign fd_met = false
+  if fd_blocked == false and cart.total_price >= free_ship_threshold
+    assign fd_met = true
+  endif
+
   if cart.total_price >= free_ship_threshold
     assign ship_pct = 100
   else
@@ -40,7 +65,9 @@
       {%- if cart.item_count > 0 -%}
         {%- comment -%} Free-delivery progress, same threshold as the cart page. {%- endcomment -%}
         <div class="cd-ship">
-          {%- if cart.total_price >= free_ship_threshold -%}
+          {%- if fd_blocked -%}
+            <span class="cd-ship-msg">Your discount is applied — delivery is charged at the standard rate on this order.</span>
+          {%- elsif fd_met -%}
             <span class="cd-ship-msg is-met"><span class="mi" aria-hidden="true">local_shipping</span>You've unlocked free UAE delivery</span>
           {%- else -%}
             <span class="cd-ship-msg">You’re <b>{{ remaining | money_with_currency }}</b> away from free UAE delivery</span>
