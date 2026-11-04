@@ -20,8 +20,12 @@
   because render is scoped: a variable set in one file cannot be read in
   another, and a capture in each caller is how the duplication started.
 
-  Trailing zeros are dropped deliberately — "AED 10" is what the discount is
-  called; "AED 10.00" is what a receipt calls it.
+  Written "AED 10", not through a money filter. This shop's money_format
+  carries no currency at all — money_without_trailing_zeros on 1000 renders
+  the bare string "10", which put "Your 10 welcome discount" on the sign-up
+  page — and money_with_currency renders "10.00 AED", which is how a receipt
+  names an amount, not how a sentence does. The rest of the site already
+  writes thresholds as "AED 250" in prose for the same reason.
 
   Every file that renders this one depends on it existing. Shopify validates
   a theme on upload and refuses a template whose snippet is absent, so on a
@@ -36,8 +40,10 @@
   assign wol_pct = settings.welcome_offer_percent | default: '10' | strip
 
   if wol_kind == 'amount' and wol_amt != blank
-    assign wol_cents = wol_amt | times: 100
-    echo wol_cents | money_without_trailing_zeros
+    assign wol_cur = cart.currency.iso_code | default: shop.currency
+    echo wol_cur
+    echo ' '
+    echo wol_amt
   else
     echo wol_pct
     echo '%'
