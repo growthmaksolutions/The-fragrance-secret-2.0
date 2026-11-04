@@ -28,7 +28,7 @@
     "welcome_offer_excludes_shipping": true,
     "welcome_offer_min": "150",
     "promos_enabled": true,
-    "cashback_enabled": true,
+    "cashback_enabled": false,
     "cashback_partner": "Mimojo",
     "cashback_percent": "7",
     "cashback_sources": "mimojo",
