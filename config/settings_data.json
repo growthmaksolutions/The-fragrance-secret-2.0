@@ -9,7 +9,6 @@
  */
 {
   "current": {
-    "welcome_popup_enabled": true,
     "color_cream": "#F7F2EA",
     "color_ink": "#0D0A06",
     "color_charcoal": "#1C1812",
@@ -23,9 +22,10 @@
     "delivery_zones": "",
     "welcome_offer_enabled": true,
     "welcome_offer_code": "WELCOME10",
-    "welcome_offer_percent": "5",
     "welcome_offer_kind": "amount",
+    "welcome_offer_percent": "5",
     "welcome_offer_amount": "10",
+    "welcome_popup_enabled": true,
     "welcome_offer_excludes_shipping": true,
     "welcome_offer_min": "150",
     "promos_enabled": true,
@@ -35,6 +35,16 @@
     "cashback_sources": "mimojo",
     "cashback_window_days": "30",
     "cashback_exclusive": true,
+    "sections": {
+      "customer-login-cta": {
+        "type": "customer-login-cta",
+        "settings": {}
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      }
+    },
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
