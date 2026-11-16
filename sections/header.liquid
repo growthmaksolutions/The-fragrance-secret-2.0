@@ -103,8 +103,15 @@
         a brand collection nothing would be marked current. nav_active above
         already works that out properly, so it decides, and link.active is
         only the fallback for entries it does not know about.
+
+        A link_list setting hands back the linklist itself, not its handle, so
+        it is read directly. linklists[section.settings.menu] looks right and
+        is the older spelling, but it indexes the lookup table with an object
+        rather than a string, finds nothing, and renders a header with no
+        navigation in it at all — silently, because an empty for loop is not
+        an error.
       {%- endcomment -%}
-      {%- for link in linklists[section.settings.menu].links -%}
+      {%- for link in section.settings.menu.links -%}
         {%- liquid
           assign is_act = false
           if link.links.size > 0 and nav_active == 'shop'
