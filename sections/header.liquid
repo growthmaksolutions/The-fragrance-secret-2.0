@@ -76,82 +76,74 @@
         <span class="mi" aria-hidden="true">close</span>
       </button>
 
-      {%- comment -%} Shop — with mega-menu {%- endcomment -%}
-      <div class="nav-item has-mega">
-        <a href="/collections/all" class="nav-toplink{% if nav_active == 'shop' %} nav-active{% endif %}"{% if nav_active == 'shop' %} aria-current="page"{% endif %} onclick="toggleShopGroup(this, event)">Shop<span class="mi nav-caret" aria-hidden="true">expand_more</span></a>
-        <div class="nav-mega"><div class="nav-mega-inner container">
-          <div class="nm-col" onclick="toggleNavGroup(this, event)"><h5><a href="/collections/all">Shop</a></h5>
-            <a href="/collections/all">All Products</a>
-            <a href="/collections/best-sellers">Best Sellers</a>
-            <a href="/collections/new-arrivals">New Arrivals</a>
-            <a href="/collections/crazy-deals">Crazy Deals</a>
-          </div>
-          <div class="nm-col" onclick="toggleNavGroup(this, event)"><h5><a href="/pages/shop-by-category">Shop by Category</a></h5>
-            <a href="/collections/mens-perfumes">Men's Perfumes</a>
-            <a href="/collections/womens-perfumes">Women's Perfumes</a>
-            <a href="/collections/kids-perfumes">Kids Perfumes</a>
-            <a href="/collections/unisex-perfumes">Unisex Perfumes</a>
-            <a href="/collections/luxury-perfumes">Luxury Perfumes</a>
-            <a href="/collections/miracle-plant">Miracle Plant</a>
-            <a href="/collections/perfume-oil">Perfume Oil</a>
-            <a href="/collections/attar">Attar</a>
-            <a href="/collections/arabic-perfumes">Arabic Perfumes</a>
-            <a href="/collections/inspired-perfumes">Inspired Perfumes</a>
-          </div>
-          <div class="nm-col" onclick="toggleNavGroup(this, event)"><h5><a href="/pages/shop-by-lifestyle">Shop by Lifestyle</a></h5>
-            <a href="/collections/everyday-perfumes">Everyday Perfumes</a>
-            <a href="/collections/office-wear-perfumes">Office Wear Perfumes</a>
-            <a href="/collections/date-night-perfumes">Date Night Perfumes</a>
-            <a href="/collections/party-wear-perfumes">Party Wear Perfumes</a>
-            <a href="/collections/wedding-perfumes">Wedding Perfumes</a>
-            <a href="/collections/formal-event-perfumes">Formal Event Perfumes</a>
-            <a href="/collections/gym-perfumes">Gym Perfumes</a>
-            <a href="/collections/travel-perfumes">Travel Perfumes</a>
-            <a href="/collections/beach-perfumes">Beach Perfumes</a>
-            <a href="/collections/vacation-perfumes">Vacation Perfumes</a>
-            <a href="/collections/evening-wear-perfumes">Evening Wear Perfumes</a>
-          </div>
-          <div class="nm-col" onclick="toggleNavGroup(this, event)"><h5><a href="/pages/shop-by-climate">Shop by Climate</a></h5>
-            <a href="/collections/summer-wear-perfumes">Summer Wear Perfumes</a>
-            <a href="/collections/winter-wear-perfumes">Winter Wear Perfumes</a>
-            <a href="/collections/spring-wear-perfumes">Spring Wear Perfumes</a>
-            <a href="/collections/rainy-day-perfumes">Rainy Day Perfumes</a>
-            <a href="/collections/humid-weather-perfumes">Humid Weather Perfumes</a>
-            <a href="/collections/tropical-climate-perfumes">Tropical Climate Perfumes</a>
-            <a href="/collections/desert-climate-perfumes">Desert Climate Perfumes</a>
-            <a href="/collections/hot-weather-perfumes">Hot Weather Perfumes</a>
-            <a href="/collections/cold-weather-perfumes">Cold Weather Perfumes</a>
-            <a href="/collections/dry-weather-perfumes">Dry Weather Perfumes</a>
-          </div>
-          <div class="nm-col" onclick="toggleNavGroup(this, event)"><h5><a href="/pages/shop-by-scent-family">By Scent Family</a></h5>
-            <a href="/collections/oud-woody-perfumes">Oud &amp; Woody</a>
-            <a href="/collections/fresh-citrus-perfumes">Fresh &amp; Citrus</a>
-            <a href="/collections/floral-rose-perfumes">Floral &amp; Rose</a>
-            <a href="/collections/sweet-gourmand-perfumes">Sweet &amp; Gourmand</a>
-            <a href="/collections/spicy-oriental-perfumes">Spicy &amp; Oriental</a>
-          </div>
-        </div></div>
-      </div>
-
-      <a href="/pages/brands" class="nav-toplink{% if nav_active == 'brands' %} nav-active{% endif %}"{% if nav_active == 'brands' %} aria-current="page"{% endif %}>Brands</a>
       {%- comment -%}
-        The Guides link is hidden from the nav. The guide pages and the journal
-        blog still exist and are still reachable by URL and from search — only
-        the top-level entry point is gone. The nav_active = 'guides' branches
-        above are left in place so restoring this link is a one-line change.
-      {%- endcomment -%}
-      <a href="/pages/about" class="nav-toplink{% if nav_active == 'about' %} nav-active{% endif %}"{% if nav_active == 'about' %} aria-current="page"{% endif %}>About Us</a>
+        The nav, from Shopify.
 
-      <a href="#" class="nav-toplink nav-quiz" onclick="openAI();closeMobileNav();return false"><span class="mi" aria-hidden="true">auto_awesome</span>Find My Scent</a>
-      {%- comment -%}
-        Perfume Oil is in the Shop mega-menu as well, under Shop by Category.
-        It is repeated at the top level because it is a category people come
-        looking for by name rather than browse into — one tap from anywhere,
-        instead of opening Shop and reading a list of ten. It sits after Find
-        My Scent, so the browsing entries run first and the two shortcuts sit
-        together at the end.
+        Every entry here used to be literal markup — five top-level links and
+        forty under Shop, each with its collection URL typed in. That made the
+        most-edited part of the site the one part a merchant could not edit,
+        and it drifted silently: a renamed collection left a dead link with
+        nothing to flag it.
+
+        It now renders Theme settings › Header › Menu, so the whole thing is
+        Shopify admin › Navigation. A top-level entry with children becomes
+        the mega-menu; one without becomes a plain link. Columns are the
+        second level, their links the third — which is exactly how the
+        hardcoded version was shaped, so the menu was built to match it
+        rather than the other way round.
+
+        Two things the menu cannot express, handled here:
+
+        Find My Scent is not a destination, it is the concierge. A menu can
+        only hold a URL, so the link points at the quiz page and is upgraded
+        here into the action — which also means it still goes somewhere with
+        JavaScript off, and openAI() falls back to that same page anyway.
+
+        The underline. link.active is an exact URL match, so on a product or
+        a brand collection nothing would be marked current. nav_active above
+        already works that out properly, so it decides, and link.active is
+        only the fallback for entries it does not know about.
       {%- endcomment -%}
-      <a href="/collections/perfume-oil" class="nav-toplink{% if nav_active == 'oil' %} nav-active{% endif %}"{% if nav_active == 'oil' %} aria-current="page"{% endif %}>Perfume Oil</a>
+      {%- for link in linklists[section.settings.menu].links -%}
+        {%- liquid
+          assign is_act = false
+          if link.links.size > 0 and nav_active == 'shop'
+            assign is_act = true
+          elsif nav_active == 'brands' and link.url contains '/pages/brands'
+            assign is_act = true
+          elsif nav_active == 'about' and link.url contains '/pages/about'
+            assign is_act = true
+          elsif nav_active == 'oil' and link.url contains 'perfume-oil'
+            assign is_act = true
+          elsif link.active
+            assign is_act = true
+          endif
+
+          assign is_quiz = false
+          if link.url contains 'find-my-scent'
+            assign is_quiz = true
+          endif
+        -%}
+
+        {%- if link.links.size > 0 -%}
+          <div class="nav-item has-mega">
+            <a href="{{ link.url }}" class="nav-toplink{% if is_act %} nav-active{% endif %}"{% if is_act %} aria-current="page"{% endif %} onclick="toggleShopGroup(this, event)">{{ link.title }}<span class="mi nav-caret" aria-hidden="true">expand_more</span></a>
+            <div class="nav-mega"><div class="nav-mega-inner container">
+              {%- for col in link.links -%}
+                <div class="nm-col" onclick="toggleNavGroup(this, event)"><h5><a href="{{ col.url }}">{{ col.title }}</a></h5>
+                  {%- for child in col.links -%}
+                    <a href="{{ child.url }}">{{ child.title }}</a>
+                  {%- endfor -%}
+                </div>
+              {%- endfor -%}
+            </div></div>
+          </div>
+        {%- elsif is_quiz -%}
+          <a href="{{ link.url }}" class="nav-toplink nav-quiz" onclick="openAI();closeMobileNav();return false"><span class="mi" aria-hidden="true">auto_awesome</span>{{ link.title }}</a>
+        {%- else -%}
+          <a href="{{ link.url }}" class="nav-toplink{% if is_act %} nav-active{% endif %}"{% if is_act %} aria-current="page"{% endif %}>{{ link.title }}</a>
+        {%- endif -%}
+      {%- endfor -%}
       {%- comment -%}
         Same treatment as the icon: opens the panel rather than loading the
         search page. Tapping it closes the drawer first, since the panel it
@@ -256,6 +248,7 @@
   "name": "Header",
   "settings": [
     { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "header-nav", "info": "Shopify admin \u2192 Content \u2192 Navigation. A top-level entry with sub-items becomes the Shop mega-menu, its sub-items the columns and theirs the links. An entry pointing at the Find My Scent page opens the concierge rather than loading the page." },
     { "type": "select", "id": "theme", "label": "Header theme", "options": [
       { "value": "dark", "label": "Dark" }, { "value": "light", "label": "Light" }
     ], "default": "dark" }
