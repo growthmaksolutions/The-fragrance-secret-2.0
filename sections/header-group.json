@@ -9,7 +9,7 @@
       "m4": { "type": "message", "settings": { "text": "Explore 218+ fragrance houses trusted by perfume lovers in the UAE" } },
       "m5": { "type": "message", "settings": { "text": "Need assistance? Connect with our WhatsApp team daily from 10am to 7pm" } }
     }, "block_order": ["m1","m2","m3","m4","m5"] },
-    "header": { "type": "header", "settings": { "theme": "dark" } }
+    "header": { "type": "header", "settings": { "theme": "dark", "menu": "header-nav" } }
   },
   "order": ["announcement-bar", "header"]
 }
