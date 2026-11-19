@@ -25,7 +25,7 @@
           "type": "column",
           "settings": {
             "heading": "Discover",
-            "links": "Find My Scent | /pages/find-my-scent"
+            "links": "Journal | /blogs/journal\nFind My Scent | /pages/find-my-scent"
           }
         },
         "policies": {

@@ -122,6 +122,8 @@
             assign is_act = true
           elsif nav_active == 'oil' and link.url contains 'perfume-oil'
             assign is_act = true
+          elsif nav_active == 'guides' and link.url contains '/blogs/'
+            assign is_act = true
           elsif link.active
             assign is_act = true
           endif
