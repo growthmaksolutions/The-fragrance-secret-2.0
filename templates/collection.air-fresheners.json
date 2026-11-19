@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "hero_eyebrow": "The Collection",
+        "hero_heading": "Air <em>Fresheners</em>",
+        "hero_bg_image": "air-fresheners-hero.webp",
+        "hero_bg_image_sm": "air-fresheners-hero-sm.webp"
+      }
+    }
+  },
+  "order": ["main"]
+}
