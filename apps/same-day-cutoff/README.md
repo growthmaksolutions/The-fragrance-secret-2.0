@@ -1,7 +1,7 @@
 # TFS Same-Day Cutoff
 
 One Shopify Function that hides the same-day shipping rate once the store's
-local clock passes 10:00.
+local clock passes 17:00.
 
 ## Why this exists rather than a scheduled job
 
@@ -19,8 +19,8 @@ first in any paid app that claims to do this.
 
 ## What it does
 
-Target `cart.delivery-options.transform.run`. After 10:00 store time, any
-delivery option whose title contains "same-day" is hidden. Before 10:00,
+Target `cart.delivery-options.transform.run`. After 17:00 store time, any
+delivery option whose title contains "same-day" is hidden. Before 17:00,
 nothing is touched.
 
 Two deliberate refusals to act:
@@ -56,11 +56,11 @@ activated there — deploying alone has no effect on checkout.
 The time lives in `src/run.graphql`:
 
 ```graphql
-timeAfter(time: "10:00:00")
+timeAfter(time: "17:00:00")
 ```
 
 It has to be a literal. An input query is static, so it cannot read the time
-from a metafield and pass it in. Changing 10:00 to 11:00 means editing that
+from a metafield and pass it in. Changing 17:00 to another hour means editing that
 line and running `shopify app deploy` again.
 
 This is the one place a paid app is genuinely better: Shipy and similar let a
@@ -79,7 +79,7 @@ title, "Same-day delivery — order before 10 AM", matches.
 
 ## What this does not do
 
-Hiding the rate after 10:00 is the whole scope. Restricting same-day to paid
+Hiding the rate after 17:00 is the whole scope. Restricting same-day to paid
 orders only is a separate concern and belongs to Payflow, which is already
 installed: hide COD when the delivery method is the same-day rate. Payment
 methods are chosen after shipping at checkout, so that rule can see which rate

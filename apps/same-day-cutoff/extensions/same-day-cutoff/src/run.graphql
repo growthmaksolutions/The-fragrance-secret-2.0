@@ -6,13 +6,13 @@
 # there is no cron to drift and no UTC offset to get wrong.
 #
 # The cutoff is a literal here because an input query is static — it cannot read
-# the time from a metafield and pass it to timeAfter. Changing 10:00 therefore
+# the time from a metafield and pass it to timeAfter. Changing 17:00 therefore
 # means editing this line and redeploying. That is the one thing a paid app
 # does better, and it is written down in the README rather than discovered.
 query RunInput {
   shop {
     localTime {
-      timeAfter(time: "10:00:00")
+      timeAfter(time: "17:00:00")
     }
   }
   cart {
