@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
@@ -9,12 +18,23 @@
         "hero_heading": "Shop by <em>Brand</em>",
         "intro_eyebrow": "The Houses We Carry",
         "intro_heading": "Shop Perfume Brands in the UAE",
-        "intro_text": "<p>Every fragrance house has its own story, style, and signature creations. The Fragrance Secrets brings together 47+ authentic perfume brands, from renowned designer labels and luxury niche houses to iconic Arabian fragrance brands, all sourced through trusted suppliers. Browse perfume brands from A to Z, including our exclusive signature collections created to our own standards in the UAE. Whether you're searching for your favourite fragrance house or exploring a new brand, you'll find the complete collection in one place. Compare brands, discover their fragrances, and shop with complete confidence.</p>"
+        "intro_text": "<p>Every fragrance house has its own story, style, and signature creations. The Fragrance Secrets brings together 47+ authentic perfume brands, from renowned designer labels and luxury niche houses to iconic Arabian fragrance brands, all sourced through trusted suppliers. Browse perfume brands from A to Z, including our exclusive signature collections created to our own standards in the UAE. Whether you're searching for your favourite fragrance house or exploring a new brand, you'll find the complete collection in one place. Compare brands, discover their fragrances, and shop with complete confidence.</p>",
+        "children_eyebrow": "",
+        "children_heading": "",
+        "children_sub": ""
       }
     },
     "brandgrid": {
       "type": "page-brands",
-      "settings": {}
+      "settings": {
+        "house_eyebrow": "Our Signature Houses",
+        "house_heading": "Made By Us, For the UAE",
+        "house_sub": "Our in-house lines — original compositions manufactured to our own standards through certified UAE partners. Never claimed as designer originals; inspired-by lines are always labelled as inspired.",
+        "house_handles": "fragrance-secrets, secret-scents, paris-collection",
+        "az_eyebrow": "View All Brands",
+        "az_sub": "Every designer and Arabic-house brand below is 100% genuine, sourced through verified wholesalers and market-authorised channels — sealed stock, authenticity guaranteed.",
+        "brand_handles": "ahmed-al-maghribi, al-haramain, alezz-oud, amouage, arabiyat-prestige, armaf, azzaro, billie-eilish, boadicea-the-victorious, borntostandout, calvin-klein, chanel, cristiano-ronaldo, davidoff, dior, dolce-and-gabbana, elan-dor, ex-nihilo, farzanas-collection, fragrance-secrets, french-avenue, giorgio-armani, hevora, house-of-morais, hugo-boss, ibrahim-al-qurashi, jay-marley, jean-paul-gaultier, khaleej-pride, la-parfum-galleria, la-parfum-galleria-exclusif, lattafa, mancera, marxzelle, niche-profumo, orchid, paris-collection, parisbelle, prada, rafaan, ralph-lauren, rasasi, rayhaan, reef, riiffs, roberto-cavalli, sabrina-carpenter, swiss-arabian, yves-saint-laurent, Dumont-Paris"
+      }
     },
     "body": {
       "type": "hub-editorial",
@@ -53,6 +73,42 @@
             "body": "Use the A to Z brand index to jump straight to a house you love, or explore by style to discover a new favourite. Every brand links through to its full range of fragrances.",
             "tag_label": "Best For",
             "tags": "Loyal Buyers, Explorers, Gifting"
+          }
+        },
+        "way1": {
+          "type": "way",
+          "settings": {
+            "icon": "category",
+            "label": "Shop by Category",
+            "sub": "Men, women, unisex, attar, oils",
+            "url": "/pages/shop-by-category"
+          }
+        },
+        "way2": {
+          "type": "way",
+          "settings": {
+            "icon": "auto_awesome",
+            "label": "Shop by Lifestyle",
+            "sub": "Office, date night, everyday",
+            "url": "/pages/shop-by-lifestyle"
+          }
+        },
+        "way3": {
+          "type": "way",
+          "settings": {
+            "icon": "wb_sunny",
+            "label": "Shop by Climate",
+            "sub": "Summer, humid, cooler days",
+            "url": "/pages/shop-by-climate"
+          }
+        },
+        "way4": {
+          "type": "way",
+          "settings": {
+            "icon": "spa",
+            "label": "Shop by Scent Family",
+            "sub": "Oud, fresh, floral, sweet, spicy",
+            "url": "/pages/shop-by-scent-family"
           }
         },
         "shop1": {
@@ -124,42 +180,6 @@
             "question": "Do you ship internationally?",
             "answer": "Yes. The Fragrance Secrets ships across the UAE and also delivers to customers in the United States and Canada. Shipping options and estimated delivery times are available during checkout."
           }
-        },
-        "way1": {
-          "type": "way",
-          "settings": {
-            "icon": "category",
-            "label": "Shop by Category",
-            "sub": "Men, women, unisex, attar, oils",
-            "url": "/pages/shop-by-category"
-          }
-        },
-        "way2": {
-          "type": "way",
-          "settings": {
-            "icon": "auto_awesome",
-            "label": "Shop by Lifestyle",
-            "sub": "Office, date night, everyday",
-            "url": "/pages/shop-by-lifestyle"
-          }
-        },
-        "way3": {
-          "type": "way",
-          "settings": {
-            "icon": "wb_sunny",
-            "label": "Shop by Climate",
-            "sub": "Summer, humid, cooler days",
-            "url": "/pages/shop-by-climate"
-          }
-        },
-        "way4": {
-          "type": "way",
-          "settings": {
-            "icon": "spa",
-            "label": "Shop by Scent Family",
-            "sub": "Oud, fresh, floral, sweet, spicy",
-            "url": "/pages/shop-by-scent-family"
-          }
         }
       },
       "block_order": [
@@ -189,12 +209,12 @@
         "ways_eyebrow": "Keep Looking",
         "ways_heading": "Explore More <em>Fragrance Collections</em>",
         "ways_sub": "Prefer to shop another way? Browse our main fragrance collections by category, lifestyle, climate, and scent family to find the perfect scent for every occasion.",
+        "ways_all_label": "See All Products",
+        "ways_all_url": "/collections/all",
         "shop_eyebrow": "The Shop",
         "shop_heading": "Explore Our <em>Shop Collections</em>",
         "shop_sub": "Looking for something specific? Explore our shop collections to browse the full range, bestsellers, new launches, and limited-time offers.",
-        "crumb_name": "Shop by Brand",
-        "ways_all_label": "See All Products",
-        "ways_all_url": "/collections/all"
+        "crumb_name": "Shop by Brand"
       }
     }
   },
