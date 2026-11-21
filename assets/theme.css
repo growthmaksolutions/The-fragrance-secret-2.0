@@ -1873,6 +1873,16 @@
       color: var(--white)
     }
 
+    /* Sold out. Deliberately muted rather than loud: it is information, not an
+       offer, and a bright flag would compete with the Sale badge on the cards
+       either side of it while advertising the one bottle a shopper cannot
+       have. */
+    .badge-sold {
+      background: rgba(13, 10, 6, .72);
+      color: var(--cream);
+      backdrop-filter: blur(2px)
+    }
+
     .prod-actions {
       position: absolute;
       bottom: 12px;

@@ -28,6 +28,20 @@
     endif
   endif
 
+  # Sold out wins over everything above it. A product with nothing to sell is
+  # not a Sale and not a Bestseller — leaving a red "Sale" flag on a bottle
+  # that cannot be bought is the version of this that wastes a click, and the
+  # badge is the only thing on the card that says so while browsing. Until now
+  # the one signal was the disabled Quick Add button, which lives in the hover
+  # actions and so does not exist on a phone at all.
+  #
+  # product.available is true when any variant can be bought, which is the same
+  # question the Quick Add button below asks of the variant it would add.
+  unless product.available
+    assign badge = 'Sold Out'
+    assign badge_class = 'badge-sold'
+  endunless
+
   assign rating = product.metafields.reviews.rating.value.rating | default: product.metafields.custom.rating.value
   assign review_count = product.metafields.reviews.rating_count.value | default: product.metafields.custom.review_count.value
 

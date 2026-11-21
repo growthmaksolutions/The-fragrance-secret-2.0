@@ -26,7 +26,7 @@ const FAM = ['Fresh & Citrus', 'Oud & Woody', 'Floral & Rose', 'Sweet & Gourmand
 const FAQ_TRUST = [
   { q: 'Are your perfumes 100% authentic?', a: 'Yes. Every fragrance is either from our own manufactured brands or sourced through verified wholesalers and market-authorised channels — genuine, sealed stock. Questions about a specific item? Our human team confirms sourcing on WhatsApp before you buy.' },
   { q: 'Do you offer Cash on Delivery?', a: 'Absolutely. Cash on Delivery is available across all seven Emirates, alongside Tabby & Tamara interest-free instalments, Apple Pay, Google Pay and cards.' },
-  { q: 'How fast is delivery in the UAE?', a: 'Free delivery on orders above ' + FREE_SHIP_LABEL + '. In-stock orders are dispatched within 48 hours, with same-day options available in Dubai for orders placed before 2 PM.' },
+  { q: 'How fast is delivery in the UAE?', a: 'Free delivery on orders above ' + FREE_SHIP_LABEL + '. In-stock orders are dispatched within 48 hours, with same-day options available in Dubai for orders placed before 5 PM.' },
   { q: 'What is your return policy?', a: 'Returns are accepted within ' + RETURN_DAYS + ' days of delivery on unused, sealed products that arrive damaged, defective, incorrect or incomplete. Opened bottles cannot be returned and change-of-mind returns are not accepted on fragrance. Message our team within 48 hours and we will arrange a collection.' },
 ];
 
