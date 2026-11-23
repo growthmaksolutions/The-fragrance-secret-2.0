@@ -95,45 +95,7 @@
 
 <article class="guide-article" data-ga-root>
   <!-- HERO -->
-  {%- comment -%}
-    A wide cover image is the banner; a small one stays a figure below.
-
-    Both because the two kinds exist here. This article's cover is 1849x851
-    and reads as artwork behind the title, the way the collection heroes do.
-    The earlier posts were given small squares — 360 to 533px — and the rule
-    in pages.css that sizes them to fit-content says why: stretched across a
-    2880px banner they upscale and blur. So width decides, not the template,
-    and neither kind is made to look like the other.
-
-    Wide enough as well as big enough. 1200px is the narrower of the two
-    sources the banner srcset offers, so below it a desktop banner is just an
-    enlargement. The shape matters more: almost every cover on this blog is
-    square — 1024, 1500, 2048 — and object-fit:cover would crop a square to a
-    strip and throw away two thirds of it, bottle included. 1.5 passes this
-    article's 1849x851 and holds the squares back.
-
-    alt="" in the banner because it is decoration there — the H1 over it
-    already names the article, and a background repeating the title is noise
-    to a screen reader. The figure keeps its real alt, where the image is
-    content rather than backdrop.
-  {%- endcomment -%}
-  {%- liquid
-    assign hero_bg_ok = false
-    if article.image and article.image.width >= 1200 and article.image.aspect_ratio >= 1.5
-      assign hero_bg_ok = true
-    endif
-  -%}
-  <section class="page-hero tall{% if hero_bg_ok %} has-bg{% endif %}">
-    {%- if hero_bg_ok -%}
-      <div class="ph-bg" aria-hidden="true">
-        <img src="{{ article.image | image_url: width: 2880 }}"
-             srcset="{{ article.image | image_url: width: 1400 }} 1400w,
-                     {{ article.image | image_url: width: 2880 }} 2880w"
-             sizes="100vw"
-             alt="" width="2880" height="{{ 2880 | divided_by: article.image.aspect_ratio | round }}"
-             loading="eager" fetchpriority="high" decoding="async">
-      </div>
-    {%- endif -%}
+  <section class="page-hero tall">
     <div class="container">
       <div class="breadcrumb">
         <a href="{{ routes.root_url }}">Home</a><span class="mi" aria-hidden="true">chevron_right</span>
@@ -160,7 +122,7 @@
     </div>
   </section>
 
-  {%- if article.image and hero_bg_ok == false -%}
+  {%- if article.image -%}
     <div class="container">
       <figure class="article-hero-img">
         <img src="{{ article.image | image_url: width: 1400 }}"
