@@ -28,6 +28,35 @@
 -%}
 
 <style>
+  /* ── One canvas ──
+     .page-hero is ink with white type, which is right on a collection or a
+     hub where the band is the picture. An article is not that: the hero holds
+     breadcrumb, eyebrow, title, excerpt, date, byline and three buttons, then
+     the cover and the body follow on cream — so the page read as a dark slab
+     stacked on a light one, with a hard seam between the title and the
+     article it belongs to.
+
+     Scoped to .guide-article so every other page-hero on the site keeps the
+     dark treatment. Only the colours and the band's own padding change; the
+     type scale and layout are untouched.
+
+     The header is not affected: header.dark carries its own opaque background
+     rather than borrowing the hero's, so it stays legible over cream. */
+  .guide-article .page-hero { background: var(--cream); color: var(--ink); padding: 72px 0 0; }
+  /* The gold wash exists to lift ink. On cream it is a smudge. */
+  .guide-article .page-hero::before { display: none; }
+  .guide-article .page-hero .breadcrumb a,
+  .guide-article .page-hero .breadcrumb span { color: var(--warm); }
+  .guide-article .page-hero .breadcrumb a:hover { color: var(--gold-dk); }
+  /* --gold and --gold-lt are mixed for contrast against ink; on cream they
+     wash out, so the darker end of the same ramp does the same job. */
+  .guide-article .page-hero .ph-eyebrow { color: var(--gold-dk); }
+  .guide-article .page-hero .ph-title em { color: var(--gold-dk); }
+  .guide-article .page-hero .ph-sub { color: var(--warm); }
+  /* 56px separated the cover from the bottom edge of the dark band. There is
+     no edge now, so the picture sits with its title instead of away from it. */
+  .guide-article .article-hero-img { margin-top: 28px; }
+
   /* ── Reading progress ── */
   .ga-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 1001; background: transparent; pointer-events: none; }
   .ga-progress i { display: block; height: 100%; width: 0; background: var(--gold); transition: width .1s linear; }
@@ -36,13 +65,15 @@
   .ga-meta { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-top: 18px; }
   .ga-meta .bl-meta { margin: 0; }
   .ga-share { display: flex; align-items: center; gap: 8px; }
+  /* Outlined rather than filled, and in the dark end of the gold ramp: these
+     were pale gold on a translucent gold wash, which only reads against ink. */
   .ga-share button {
     width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
-    border-radius: 50%; border: 1px solid rgba(226, 201, 126, .38); background: rgba(226, 201, 126, .1);
-    color: var(--gold-lt); cursor: pointer; transition: .25s var(--ease);
+    border-radius: 50%; border: 1px solid rgba(13, 10, 6, .16); background: transparent;
+    color: var(--gold-dk); cursor: pointer; transition: .25s var(--ease);
   }
   .ga-share button:hover { background: var(--gold); border-color: var(--gold); color: var(--ink); }
-  .ga-share button:focus-visible { outline: 2px solid var(--gold-lt); outline-offset: 2px; }
+  .ga-share button:focus-visible { outline: 2px solid var(--gold-dk); outline-offset: 2px; }
   .ga-share .mi { font-size: 18px; }
 
   /* ── Two-column body ──
