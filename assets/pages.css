@@ -1587,6 +1587,33 @@ body.jdgm-modal-open .sticky-atc {
   .oer-star:hover { transform: none; }
 }
 
+/* ── Brand strip (brands hub) ────────────────────────────────────────────
+   The moving row under the hero. The track mechanics — seamless loop, edge
+   fades, pause on hover — already exist as .brand-track-wrap/.brand-track in
+   theme.css, built for a row of plain wordmarks. This is what changes for a
+   row of chips instead: they must not be squeezed by the flex row, and the
+   gap closes because each chip brings its own border. */
+.brand-strip { padding: 10px 0 4px; }
+.brand-strip .brand-track { gap: 14px; }
+.brand-strip .brand-chip { flex: none; min-width: 0; }
+/* The fades sit on --cream-dk in theme.css, which is the band the original
+   track lived in. This strip sits on the page, so they have to match it or
+   they read as two grey smudges. */
+.brand-strip.brand-track-wrap::before { background: linear-gradient(to right, var(--cream), transparent); }
+.brand-strip.brand-track-wrap::after  { background: linear-gradient(to left,  var(--cream), transparent); }
+
+/* A row that never stops moving is unusable for anyone who needs it to hold
+   still, and the existing track had no exemption. Stopped rather than hidden:
+   the brands are still there to read and click. */
+@media (prefers-reduced-motion: reduce) {
+  .brand-track { animation: none; }
+}
+
+@media (max-width: 560px) {
+  .brand-strip { padding: 6px 0 2px; }
+  .brand-strip .brand-track { gap: 10px; }
+}
+
 /* ── Welcome offer popup ─────────────────────────────────────────────────
    "Get AED 10 off your first order". Markup in snippets/welcome-popup.liquid,
    timing in app.js. Bottom-left like the review prompt, and for the same
