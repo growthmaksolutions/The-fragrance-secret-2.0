@@ -1587,46 +1587,6 @@ body.jdgm-modal-open .sticky-atc {
   .oer-star:hover { transform: none; }
 }
 
-/* ── Blog product card ───────────────────────────────────────────────────
-   A product named in an article used to be a hyperlink in a heading and
-   nothing else: the reader took the writer's word for it and left the page to
-   see the bottle. This is the picture and a button that says what the next
-   click does.
-
-   Sized to its contents, not to the measure. Stretched across the full column
-   it was mostly empty — a 132px bottle at one end, a button at the other, and
-   a hand's width of nothing between them.
-
-   No name and no price on the card. The heading immediately above it is the
-   product name and the link, so printing it again said the same thing twice
-   in two type sizes; the button carries the name in aria-label instead, so a
-   screen reader never meets a bare "Shop Now". Price is in the writer's line
-   below, and a second copy in the body would be a snapshot that goes stale
-   the next time the product is repriced.
-
-   Not the real ProductCard: an article body is HTML stored in Shopify, not a
-   template, so Liquid cannot run inside it. */
-.blog-pcard {
-  display: flex; align-items: center; gap: 18px;
-  width: fit-content; max-width: 100%;
-  margin: 16px 0 20px; padding: 14px 20px 14px 14px;
-  border: 1px solid var(--cream-dk); border-radius: 12px;
-  background: var(--white);
-}
-.blog-pcard-img { flex: none; width: 104px; border-radius: 8px; overflow: hidden; }
-.blog-pcard-img img { display: block; width: 100%; height: auto; }
-/* .rte a paints links gold and underlines them — right in a sentence, wrong on
-   a button. The opt-out lives beside that rule. */
-.blog-pcard .btn-g { padding: 11px 26px; font-size: .74rem; white-space: nowrap; }
-
-@media (max-width: 560px) {
-  /* Full width and stacked: a 104px thumbnail beside a button leaves neither
-     enough room on a phone. */
-  .blog-pcard { width: auto; flex-direction: column; align-items: stretch; gap: 14px; padding: 14px; }
-  .blog-pcard-img { width: 100%; }
-  .blog-pcard .btn-g { justify-content: center; }
-}
-
 /* ── Welcome offer popup ─────────────────────────────────────────────────
    "Get AED 10 off your first order". Markup in snippets/welcome-popup.liquid,
    timing in app.js. Bottom-left like the review prompt, and for the same
