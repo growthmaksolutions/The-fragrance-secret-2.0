@@ -44,19 +44,28 @@
 
 {%- if section.settings.intro_heading != blank or section.settings.intro_text != blank -%}
   {%- comment -%}
-    Intro copy only. The "Why Choose Us" rotator used to sit in the right-hand
-    column here; it is not wanted on the hubs. Without a second child the
-    two-column grid would leave the copy in a 1.25fr column with dead space
-    beside it, so the row collapses to one column via .no-aside.
-    The rotator itself is untouched — collection pages still opt into it through
-    main-collection's show_why_rotator setting.
+    The "Why Choose Us" rotator is opt-in per hub. It was removed from here
+    wholesale because it was not wanted on the hubs, but the brands hub asks
+    for it, and one hub wanting it is not a reason for all of them to have it.
+
+    The class follows the content: with the rotator beside it the row is the
+    normal two-column grid, and without it .no-aside collapses to one, because
+    a 1.25fr column of copy with dead space beside it is what the removal was
+    avoiding in the first place.
+
+    Same snippet and the same uid contract collection pages use, so there is
+    one rotator in the theme rather than a hub copy of it.
   {%- endcomment -%}
-  <section class="section-sm coll-intro"><div class="container coll-intro-grid no-aside">
+  <section class="section-sm coll-intro"><div class="container coll-intro-grid{% unless section.settings.show_why_rotator %} no-aside{% endunless %}">
     <div class="coll-intro-copy">
       {%- if section.settings.intro_eyebrow != blank -%}<span class="label">{{ section.settings.intro_eyebrow }}</span>{%- endif -%}
       {%- if section.settings.intro_heading != blank -%}<h2 class="sec-title">{{ section.settings.intro_heading }}</h2>{%- endif -%}
       {%- if section.settings.intro_text != blank -%}<div class="sec-sub coll-intro-body">{{ section.settings.intro_text }}</div>{%- endif -%}
     </div>
+
+    {%- if section.settings.show_why_rotator -%}
+      {% render 'why-choose-rotator', uid: section.id %}
+    {%- endif -%}
   </div></section>
 {%- endif -%}
 
@@ -112,32 +121,114 @@
 {
   "name": "Hub hero",
   "settings": [
-    { "type": "header", "content": "Hero" },
-    { "type": "text", "id": "hero_bg_image", "label": "Hero background image (theme asset filename)", "info": "e.g. brands-hub-hero.webp — the file must live in assets/. Best at 2880 × 1000 with the left side dark." },
-    { "type": "text", "id": "hero_bg_image_sm", "label": "Hero background image, small (theme asset filename)", "info": "Optional 1200 × 417 variant served to phones." },
-    { "type": "text", "id": "hero_eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "hero_heading", "label": "Heading (H1)", "info": "Wrap words in <em></em> for the gold italic accent." },
-    { "type": "header", "content": "Introduction" },
-    { "type": "text", "id": "intro_eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "intro_heading", "label": "Heading (H2)", "info": "Carries the page's primary keyword." },
-    { "type": "richtext", "id": "intro_text", "label": "Intro copy" },
-    { "type": "header", "content": "Child collections" },
-    { "type": "text", "id": "children_eyebrow", "label": "Eyebrow" },
-    { "type": "text", "id": "children_heading", "label": "Heading (H2)" },
-    { "type": "textarea", "id": "children_sub", "label": "Intro paragraph" }
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "text",
+      "id": "hero_bg_image",
+      "label": "Hero background image (theme asset filename)",
+      "info": "e.g. brands-hub-hero.webp — the file must live in assets/. Best at 2880 × 1000 with the left side dark."
+    },
+    {
+      "type": "text",
+      "id": "hero_bg_image_sm",
+      "label": "Hero background image, small (theme asset filename)",
+      "info": "Optional 1200 × 417 variant served to phones."
+    },
+    {
+      "type": "text",
+      "id": "hero_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "hero_heading",
+      "label": "Heading (H1)",
+      "info": "Wrap words in <em></em> for the gold italic accent."
+    },
+    {
+      "type": "header",
+      "content": "Introduction"
+    },
+    {
+      "type": "text",
+      "id": "intro_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "intro_heading",
+      "label": "Heading (H2)",
+      "info": "Carries the page's primary keyword."
+    },
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Intro copy"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_why_rotator",
+      "label": "Show the Why Choose Us rotator",
+      "default": false,
+      "info": "Places the rotating Why Choose Us card beside the intro copy, as the collection pages do. Off on the other hubs, where the intro runs full width instead."
+    },
+    {
+      "type": "header",
+      "content": "Child collections"
+    },
+    {
+      "type": "text",
+      "id": "children_eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "children_heading",
+      "label": "Heading (H2)"
+    },
+    {
+      "type": "textarea",
+      "id": "children_sub",
+      "label": "Intro paragraph"
+    }
   ],
   "blocks": [
     {
       "type": "link",
       "name": "Child collection",
       "settings": [
-        { "type": "text", "id": "label", "label": "Label" },
-        { "type": "url", "id": "url", "label": "Link" },
-        { "type": "text", "id": "image_asset", "label": "Tile image (theme asset filename)", "info": "e.g. desert-climate-tile.webp — the file must live in assets/. Leave blank to fall back to the collection's own image, then its first product photo." },
-        { "type": "text", "id": "image_asset_sm", "label": "Tile image, small (theme asset filename)", "info": "Optional smaller variant served to phones." }
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "image_asset",
+          "label": "Tile image (theme asset filename)",
+          "info": "e.g. desert-climate-tile.webp — the file must live in assets/. Leave blank to fall back to the collection's own image, then its first product photo."
+        },
+        {
+          "type": "text",
+          "id": "image_asset_sm",
+          "label": "Tile image, small (theme asset filename)",
+          "info": "Optional smaller variant served to phones."
+        }
       ]
     }
   ],
-  "presets": [ { "name": "Hub hero" } ]
+  "presets": [
+    {
+      "name": "Hub hero"
+    }
+  ]
 }
 {% endschema %}
