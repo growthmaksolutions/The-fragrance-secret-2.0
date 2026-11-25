@@ -2981,23 +2981,33 @@
        every card lands on the same field. The product pixels darken by the
        tint's ~6%, which is uniform across the row and not perceptible.
        isolation:isolate keeps the blend inside the card. */
+    /* No fixed ratio: the box is whatever shape the picture is. It used to be
+       4/3 with the image contained inside, which suited the square product
+       shots this card was built for — but the guide covers are 1850x850
+       banners, and a 2.18:1 picture in a 4/3 box filled under half of it and
+       left a band of tint above and below on every card in the row. */
     .bl-img-wrap {
       border-radius: 6px;
       overflow: hidden;
-      aspect-ratio: 4/3;
       margin-bottom: 20px;
       background: var(--cream-mid);
       isolation: isolate
     }
 
-    /* contain, not cover: these are square images in a 4/3 box, so cover was
-       cropping the top and bottom off the bottle. Containing them shows the
-       whole product and lets the tinted field frame it. */
+    /* height:auto, so the image sets the card's height rather than being fitted
+       into one. Nothing is cropped and nothing is letterboxed, whatever shape
+       the cover is — which is why neither object-fit nor the 14px inset is
+       needed any more: there is no leftover box for either to manage.
+
+       multiply stays. The square product shots on the older posts carry their
+       white backdrop baked into the JPEG, and multiplying it against the tint
+       is what puts every card on the same field instead of leaving some as
+       white tiles on cream. On full-bleed artwork it costs the tint's ~6%,
+       uniform across the row. */
     .bl-img {
+      display: block;
       width: 100%;
-      height: 100%;
-      object-fit: contain;
-      padding: 14px;
+      height: auto;
       mix-blend-mode: multiply;
       transition: transform .5s var(--ease)
     }
