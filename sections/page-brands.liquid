@@ -18,39 +18,6 @@
   assign brand_handles = section.settings.brand_handles | split: ','
 -%}
 
-{%- comment -%}
-  Auto-moving brand strip, straight under the hero.
-
-  The track holds the brand list twice and the keyframe travels -50%, so the
-  second copy is passing the start as the first leaves: one seamless loop with
-  no jump and no JavaScript. Pausing on hover is what makes it usable — a
-  moving target you cannot read or click is decoration, and these are links.
-
-  Cards, not logos. Only 6 of the 55 brand collections have an image, and
-  those six are a mix of wordmarks and product shots, so an image row would
-  read half finished at wildly different visual weights. brand-chip already
-  settled this question for the A-Z grid below and settled it the same way —
-  see the comment in that snippet. The chip carries the name and the product
-  count, which is the information a shopper is scanning for anyway.
-
-  Hidden from a screen reader: every brand here is in the A-Z grid further
-  down the same page, so announcing all 55 twice adds nothing but length.
-{%- endcomment -%}
-{%- if section.settings.show_brand_strip and brand_handles.size > 0 -%}
-  <div class="brand-track-wrap brand-strip" aria-hidden="true">
-    <div class="brand-track">
-      {%- for pass in (1..2) -%}
-        {%- for raw_handle in brand_handles -%}
-          {%- assign strip_handle = raw_handle | strip -%}
-          {%- assign strip_brand = collections[strip_handle] -%}
-          {%- if strip_brand.handle == blank -%}{%- continue -%}{%- endif -%}
-          {% render 'brand-chip', brand: strip_brand %}
-        {%- endfor -%}
-      {%- endfor -%}
-    </div>
-  </div>
-{%- endif -%}
-
 <!-- OUR BRANDS (elevated) -->
 {%- if house_handles.size > 0 -%}
   <section class="section" id="our-brands">
@@ -111,65 +78,22 @@
 {
   "name": "Brands page",
   "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_brand_strip",
-      "label": "Auto-moving brand strip",
-      "default": true,
-      "info": "The moving row of brand cards under the hero. It loops on its own, pauses when hovered, and holds still for a visitor who has asked for reduced motion."
-    },
-    {
-      "type": "header",
-      "content": "Signature houses"
-    },
-    {
-      "type": "text",
-      "id": "house_eyebrow",
-      "label": "Eyebrow",
-      "default": "Our Signature Houses"
-    },
-    {
-      "type": "text",
-      "id": "house_heading",
-      "label": "Heading",
-      "default": "Made By <em>Us</em>, For the UAE"
-    },
-    {
-      "type": "textarea",
-      "id": "house_sub",
-      "label": "Intro",
-      "default": "Our in-house lines — original compositions manufactured to our own standards through certified UAE partners. Never claimed as designer originals; inspired-by lines are always labelled as inspired."
-    },
-    {
-      "type": "textarea",
-      "id": "house_handles",
-      "label": "House collections (comma separated handles)",
+    { "type": "header", "content": "Signature houses" },
+    { "type": "text", "id": "house_eyebrow", "label": "Eyebrow", "default": "Our Signature Houses" },
+    { "type": "text", "id": "house_heading", "label": "Heading", "default": "Made By <em>Us</em>, For the UAE" },
+    { "type": "textarea", "id": "house_sub", "label": "Intro",
+      "default": "Our in-house lines — original compositions manufactured to our own standards through certified UAE partners. Never claimed as designer originals; inspired-by lines are always labelled as inspired." },
+    { "type": "textarea", "id": "house_handles", "label": "House collections (comma separated handles)",
       "info": "Handles with no matching collection are skipped, so a tile can never link to a page that does not exist.",
-      "default": "fragrance-secrets, secret-scents, paris-collection"
-    },
-    {
-      "type": "header",
-      "content": "All brands A–Z"
-    },
-    {
-      "type": "text",
-      "id": "az_eyebrow",
-      "label": "Eyebrow",
-      "default": "View All Brands"
-    },
-    {
-      "type": "textarea",
-      "id": "az_sub",
-      "label": "Intro",
-      "default": "Every designer and Arabic-house brand below is 100% genuine, sourced through verified wholesalers and market-authorised channels — sealed stock, authenticity guaranteed."
-    },
-    {
-      "type": "textarea",
-      "id": "brand_handles",
-      "label": "Brand collections (comma separated handles)",
+      "default": "fragrance-secrets, secret-scents, paris-collection" },
+
+    { "type": "header", "content": "All brands A–Z" },
+    { "type": "text", "id": "az_eyebrow", "label": "Eyebrow", "default": "View All Brands" },
+    { "type": "textarea", "id": "az_sub", "label": "Intro",
+      "default": "Every designer and Arabic-house brand below is 100% genuine, sourced through verified wholesalers and market-authorised channels — sealed stock, authenticity guaranteed." },
+    { "type": "textarea", "id": "brand_handles", "label": "Brand collections (comma separated handles)",
       "info": "Shown in this order. The heading counts only the handles that resolve to a collection.",
-      "default": "ahmed-al-maghribi, al-haramain, alezz-oud, amouage, arabiyat-prestige, armaf, azzaro, billie-eilish, boadicea-the-victorious, borntostandout, calvin-klein, chanel, cristiano-ronaldo, davidoff, dior, dolce-and-gabbana, elan-dor, ex-nihilo, farzanas-collection, fragrance-secrets, french-avenue, giorgio-armani, hevora, house-of-morais, hugo-boss, ibrahim-al-qurashi, jay-marley, jean-paul-gaultier, khaleej-pride, la-parfum-galleria, la-parfum-galleria-exclusif, lattafa, mancera, marxzelle, niche-profumo, orchid, paris-collection, parisbelle, prada, rafaan, ralph-lauren, rasasi, rayhaan, reef, riiffs, roberto-cavalli, sabrina-carpenter, swiss-arabian, yves-saint-laurent"
-    }
+      "default": "ahmed-al-maghribi, al-haramain, alezz-oud, amouage, arabiyat-prestige, armaf, azzaro, billie-eilish, boadicea-the-victorious, borntostandout, calvin-klein, chanel, cristiano-ronaldo, davidoff, dior, dolce-and-gabbana, elan-dor, ex-nihilo, farzanas-collection, fragrance-secrets, french-avenue, giorgio-armani, hevora, house-of-morais, hugo-boss, ibrahim-al-qurashi, jay-marley, jean-paul-gaultier, khaleej-pride, la-parfum-galleria, la-parfum-galleria-exclusif, lattafa, mancera, marxzelle, niche-profumo, orchid, paris-collection, parisbelle, prada, rafaan, ralph-lauren, rasasi, rayhaan, reef, riiffs, roberto-cavalli, sabrina-carpenter, swiss-arabian, yves-saint-laurent" }
   ]
 }
 {% endschema %}
