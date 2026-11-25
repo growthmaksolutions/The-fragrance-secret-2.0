@@ -3,12 +3,206 @@
     "main": {
       "type": "main-collection",
       "settings": {
-        "hero_eyebrow": "The Collection",
+        "hero_eyebrow": "For Your Home",
         "hero_heading": "Air <em>Fresheners</em>",
+        "hero_image_alt": "Maison El Nabil room freshener sprays at The Fragrance Secrets UAE",
+        "show_hero_description": false,
+        "crumb_parent_label": "Shop",
+        "crumb_parent_url": "/pages/shop-by-category",
+        "show_trust_band": false,
+        "show_reviews": false,
+        "intro_eyebrow": "For Your Home",
+        "intro_heading": "Air Fresheners UAE",
+        "intro_text": "<p>A home is often remembered by how it smells. The right air freshener makes every room feel welcoming. At The Fragrance Secrets we offer authentic room freshener sprays by Maison El Nabil. Each bottle is filled with rich perfume-like fragrance. Choose warm oud and amber to welcome guests in the majlis. Pick sweet vanilla and caramel for a cosy living room. Go for soft musk and white flowers in the bedroom. Or try fresh fruity notes for the office. Just spray lightly into the air or onto suitable fabrics and enjoy.</p>",
+        "show_why_rotator": true,
         "hero_bg_image": "air-fresheners-hero.webp",
         "hero_bg_image_sm": "air-fresheners-hero-sm.webp"
       }
+    },
+    "editorial": {
+      "type": "category-editorial",
+      "settings": {
+        "cards_eyebrow": "Find Your Match",
+        "cards_heading": "Find the Right Scent <em>for Your Space</em>",
+        "cards_sub": "The best room freshener is the one that suits your space. Pick a scent family below and the choice becomes easy.",
+        "show_numbers": true,
+        "explore_eyebrow": "Keep Looking",
+        "explore_heading": "Explore More <em>Collections</em>",
+        "explore_sub": "Keep exploring by brand and scent family. You may find a perfume that matches your favourite room scent.",
+        "explore_all_label": "See All Categories",
+        "explore_all_url": "/pages/shop-by-category",
+        "current_hub": "category",
+        "show_reviews": true,
+        "crumb_name": "Air Fresheners",
+        "crumb_parent_label": "Shop",
+        "crumb_parent_url": "/pages/shop-by-category",
+        "schema_name": "Air Fresheners UAE",
+        "schema_description": "Shop luxury air fresheners in the UAE at The Fragrance Secrets. Choose authentic Maison El Nabil room freshener sprays in warm oud and sweet vanilla or soft musk and fresh fruit."
+      },
+      "blocks": {
+        "card1": {
+          "type": "card",
+          "settings": {
+            "title": "Warm & Oriental",
+            "body": "The welcome scent. Amber and oud bring deep warmth with hints of spice and vanilla. It is the classic Gulf way to greet guests. This family includes Royal Gold and Sugar Musc. Elixir of Dubai and Medania belong here too.",
+            "tag_label": "Best For",
+            "tags": "Majlis, Guests, Evenings",
+            "link_label": "Explore Elixir of Dubai",
+            "link_url": "/products/elixir-of-dubai-350ml-room-freshener-maison-el-nabil"
+          }
+        },
+        "card2": {
+          "type": "card",
+          "settings": {
+            "title": "Sweet & Gourmand",
+            "body": "The comfort scent. Notes like pistachio and caramel make a room feel cosy and inviting. This family includes Royal Pistache and White Coco. Halima belongs here too. They are perfect for relaxed evenings at home.",
+            "tag_label": "Best For",
+            "tags": "Living Room, Family Time, Cooler Evenings",
+            "link_label": "Explore Royal Pistache",
+            "link_url": "/products/royal-pistache-350ml-room-freshener-maison-el-nabil"
+          }
+        },
+        "card3": {
+          "type": "card",
+          "settings": {
+            "title": "Floral & Musky",
+            "body": "The calm scent. Soft musk and white flowers give a room a clean and airy feel. It feels light and gentle. This family includes Musc Blanc and Pure White. Musc Bella belongs here too.",
+            "tag_label": "Best For",
+            "tags": "Bedroom, Daytime, Everyday",
+            "link_label": "Explore Musc Blanc",
+            "link_url": "/products/musc-blanc-room-freshener-350ml-maison-el-nabil"
+          }
+        },
+        "card4": {
+          "type": "card",
+          "settings": {
+            "title": "Fruity & Fresh",
+            "body": "The bright scent. Juicy fruit notes lift a space without feeling heavy. Musc Slim opens with citrus and crisp apple. Extra Mango brings ripe tropical mango. Both settle into a soft and warm finish.",
+            "tag_label": "Best For",
+            "tags": "Office, Hot Days, Daytime",
+            "link_label": "Explore Musc Slim",
+            "link_url": "/products/musc-slim-room-freshener-350ml-maison-el-nabil"
+          }
+        },
+        "explore1": {
+          "type": "explore",
+          "settings": {
+            "icon": "storefront",
+            "label": "Shop by Brand",
+            "sub": "Every house we carry",
+            "url": "/pages/brands",
+            "hub": "brand"
+          }
+        },
+        "explore2": {
+          "type": "explore",
+          "settings": {
+            "icon": "spa",
+            "label": "Sweet & Gourmand",
+            "sub": "Vanilla and caramel scents",
+            "url": "/collections/sweet-gourmand-perfumes",
+            "hub": "scent"
+          }
+        },
+        "explore3": {
+          "type": "explore",
+          "settings": {
+            "icon": "forest",
+            "label": "Oud & Woody",
+            "sub": "Oud and amber scents",
+            "url": "/collections/oud-woody-perfumes",
+            "hub": "scent"
+          }
+        },
+        "explore4": {
+          "type": "explore",
+          "settings": {
+            "icon": "water_drop",
+            "label": "Perfume Oil",
+            "sub": "Rich oil fragrances",
+            "url": "/collections/perfume-oil",
+            "hub": "category"
+          }
+        },
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "What air fresheners do you sell?",
+            "answer": "We sell authentic room freshener sprays by Maison El Nabil. The scents range from warm oud and sweet vanilla to soft musk and fresh fruit. Popular names include Royal Gold and Musc Blanc."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "How do I use a room freshener spray?",
+            "answer": "Spray it lightly into the air. You can also spray it onto suitable fabrics. Then let the scent spread through the room on its own. Add a few more sprays if you want it stronger. Do not spray it on people or animals. Keep it away from plants and delicate surfaces too."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I spray an air freshener on fabrics?",
+            "answer": "Yes. Most scents can be sprayed lightly onto suitable fabrics. Avoid delicate fabrics and furniture. Always check the instructions for your chosen scent first."
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Which air freshener is best for a living room or bedroom?",
+            "answer": "For a living room or majlis go for a warm scent. Royal Gold and Elixir of Dubai feel rich and welcoming for guests. For a bedroom or office choose something softer. Musc Blanc and Pure White feel clean and light."
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Which air fresheners are the most popular?",
+            "answer": "Royal Pistache is one of our bestsellers. So are Halima and Elixir of Dubai. Royal Pistache is sweet with pistachio and caramel. Halima mixes chocolate with vanilla. Elixir of Dubai blends hazelnut with warm spices and amber."
+          }
+        },
+        "faq6": {
+          "type": "faq",
+          "settings": {
+            "question": "Are room sprays safe around children and pets?",
+            "answer": "Use them with care. Keep the bottle out of reach of children. Do not spray it directly on people or animals. Avoid contact with the eyes. Store it away from heat and open flames."
+          }
+        },
+        "faq7": {
+          "type": "faq",
+          "settings": {
+            "question": "Are your air fresheners authentic?",
+            "answer": "Yes. Every air freshener we sell is a genuine Maison El Nabil product. Each one is checked before it reaches you. The brand began in 2006 and is inspired by French perfume making. Today its flagship boutique is in Dubai."
+          }
+        },
+        "faq8": {
+          "type": "faq",
+          "settings": {
+            "question": "What does Royal Gold air freshener smell like?",
+            "answer": "Royal Gold is a warm and sweet scent. Golden vanilla sits at its heart. Jasmine and rose add a soft floral touch. Amber and musk give it a smooth and cosy finish."
+          }
+        }
+      },
+      "block_order": [
+        "card1",
+        "card2",
+        "card3",
+        "card4",
+        "explore1",
+        "explore2",
+        "explore3",
+        "explore4",
+        "faq1",
+        "faq2",
+        "faq3",
+        "faq4",
+        "faq5",
+        "faq6",
+        "faq7",
+        "faq8"
+      ]
     }
   },
-  "order": ["main"]
+  "order": [
+    "main",
+    "editorial"
+  ]
 }
