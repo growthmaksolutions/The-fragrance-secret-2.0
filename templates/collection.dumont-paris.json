@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -24,11 +15,205 @@
         "intro_heading": "Shop Dumont Paris Perfumes UAE",
         "show_why_rotator": true,
         "hero_bg_image": "dumont-paris-hero.webp",
-        "hero_bg_image_sm": "dumont-paris-hero-sm.webp"
+        "hero_bg_image_sm": "dumont-paris-hero-sm.webp",
+        "intro_text": "<p>Dumont Paris is the house behind the Nitro collection, a line of bold men's fragrances loved for pairing a designer-style feel with accessible pricing. The Fragrance Secrets brings together authentic Dumont Paris perfumes, led by the much-loved Nitro Red and its Extrait de Parfum sibling, Nitro Red Intensely, alongside Nitro White, Nitro Platinum, Nitro Green and Nitro Pour Homme. Spanning fresh fruity, woody amber, aromatic and leathery styles, every Dumont Nitro scent is crafted to be noticed. If you want a confident signature that works from the office to the evening, Dumont Paris is a house to explore.</p>"
       }
+    },
+    "editorial": {
+      "type": "category-editorial",
+      "settings": {
+        "cards_eyebrow": "The House",
+        "cards_heading": "Why Choose Dumont <em>Paris</em>",
+        "cards_sub": "",
+        "show_numbers": false,
+        "sibling_eyebrow": "Similar Houses",
+        "sibling_heading": "Explore Other <em>Brands</em>",
+        "sibling_sub": "Love Dumont? Explore more fragrance houses with a similar style and discover your next favourite scent.",
+        "sibling_all_label": "See All Brands",
+        "sibling_all_url": "/pages/brands",
+        "explore_eyebrow": "Keep Looking",
+        "explore_heading": "Explore More <em>Fragrance Collections</em>",
+        "explore_sub": "Browse fragrances by category, lifestyle, climate, scent family, or brand to find the perfect fragrance for every preference and occasion.",
+        "current_hub": "brand",
+        "show_reviews": true,
+        "crumb_name": "Dumont Paris",
+        "crumb_parent_label": "Brands",
+        "crumb_parent_url": "/pages/brands",
+        "schema_name": "Dumont Paris Perfumes UAE | The Fragrance Secrets",
+        "schema_description": "Explore authentic Dumont Paris perfumes at The Fragrance Secrets. Shop the Nitro collection, including Nitro Red. Fast UAE, USA and Canada delivery."
+      },
+      "blocks": {
+        "card1": {
+          "type": "card",
+          "settings": {
+            "title": "The Nitro Collection",
+            "body": "Dumont Paris is built around its Nitro collection, a family of men's fragrances that share one bold bottle style but each tell a different scent story, from juicy fruit and fresh citrus to smoky leather and warm amber.",
+            "tag_label": "The House",
+            "tags": "Dumont Paris, Nitro, Men's Fragrance"
+          }
+        },
+        "card2": {
+          "type": "card",
+          "settings": {
+            "title": "The Nitro Red Icon",
+            "body": "Dumont Nitro Red is the house's best-known scent, a fresh fruity woody blend of bergamot, apple and watermelon over sandalwood and amber, with Nitro Red Intensely adding a fruity amber Extrait de Parfum to the Red line.",
+            "tag_label": "Known For",
+            "tags": "Nitro Red, Nitro Red Intensely, Nitro Platinum"
+          }
+        },
+        "card3": {
+          "type": "card",
+          "settings": {
+            "title": "A Nitro for Every Mood",
+            "body": "From the zesty citrus of Nitro Pour Homme and the green freshness of Nitro Green to the leather and honey of Nitro White and the sweet fruity woods of Nitro Platinum, there is a Dumont Nitro for every style and season.",
+            "tag_label": "Explore",
+            "tags": "Fruity, Citrus, Woody, Leather"
+          }
+        },
+        "card4": {
+          "type": "card",
+          "settings": {
+            "title": "Designer Feel, Accessible Price",
+            "body": "Dumont's appeal is delivering confident, long-lasting men's fragrance with the polish of far pricier designer scents, making a bold signature easy to own and easy to wear every day.",
+            "tag_label": "Best For",
+            "tags": "Men, Office, Evening"
+          }
+        },
+        "sibling1": {
+          "type": "sibling",
+          "settings": {
+            "label": "Armaf",
+            "url": "/collections/armaf"
+          }
+        },
+        "sibling2": {
+          "type": "sibling",
+          "settings": {
+            "label": "French Avenue",
+            "url": "/collections/french-avenue"
+          }
+        },
+        "sibling3": {
+          "type": "sibling",
+          "settings": {
+            "label": "RiiFFS",
+            "url": "/collections/riiffs"
+          }
+        },
+        "sibling4": {
+          "type": "sibling",
+          "settings": {
+            "label": "Lattafa",
+            "url": "/collections/lattafa"
+          }
+        },
+        "explore1": {
+          "type": "explore",
+          "settings": {
+            "icon": "grid_view",
+            "label": "Shop by Category",
+            "sub": "Every way to shop, in one place",
+            "url": "/pages/shop-by-category",
+            "hub": "category"
+          }
+        },
+        "explore2": {
+          "type": "explore",
+          "settings": {
+            "icon": "auto_awesome",
+            "label": "Shop by Lifestyle",
+            "sub": "Office, date night, everyday",
+            "url": "/pages/shop-by-lifestyle",
+            "hub": "lifestyle"
+          }
+        },
+        "explore3": {
+          "type": "explore",
+          "settings": {
+            "icon": "wb_sunny",
+            "label": "Shop by Climate",
+            "sub": "Summer, humid, cooler days",
+            "url": "/pages/shop-by-climate",
+            "hub": "climate"
+          }
+        },
+        "explore4": {
+          "type": "explore",
+          "settings": {
+            "icon": "spa",
+            "label": "Shop by Scent Family",
+            "sub": "Fresh, oud, spicy, sweet",
+            "url": "/pages/shop-by-scent-family",
+            "hub": "scent"
+          }
+        },
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Dumont Paris a good perfume brand?",
+            "answer": "Yes. Dumont Paris is popular for its Nitro collection, bold men's fragrances that deliver a designer-style feel and strong performance at an accessible price. Nitro Red is a firm favourite."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "What is Dumont Paris known for?",
+            "answer": "Dumont Paris is best known for its Nitro collection, especially Dumont Nitro Red. The range also includes Nitro Red Intensely, Nitro White, Nitro Platinum, Nitro Green and Nitro Pour Homme."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "What does Dumont Nitro Red smell like?",
+            "answer": "Dumont Nitro Red is a fresh fruity woody scent. It opens with bergamot, lavender and apple, moves into watermelon, cedarwood and calamus, and settles into sandalwood, patchouli and amber."
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do Dumont Paris perfumes last long?",
+            "answer": "Yes. Dumont Nitro fragrances are long lasting with moderate to strong projection, and Nitro Red Intensely, an Extrait de Parfum, is the richest and longest wearing of the range."
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Are Dumont Paris perfumes authentic at The Fragrance Secrets?",
+            "answer": "Yes. Every Dumont Paris perfume at The Fragrance Secrets is 100% authentic and sourced through trusted suppliers, sealed and quality-checked, so you can shop with complete confidence."
+          }
+        },
+        "faq6": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you ship Dumont Paris perfumes internationally?",
+            "answer": "Yes. The Fragrance Secrets delivers Dumont Paris perfumes across the UAE and also ships to customers in the USA and Canada. Shipping options and delivery estimates are available during checkout."
+          }
+        }
+      },
+      "block_order": [
+        "card1",
+        "card2",
+        "card3",
+        "card4",
+        "sibling1",
+        "sibling2",
+        "sibling3",
+        "sibling4",
+        "explore1",
+        "explore2",
+        "explore3",
+        "explore4",
+        "faq1",
+        "faq2",
+        "faq3",
+        "faq4",
+        "faq5",
+        "faq6"
+      ]
     }
   },
   "order": [
-    "main"
+    "main",
+    "editorial"
   ]
 }

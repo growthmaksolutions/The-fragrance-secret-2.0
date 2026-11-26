@@ -15,11 +15,205 @@
         "intro_heading": "Shop Sasan Perfumes UAE",
         "show_why_rotator": true,
         "hero_bg_image": "sasan-perfumes-hero.webp",
-        "hero_bg_image_sm": "sasan-perfumes-hero-sm.webp"
+        "hero_bg_image_sm": "sasan-perfumes-hero-sm.webp",
+        "intro_text": "<p>Sasan Perfumes is a modern fragrance house known for stylish, easy-to-wear scents at an accessible price, combining its own Sasan Creation fragrances with a popular inspired range. The Fragrance Secrets brings together authentic Sasan perfumes for men and women, including the warm woody Terra Sol, the vanilla and passion fruit of Sasan 24, the comforting King of Vanilla and the elegant Voice of Saccarat. Spanning woody amber, gourmand, fresh fruity and vanilla styles, Sasan crafts confident scents for every day. If you want a new signature without paying a luxury price, Sasan Perfumes is a house to explore.</p>"
       }
+    },
+    "editorial": {
+      "type": "category-editorial",
+      "settings": {
+        "cards_eyebrow": "The House",
+        "cards_heading": "Why Choose Sasan <em>Perfumes</em>",
+        "cards_sub": "",
+        "show_numbers": false,
+        "sibling_eyebrow": "Similar Houses",
+        "sibling_heading": "Explore Other <em>Brands</em>",
+        "sibling_sub": "Love Sasan? Explore more fragrance houses with a similar style and discover your next favourite scent.",
+        "sibling_all_label": "See All Brands",
+        "sibling_all_url": "/pages/brands",
+        "explore_eyebrow": "Keep Looking",
+        "explore_heading": "Explore More <em>Fragrance Collections</em>",
+        "explore_sub": "Browse fragrances by category, lifestyle, climate, scent family, or brand to find the perfect fragrance for every preference and occasion.",
+        "current_hub": "brand",
+        "show_reviews": true,
+        "crumb_name": "Sasan Perfumes",
+        "crumb_parent_label": "Brands",
+        "crumb_parent_url": "/pages/brands",
+        "schema_name": "Sasan Perfumes UAE | The Fragrance Secrets",
+        "schema_description": "Explore authentic Sasan perfumes at The Fragrance Secrets. Shop Terra Sol, Sasan 24 and King of Vanilla. Fast UAE, USA and Canada delivery."
+      },
+      "blocks": {
+        "card1": {
+          "type": "card",
+          "settings": {
+            "title": "A Modern Fragrance House",
+            "body": "Sasan Perfumes creates contemporary fragrances for men and women, pairing its own Sasan Creation line with an inspired range, so there is a stylish scent for every taste and budget.",
+            "tag_label": "The House",
+            "tags": "Sasan Perfumes, Sasan Creation"
+          }
+        },
+        "card2": {
+          "type": "card",
+          "settings": {
+            "title": "The Sasan Creation Line",
+            "body": "Sasan Creation is the house's own original line, with Terra Sol blending woody, amber and aromatic accords with musk and caramel, and Sasan 24 pairing vanilla and passion fruit with musk and lavender.",
+            "tag_label": "Known For",
+            "tags": "Terra Sol, Sasan 24, Voice of Saccarat"
+          }
+        },
+        "card3": {
+          "type": "card",
+          "settings": {
+            "title": "A Range for Every Style",
+            "body": "From the warm woods and caramel of Terra Sol and the fruity aquatic freshness of Sasan 24 to the comforting sweetness of King of Vanilla, Sasan offers a broad palette for men, women and unisex wearers.",
+            "tag_label": "Explore",
+            "tags": "Woody, Vanilla, Fruity, Amber"
+          }
+        },
+        "card4": {
+          "type": "card",
+          "settings": {
+            "title": "Signature Style, Accessible Price",
+            "body": "Sasan's appeal is delivering refined, wearable fragrance at an accessible price, making it easy to build a collection or pick a thoughtful gift without compromise.",
+            "tag_label": "Best For",
+            "tags": "Men, Women, Everyday Wear"
+          }
+        },
+        "sibling1": {
+          "type": "sibling",
+          "settings": {
+            "label": "French Avenue",
+            "url": "/collections/french-avenue"
+          }
+        },
+        "sibling2": {
+          "type": "sibling",
+          "settings": {
+            "label": "Lattafa",
+            "url": "/collections/lattafa"
+          }
+        },
+        "sibling3": {
+          "type": "sibling",
+          "settings": {
+            "label": "Armaf",
+            "url": "/collections/armaf"
+          }
+        },
+        "sibling4": {
+          "type": "sibling",
+          "settings": {
+            "label": "Rayhaan",
+            "url": "/collections/rayhaan"
+          }
+        },
+        "explore1": {
+          "type": "explore",
+          "settings": {
+            "icon": "grid_view",
+            "label": "Shop by Category",
+            "sub": "Every way to shop, in one place",
+            "url": "/pages/shop-by-category",
+            "hub": "category"
+          }
+        },
+        "explore2": {
+          "type": "explore",
+          "settings": {
+            "icon": "auto_awesome",
+            "label": "Shop by Lifestyle",
+            "sub": "Office, date night, everyday",
+            "url": "/pages/shop-by-lifestyle",
+            "hub": "lifestyle"
+          }
+        },
+        "explore3": {
+          "type": "explore",
+          "settings": {
+            "icon": "wb_sunny",
+            "label": "Shop by Climate",
+            "sub": "Summer, humid, cooler days",
+            "url": "/pages/shop-by-climate",
+            "hub": "climate"
+          }
+        },
+        "explore4": {
+          "type": "explore",
+          "settings": {
+            "icon": "spa",
+            "label": "Shop by Scent Family",
+            "sub": "Fresh, oud, spicy, sweet",
+            "url": "/pages/shop-by-scent-family",
+            "hub": "scent"
+          }
+        },
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Sasan Perfumes a good perfume brand?",
+            "answer": "Yes. Sasan Perfumes is popular for stylish, easy-to-wear fragrances at an accessible price, with a mix of its own Sasan Creation scents and an inspired range. Terra Sol is a favourite."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "What is Sasan Perfumes known for?",
+            "answer": "Sasan Perfumes is known for its Sasan Creation line, including Terra Sol, Sasan 24 and Voice of Saccarat, along with comforting scents such as King of Vanilla."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "What is Sasan Creation?",
+            "answer": "Sasan Creation is the name Sasan uses for its own original fragrances, such as Terra Sol, Sasan 24 and Voice of Saccarat, as opposed to the scents in its inspired range."
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do Sasan perfumes last long?",
+            "answer": "Sasan fragrances are Eau de Parfum, and scents such as Terra Sol are built on warm base accords of musk, caramel and woods, giving them a comforting trail for everyday wear and special occasions."
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Are Sasan perfumes authentic at The Fragrance Secrets?",
+            "answer": "Yes. Every Sasan perfume at The Fragrance Secrets is 100% authentic and sourced through trusted suppliers, sealed and quality-checked, so you can shop with complete confidence."
+          }
+        },
+        "faq6": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you ship Sasan perfumes internationally?",
+            "answer": "Yes. The Fragrance Secrets delivers Sasan perfumes across the UAE and also ships to customers in the USA and Canada. Shipping options and delivery estimates are available during checkout."
+          }
+        }
+      },
+      "block_order": [
+        "card1",
+        "card2",
+        "card3",
+        "card4",
+        "sibling1",
+        "sibling2",
+        "sibling3",
+        "sibling4",
+        "explore1",
+        "explore2",
+        "explore3",
+        "explore4",
+        "faq1",
+        "faq2",
+        "faq3",
+        "faq4",
+        "faq5",
+        "faq6"
+      ]
     }
   },
   "order": [
-    "main"
+    "main",
+    "editorial"
   ]
 }

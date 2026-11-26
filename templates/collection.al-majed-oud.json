@@ -12,14 +12,208 @@
         "show_trust_band": false,
         "show_reviews": false,
         "intro_eyebrow": "By Brand",
-        "intro_heading": "Shop Al Majed Oud UAE",
+        "intro_heading": "Shop Al Majed Oud Perfumes UAE",
         "show_why_rotator": true,
         "hero_bg_image": "al-majed-oud-hero.webp",
-        "hero_bg_image_sm": "al-majed-oud-hero-sm.webp"
+        "hero_bg_image_sm": "al-majed-oud-hero-sm.webp",
+        "intro_text": "<p>Al Majed Oud, also known as Al Majed for Oud, is a heritage oud and perfume house whose story dates back to 1956 and one of the best-known names in Arabian perfumery. The Fragrance Secrets brings together authentic Al Majed Oud perfumes for men and women, led by the Prestige line with Prestige Ruby, Prestige Topaz and Prestige Pearl, alongside the smoky Boisée, the sweet Candy Musk and the fresh Mistral. Spanning floral woody, leather, gourmand and citrus amber styles, Al Majed Oud crafts rich, refined scents with real presence. If you want the depth of an oud house with modern, wearable blends, Al Majed Oud is a house to explore.</p>"
       }
+    },
+    "editorial": {
+      "type": "category-editorial",
+      "settings": {
+        "cards_eyebrow": "The House",
+        "cards_heading": "Why Choose Al Majed <em>Oud</em>",
+        "cards_sub": "",
+        "show_numbers": false,
+        "sibling_eyebrow": "Similar Houses",
+        "sibling_heading": "Explore Other <em>Brands</em>",
+        "sibling_sub": "Love Al Majed Oud? Explore more fragrance houses with a similar style and discover your next favourite scent.",
+        "sibling_all_label": "See All Brands",
+        "sibling_all_url": "/pages/brands",
+        "explore_eyebrow": "Keep Looking",
+        "explore_heading": "Explore More <em>Fragrance Collections</em>",
+        "explore_sub": "Browse fragrances by category, lifestyle, climate, scent family, or brand to find the perfect fragrance for every preference and occasion.",
+        "current_hub": "brand",
+        "show_reviews": true,
+        "crumb_name": "Al Majed Oud",
+        "crumb_parent_label": "Brands",
+        "crumb_parent_url": "/pages/brands",
+        "schema_name": "Al Majed Oud Perfumes UAE | The Fragrance Secrets",
+        "schema_description": "Explore authentic Al Majed Oud perfumes at The Fragrance Secrets. Shop the Prestige line, Boisée and Candy Musk. Fast UAE, USA and Canada delivery."
+      },
+      "blocks": {
+        "card1": {
+          "type": "card",
+          "settings": {
+            "title": "A Heritage Oud House",
+            "body": "Al Majed Oud, also known as Al Majed for Oud, traces its story back to 1956, when it began trading oud, and has grown into one of the most recognised oud and perfume houses in the region.",
+            "tag_label": "The House",
+            "tags": "Al Majed for Oud, Since 1956"
+          }
+        },
+        "card2": {
+          "type": "card",
+          "settings": {
+            "title": "The Prestige Line",
+            "body": "The house's Prestige line is a highlight, with Prestige Ruby blending orange blossom, amber and cedar, while Prestige Topaz and Prestige Pearl pair pink pepper and rose with sweet or musky woods.",
+            "tag_label": "Known For",
+            "tags": "Prestige Ruby, Prestige Topaz, Prestige Pearl"
+          }
+        },
+        "card3": {
+          "type": "card",
+          "settings": {
+            "title": "A Range for Every Style",
+            "body": "From the smoky incense and leather of Boisée and the peach, vanilla and musk of Candy Musk to the fresh bergamot and lavender of Mistral, Al Majed Oud offers a broad palette of unisex fragrances.",
+            "tag_label": "Explore",
+            "tags": "Floral, Woody, Leather, Citrus"
+          }
+        },
+        "card4": {
+          "type": "card",
+          "settings": {
+            "title": "Oud Heritage, Modern Blends",
+            "body": "Al Majed Oud's appeal is bringing decades of oud expertise into modern, long-lasting perfumes that feel rich and refined without being heavy, for daily wear and special occasions alike.",
+            "tag_label": "Best For",
+            "tags": "Men, Women, Unisex"
+          }
+        },
+        "sibling1": {
+          "type": "sibling",
+          "settings": {
+            "label": "Ibrahim Al Qurashi",
+            "url": "/collections/ibrahim-al-qurashi"
+          }
+        },
+        "sibling2": {
+          "type": "sibling",
+          "settings": {
+            "label": "Ahmed Al Maghribi",
+            "url": "/collections/ahmed-al-maghribi"
+          }
+        },
+        "sibling3": {
+          "type": "sibling",
+          "settings": {
+            "label": "Swiss Arabian",
+            "url": "/collections/swiss-arabian"
+          }
+        },
+        "sibling4": {
+          "type": "sibling",
+          "settings": {
+            "label": "Alezz Oud",
+            "url": "/collections/alezz-oud"
+          }
+        },
+        "explore1": {
+          "type": "explore",
+          "settings": {
+            "icon": "grid_view",
+            "label": "Shop by Category",
+            "sub": "Every way to shop, in one place",
+            "url": "/pages/shop-by-category",
+            "hub": "category"
+          }
+        },
+        "explore2": {
+          "type": "explore",
+          "settings": {
+            "icon": "auto_awesome",
+            "label": "Shop by Lifestyle",
+            "sub": "Office, date night, everyday",
+            "url": "/pages/shop-by-lifestyle",
+            "hub": "lifestyle"
+          }
+        },
+        "explore3": {
+          "type": "explore",
+          "settings": {
+            "icon": "wb_sunny",
+            "label": "Shop by Climate",
+            "sub": "Summer, humid, cooler days",
+            "url": "/pages/shop-by-climate",
+            "hub": "climate"
+          }
+        },
+        "explore4": {
+          "type": "explore",
+          "settings": {
+            "icon": "spa",
+            "label": "Shop by Scent Family",
+            "sub": "Fresh, oud, spicy, sweet",
+            "url": "/pages/shop-by-scent-family",
+            "hub": "scent"
+          }
+        },
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Al Majed Oud a good perfume brand?",
+            "answer": "Yes. Al Majed Oud is a heritage oud house whose story dates back to 1956, loved for rich, long-lasting Arabian perfumes. The Prestige line and Boisée are firm favourites."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "What is Al Majed Oud known for?",
+            "answer": "Al Majed Oud is known for its oud heritage and its Prestige line, including Prestige Ruby, Prestige Topaz and Prestige Pearl, along with popular scents such as Boisée, Candy Musk and Mistral."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Al Majid Oud the same as Al Majed Oud?",
+            "answer": "Yes. Al Majid Oud, Majed Al Oud and Al Majed for Oud are different English spellings of the same house name, so they all refer to Al Majed Oud."
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do Al Majed Oud perfumes last long?",
+            "answer": "Yes. Al Majed Oud fragrances are long lasting, with moderate to strong projection depending on the scent. Boisée and Prestige Ruby are among the boldest choices for evenings."
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Are Al Majed Oud perfumes authentic at The Fragrance Secrets?",
+            "answer": "Yes. Every Al Majed Oud perfume at The Fragrance Secrets is 100% authentic and sourced through trusted suppliers, sealed and quality-checked, so you can shop with complete confidence."
+          }
+        },
+        "faq6": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you ship Al Majed Oud perfumes internationally?",
+            "answer": "Yes. The Fragrance Secrets delivers Al Majed Oud perfumes across the UAE and also ships to customers in the USA and Canada. Shipping options and delivery estimates are available during checkout."
+          }
+        }
+      },
+      "block_order": [
+        "card1",
+        "card2",
+        "card3",
+        "card4",
+        "sibling1",
+        "sibling2",
+        "sibling3",
+        "sibling4",
+        "explore1",
+        "explore2",
+        "explore3",
+        "explore4",
+        "faq1",
+        "faq2",
+        "faq3",
+        "faq4",
+        "faq5",
+        "faq6"
+      ]
     }
   },
   "order": [
-    "main"
+    "main",
+    "editorial"
   ]
 }

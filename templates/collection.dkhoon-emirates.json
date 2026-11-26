@@ -1,12 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main": {
@@ -21,14 +12,208 @@
         "show_trust_band": false,
         "show_reviews": false,
         "intro_eyebrow": "By Brand",
-        "intro_heading": "Shop Dkhoon Emirates UAE",
+        "intro_heading": "Shop Dkhoon Emirates Perfumes UAE",
         "show_why_rotator": true,
         "hero_bg_image": "dkhoon-emirates-hero.webp",
-        "hero_bg_image_sm": "dkhoon-emirates-hero-sm.webp"
+        "hero_bg_image_sm": "dkhoon-emirates-hero-sm.webp",
+        "intro_text": "<p>Dkhoon Emirates, also known as Dkhoon Al Emiratia, is a fragrance house celebrated for rich Arabian perfumes built around oud, rose, amber and spice. The Fragrance Secrets brings together authentic Dkhoon Emirates perfumes for men and women, from the smoky Dkhoon Oud and the radiant Dkhoon Rose to the desert-inspired Kahilan, alongside fresh and woody men's scents such as Titan and Signature Silver. Spanning oriental, woody, floral and fresh aquatic styles, Dkhoon crafts elegant fragrances with real character. If you love the depth of traditional Arabian perfumery with a modern finish, Dkhoon Emirates is a house to explore.</p>"
       }
+    },
+    "editorial": {
+      "type": "category-editorial",
+      "settings": {
+        "cards_eyebrow": "The House",
+        "cards_heading": "Why Choose Dkhoon <em>Emirates</em>",
+        "cards_sub": "",
+        "show_numbers": false,
+        "sibling_eyebrow": "Similar Houses",
+        "sibling_heading": "Explore Other <em>Brands</em>",
+        "sibling_sub": "Love Dkhoon? Explore more fragrance houses with a similar style and discover your next favourite scent.",
+        "sibling_all_label": "See All Brands",
+        "sibling_all_url": "/pages/brands",
+        "explore_eyebrow": "Keep Looking",
+        "explore_heading": "Explore More <em>Fragrance Collections</em>",
+        "explore_sub": "Browse fragrances by category, lifestyle, climate, scent family, or brand to find the perfect fragrance for every preference and occasion.",
+        "current_hub": "brand",
+        "show_reviews": true,
+        "crumb_name": "Dkhoon Emirates",
+        "crumb_parent_label": "Brands",
+        "crumb_parent_url": "/pages/brands",
+        "schema_name": "Dkhoon Emirates Perfumes UAE | The Fragrance Secrets",
+        "schema_description": "Explore authentic Dkhoon Emirates perfumes at The Fragrance Secrets. Shop Dkhoon Oud, Dkhoon Rose and Kahilan. Fast UAE, USA and Canada delivery."
+      },
+      "blocks": {
+        "card1": {
+          "type": "card",
+          "settings": {
+            "title": "A Modern Arabian House",
+            "body": "Dkhoon Emirates, also known as Dkhoon Al Emiratia, creates Arabian perfumes that balance traditional ingredients such as oud, rose and frankincense with a smooth, modern finish for everyday wear.",
+            "tag_label": "The House",
+            "tags": "Dkhoon Emirates, Dkhoon Al Emiratia"
+          }
+        },
+        "card2": {
+          "type": "card",
+          "settings": {
+            "title": "Oud and Rose Signatures",
+            "body": "The house is known for Dkhoon Oud, a smoky blend of rose, frankincense and agarwood, and Dkhoon Rose, a warm floral of rose, jasmine and vanilla, with Kahilan adding white oud, amber and caramel.",
+            "tag_label": "Known For",
+            "tags": "Dkhoon Oud, Dkhoon Rose, Kahilan"
+          }
+        },
+        "card3": {
+          "type": "card",
+          "settings": {
+            "title": "A Range for Every Style",
+            "body": "From rich oriental ouds and florals to the fresh marine citrus of Titan, the leather and oud of Signature Silver and the soft rose and musk of Aura, Dkhoon offers a broad palette for men, women and unisex wearers.",
+            "tag_label": "Explore",
+            "tags": "Oud, Rose, Woody, Fresh"
+          }
+        },
+        "card4": {
+          "type": "card",
+          "settings": {
+            "title": "Arabian Depth, Modern Feel",
+            "body": "Dkhoon's appeal is delivering the warmth of classic Arabian perfumery in refined, wearable compositions that suit evenings and special occasions as easily as the office.",
+            "tag_label": "Best For",
+            "tags": "Men, Women, Evening"
+          }
+        },
+        "sibling1": {
+          "type": "sibling",
+          "settings": {
+            "label": "Swiss Arabian",
+            "url": "/collections/swiss-arabian"
+          }
+        },
+        "sibling2": {
+          "type": "sibling",
+          "settings": {
+            "label": "Ibrahim Al Qurashi",
+            "url": "/collections/ibrahim-al-qurashi"
+          }
+        },
+        "sibling3": {
+          "type": "sibling",
+          "settings": {
+            "label": "Khaleej Pride",
+            "url": "/collections/khaleej-pride"
+          }
+        },
+        "sibling4": {
+          "type": "sibling",
+          "settings": {
+            "label": "Arabiyat Prestige",
+            "url": "/collections/arabiyat-prestige"
+          }
+        },
+        "explore1": {
+          "type": "explore",
+          "settings": {
+            "icon": "grid_view",
+            "label": "Shop by Category",
+            "sub": "Every way to shop, in one place",
+            "url": "/pages/shop-by-category",
+            "hub": "category"
+          }
+        },
+        "explore2": {
+          "type": "explore",
+          "settings": {
+            "icon": "auto_awesome",
+            "label": "Shop by Lifestyle",
+            "sub": "Office, date night, everyday",
+            "url": "/pages/shop-by-lifestyle",
+            "hub": "lifestyle"
+          }
+        },
+        "explore3": {
+          "type": "explore",
+          "settings": {
+            "icon": "wb_sunny",
+            "label": "Shop by Climate",
+            "sub": "Summer, humid, cooler days",
+            "url": "/pages/shop-by-climate",
+            "hub": "climate"
+          }
+        },
+        "explore4": {
+          "type": "explore",
+          "settings": {
+            "icon": "spa",
+            "label": "Shop by Scent Family",
+            "sub": "Fresh, oud, spicy, sweet",
+            "url": "/pages/shop-by-scent-family",
+            "hub": "scent"
+          }
+        },
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Dkhoon Emirates a good perfume brand?",
+            "answer": "Yes. Dkhoon Emirates is loved for elegant Arabian fragrances that combine oud, rose, amber and spice with a refined modern finish. Dkhoon Oud and Dkhoon Rose are signature favourites."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "What is Dkhoon Emirates known for?",
+            "answer": "Dkhoon Emirates is known for rich oriental scents such as Dkhoon Oud, Dkhoon Rose and Kahilan, alongside fresh and woody men's fragrances like Titan and Signature Silver."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "Is Dkhoon Emirates the same as Dkhoon Al Emiratia?",
+            "answer": "Yes. Dkhoon Emirates and Dkhoon Al Emiratia are two names for the same fragrance house, which is why you will see both names on its bottles and product pages."
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Do Dkhoon Emirates perfumes last long?",
+            "answer": "Dkhoon Emirates fragrances are Eau de Parfum, built on rich base notes such as oud, amber, musk and woods, which gives them a warm, lasting trail that suits evenings and special occasions."
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Are Dkhoon Emirates perfumes authentic at The Fragrance Secrets?",
+            "answer": "Yes. Every Dkhoon Emirates perfume at The Fragrance Secrets is 100% authentic and sourced through trusted suppliers, sealed and quality-checked, so you can shop with complete confidence."
+          }
+        },
+        "faq6": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you ship Dkhoon Emirates perfumes internationally?",
+            "answer": "Yes. The Fragrance Secrets delivers Dkhoon Emirates perfumes across the UAE and also ships to customers in the USA and Canada. Shipping options and delivery estimates are available during checkout."
+          }
+        }
+      },
+      "block_order": [
+        "card1",
+        "card2",
+        "card3",
+        "card4",
+        "sibling1",
+        "sibling2",
+        "sibling3",
+        "sibling4",
+        "explore1",
+        "explore2",
+        "explore3",
+        "explore4",
+        "faq1",
+        "faq2",
+        "faq3",
+        "faq4",
+        "faq5",
+        "faq6"
+      ]
     }
   },
   "order": [
-    "main"
+    "main",
+    "editorial"
   ]
 }
