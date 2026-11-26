@@ -10,95 +10,414 @@
   {
     "name": "Colors",
     "settings": [
-      { "type": "header", "content": "Brand palette (60·30·10)" },
-      { "type": "color", "id": "color_cream", "label": "Cream (dominant canvas)", "default": "#F7F2EA" },
-      { "type": "color", "id": "color_ink", "label": "Ink (dark structure)", "default": "#0D0A06" },
-      { "type": "color", "id": "color_charcoal", "label": "Charcoal", "default": "#1C1812" },
-      { "type": "color", "id": "color_gold", "label": "Gold (accent)", "default": "#C9A84C" }
+      {
+        "type": "header",
+        "content": "Brand palette (60·30·10)"
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "Cream (dominant canvas)",
+        "default": "#F7F2EA"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Ink (dark structure)",
+        "default": "#0D0A06"
+      },
+      {
+        "type": "color",
+        "id": "color_charcoal",
+        "label": "Charcoal",
+        "default": "#1C1812"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold (accent)",
+        "default": "#C9A84C"
+      }
     ]
   },
   {
     "name": "Layout",
     "settings": [
-      { "type": "image_picker", "id": "favicon", "label": "Favicon" },
-      { "type": "select", "id": "header_theme", "label": "Default header theme", "options": [
-        { "value": "dark", "label": "Dark" }, { "value": "light", "label": "Light" }
-      ], "default": "dark" },
-      { "type": "select", "id": "text_direction", "label": "Text direction", "options": [
-        { "value": "ltr", "label": "Left to right" }, { "value": "rtl", "label": "Right to left" }
-      ], "default": "ltr" },
-      { "type": "text", "id": "whatsapp_number", "label": "WhatsApp number", "info": "With country code, digits only (e.g. 971501234567). Used by the WhatsApp float and concierge." }
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon"
+      },
+      {
+        "type": "select",
+        "id": "header_theme",
+        "label": "Default header theme",
+        "options": [
+          {
+            "value": "dark",
+            "label": "Dark"
+          },
+          {
+            "value": "light",
+            "label": "Light"
+          }
+        ],
+        "default": "dark"
+      },
+      {
+        "type": "select",
+        "id": "text_direction",
+        "label": "Text direction",
+        "options": [
+          {
+            "value": "ltr",
+            "label": "Left to right"
+          },
+          {
+            "value": "rtl",
+            "label": "Right to left"
+          }
+        ],
+        "default": "ltr"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number",
+        "info": "With country code, digits only (e.g. 971501234567). Used by the WhatsApp float and concierge."
+      }
     ]
   },
   {
     "name": "Delivery & returns",
     "settings": [
-      { "type": "paragraph", "content": "The free-delivery threshold was hard-coded in eighteen files \u2014 the cart bar, the trust strips, the FAQs, the announcement bar \u2014 and changing it meant finding all of them. It is one number now. It must match the shipping rate in Shopify admin \u203a Settings \u203a Shipping and delivery, and the Shipping policy text, neither of which the theme can set." },
-      { "type": "text", "id": "free_shipping_threshold", "label": "Free delivery above", "default": "250", "info": "Digits only, in store currency. Orders at or above this total ship free." },
-      { "type": "text", "id": "shipping_flat_rate", "label": "Delivery charge below that", "default": "8", "info": "Digits only, in store currency. The rate charged under the threshold. Quoted in the product page's Shipping tab and published in the Product structured data, so Google shows the same figure checkout does — it must match the shipping rate in Settings › Shipping and delivery." },
-      { "type": "text", "id": "returns_window_days", "label": "Return window (days)", "default": "2", "info": "Digits only. Must match Settings \u203a Policies \u203a Refund policy. The storefront also states what returns are accepted for \u2014 faulty, wrong or incomplete orders \u2014 because a bare number reads as a change-of-mind window, which this store does not offer." },
-      { "type": "header", "content": "Delivery estimate" },
-      { "type": "paragraph", "content": "\"Delivered by Thursday\" answers the question \"ships in 1\u20134 business days\" leaves open, and 20% of shoppers who abandon a checkout say delivery was too slow \u2014 a figure they can only act on if they are told before the payment step. The dates below are worked out from these three numbers and the UAE working week (Monday\u2013Friday), and they must match the Shipping policy and the courier's real service, which the theme cannot see." },
-      { "type": "range", "id": "dispatch_cutoff_hour", "label": "Same-day dispatch cutoff", "min": 0, "max": 23, "step": 1, "default": 18, "unit": "h", "info": "Store time, 24-hour. Orders placed after this hour start their clock the next business day." },
-      { "type": "select", "id": "delivery_rest_days", "label": "Days we do not dispatch", "default": "sun", "options": [
-        { "value": "sun", "label": "Sunday only (Mon–Sat working week)" },
-        { "value": "fri", "label": "Friday only" },
-        { "value": "fri-sat", "label": "Friday & Saturday" },
-        { "value": "sat-sun", "label": "Saturday & Sunday" },
-        { "value": "none", "label": "None — we dispatch every day" }
-      ], "info": "Which days the arrival estimate skips. The Shipping policy says handling runs Monday to Saturday, so the default rests on Sunday only — counting Saturday as a non-working day pushes every estimate a day late." },
-      { "type": "range", "id": "delivery_days_min", "label": "Fastest delivery", "min": 1, "max": 14, "step": 1, "default": 1, "unit": "d", "info": "Business days after dispatch." },
-      { "type": "range", "id": "delivery_days_max", "label": "Slowest delivery", "min": 1, "max": 21, "step": 1, "default": 4, "unit": "d", "info": "Business days after dispatch. Shown as the \"by\" date, so this is the promise \u2014 keep it the one the courier actually meets." },
-      { "type": "paragraph", "content": "Where it goes changes when it lands. The UAE has no postal codes, so the usual pincode box cannot exist here \u2014 the destination is an emirate, and this is the list the shopper picks from. Their choice is remembered across the site.\n\nOne line per destination, written \"Emirate: extra working days\". Zero means it arrives in the window above; 2 means two working days later. The figures must be the courier's real ones \u2014 every line here is a delivery promise, and an invented one is worse than no picker at all. Leave the box empty to show no picker and quote one window for the whole country." },
-      { "type": "textarea", "id": "delivery_zones", "label": "Destinations and extra days", "default": "Dubai: 0\nSharjah: 0\nAjman: 0\nUmm Al Quwain: 0\nRas Al Khaimah: 0\nFujairah: 0\nAbu Dhabi: 0", "info": "Put the one most orders go to first \u2014 it is what the page shows before the shopper chooses." }
+      {
+        "type": "paragraph",
+        "content": "The free-delivery threshold was hard-coded in eighteen files — the cart bar, the trust strips, the FAQs, the announcement bar — and changing it meant finding all of them. It is one number now. It must match the shipping rate in Shopify admin › Settings › Shipping and delivery, and the Shipping policy text, neither of which the theme can set."
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_threshold",
+        "label": "Free delivery above",
+        "default": "250",
+        "info": "Digits only, in store currency. Orders at or above this total ship free."
+      },
+      {
+        "type": "text",
+        "id": "shipping_flat_rate",
+        "label": "Delivery charge below that",
+        "default": "8",
+        "info": "Digits only, in store currency. The rate charged under the threshold. Quoted in the product page's Shipping tab and published in the Product structured data, so Google shows the same figure checkout does — it must match the shipping rate in Settings › Shipping and delivery."
+      },
+      {
+        "type": "text",
+        "id": "returns_window_days",
+        "label": "Return window (days)",
+        "default": "2",
+        "info": "Digits only. Must match Settings › Policies › Refund policy. The storefront also states what returns are accepted for — faulty, wrong or incomplete orders — because a bare number reads as a change-of-mind window, which this store does not offer."
+      },
+      {
+        "type": "header",
+        "content": "Delivery estimate"
+      },
+      {
+        "type": "paragraph",
+        "content": "\"Delivered by Thursday\" answers the question \"ships in 1–4 business days\" leaves open, and 20% of shoppers who abandon a checkout say delivery was too slow — a figure they can only act on if they are told before the payment step. The dates below are worked out from these three numbers and the UAE working week (Monday–Friday), and they must match the Shipping policy and the courier's real service, which the theme cannot see."
+      },
+      {
+        "type": "range",
+        "id": "dispatch_cutoff_hour",
+        "label": "Same-day dispatch cutoff",
+        "min": 0,
+        "max": 23,
+        "step": 1,
+        "default": 18,
+        "unit": "h",
+        "info": "Store time, 24-hour. Orders placed after this hour start their clock the next business day."
+      },
+      {
+        "type": "select",
+        "id": "delivery_rest_days",
+        "label": "Days we do not dispatch",
+        "default": "sun",
+        "options": [
+          {
+            "value": "sun",
+            "label": "Sunday only (Mon–Sat working week)"
+          },
+          {
+            "value": "fri",
+            "label": "Friday only"
+          },
+          {
+            "value": "fri-sat",
+            "label": "Friday & Saturday"
+          },
+          {
+            "value": "sat-sun",
+            "label": "Saturday & Sunday"
+          },
+          {
+            "value": "none",
+            "label": "None — we dispatch every day"
+          }
+        ],
+        "info": "Which days the arrival estimate skips. The Shipping policy says handling runs Monday to Saturday, so the default rests on Sunday only — counting Saturday as a non-working day pushes every estimate a day late."
+      },
+      {
+        "type": "range",
+        "id": "delivery_days_min",
+        "label": "Fastest delivery",
+        "min": 1,
+        "max": 14,
+        "step": 1,
+        "default": 1,
+        "unit": "d",
+        "info": "Business days after dispatch."
+      },
+      {
+        "type": "range",
+        "id": "delivery_days_max",
+        "label": "Slowest delivery",
+        "min": 1,
+        "max": 21,
+        "step": 1,
+        "default": 4,
+        "unit": "d",
+        "info": "Business days after dispatch. Shown as the \"by\" date, so this is the promise — keep it the one the courier actually meets."
+      },
+      {
+        "type": "paragraph",
+        "content": "Where it goes changes when it lands. The UAE has no postal codes, so the usual pincode box cannot exist here — the destination is an emirate, and this is the list the shopper picks from. Their choice is remembered across the site.\n\nOne line per destination, written \"Emirate: extra working days\". Zero means it arrives in the window above; 2 means two working days later. The figures must be the courier's real ones — every line here is a delivery promise, and an invented one is worse than no picker at all. Leave the box empty to show no picker and quote one window for the whole country."
+      },
+      {
+        "type": "textarea",
+        "id": "delivery_zones",
+        "label": "Destinations and extra days",
+        "default": "Dubai: 0\nSharjah: 0\nAjman: 0\nUmm Al Quwain: 0\nRas Al Khaimah: 0\nFujairah: 0\nAbu Dhabi: 0",
+        "info": "Put the one most orders go to first — it is what the page shows before the shopper chooses."
+      }
     ]
   },
   {
     "name": "Analytics",
     "settings": [
-      { "type": "paragraph", "content": "Funnel tracking. Every CRO decision after this depends on seeing where shoppers drop off, so this is the one thing to fill in first. Paste a GA4 measurement ID, a GTM container ID, or both — leave both blank and nothing loads at all, which is the right default for a theme preview or a staging copy. The theme pushes the full GA4 ecommerce event set to window.dataLayer either way, so a GTM container can read the same events without a measurement ID here." },
-      { "type": "text", "id": "ga4_measurement_id", "label": "GA4 measurement ID", "info": "Starts G-. Loads gtag.js and sends events straight to GA4. Leave blank if a GTM container below is sending them instead — filling in both sends every event twice." },
-      { "type": "text", "id": "gtm_container_id", "label": "Google Tag Manager container ID", "info": "Starts GTM-. Loads the container, which then reads the dataLayer the theme writes." },
-      { "type": "paragraph", "content": "A theme cannot see the checkout, so begin_checkout is the last event this file can fire. purchase, add_shipping_info and add_payment_info have to come from a custom pixel in Settings › Customer events — the code to paste is in docs/ga4-purchase-pixel.js. Without it the funnel ends at the checkout button and conversion rate cannot be calculated." },
-      { "type": "checkbox", "id": "analytics_debug", "label": "Log events to the browser console", "default": false, "info": "For checking a release. Leave off in production." }
+      {
+        "type": "paragraph",
+        "content": "Funnel tracking. Every CRO decision after this depends on seeing where shoppers drop off, so this is the one thing to fill in first. Paste a GA4 measurement ID, a GTM container ID, or both — leave both blank and nothing loads at all, which is the right default for a theme preview or a staging copy. The theme pushes the full GA4 ecommerce event set to window.dataLayer either way, so a GTM container can read the same events without a measurement ID here."
+      },
+      {
+        "type": "text",
+        "id": "ga4_measurement_id",
+        "label": "GA4 measurement ID",
+        "info": "Starts G-. Loads gtag.js and sends events straight to GA4. Leave blank if a GTM container below is sending them instead — filling in both sends every event twice."
+      },
+      {
+        "type": "text",
+        "id": "gtm_container_id",
+        "label": "Google Tag Manager container ID",
+        "info": "Starts GTM-. Loads the container, which then reads the dataLayer the theme writes."
+      },
+      {
+        "type": "paragraph",
+        "content": "A theme cannot see the checkout, so begin_checkout is the last event this file can fire. purchase, add_shipping_info and add_payment_info have to come from a custom pixel in Settings › Customer events — the code to paste is in docs/ga4-purchase-pixel.js. Without it the funnel ends at the checkout button and conversion rate cannot be calculated."
+      },
+      {
+        "type": "checkbox",
+        "id": "analytics_debug",
+        "label": "Log events to the browser console",
+        "default": false,
+        "info": "For checking a release. Leave off in production."
+      }
     ]
   },
   {
     "name": "Order experience rating",
     "settings": [
-      { "type": "paragraph", "content": "A theme cannot store a rating. The storefront has no database and cannot write to Shopify \u2014 only the Admin API can put a value on an order, and an Admin token in theme code would expose the whole shop. So Judge.me keeps the ratings and sends the request; the theme only asks. Paste the Judge.me shop-review form link below and a \"How was your experience?\" card appears on a customer's order once that order is fulfilled. Leave it blank and nothing renders, rather than five stars that lead nowhere. Find the link in Judge.me \u203a Shop reviews. Judge.me also sends its own request automatically after fulfilment \u2014 set the timing there, not here, and give the courier time to actually arrive before it goes out." },
-      { "type": "text", "id": "judgeme_shop_review_url", "label": "Judge.me shop review form link", "info": "Full URL, starting https://. The chosen star is appended as &rating=1\u20135; if Judge.me ignores it the form simply opens unset." }
+      {
+        "type": "paragraph",
+        "content": "A theme cannot store a rating. The storefront has no database and cannot write to Shopify — only the Admin API can put a value on an order, and an Admin token in theme code would expose the whole shop. So Judge.me keeps the ratings and sends the request; the theme only asks. Paste the Judge.me shop-review form link below and a \"How was your experience?\" card appears on a customer's order once that order is fulfilled. Leave it blank and nothing renders, rather than five stars that lead nowhere. Find the link in Judge.me › Shop reviews. Judge.me also sends its own request automatically after fulfilment — set the timing there, not here, and give the courier time to actually arrive before it goes out."
+      },
+      {
+        "type": "text",
+        "id": "judgeme_shop_review_url",
+        "label": "Judge.me shop review form link",
+        "info": "Full URL, starting https://. The chosen star is appended as &rating=1–5; if Judge.me ignores it the form simply opens unset."
+      }
     ]
   },
   {
     "name": "Welcome offer",
     "settings": [
-      { "type": "paragraph", "content": "The first-order discount shown above the footer. A theme cannot create a discount, so the code below must exist in Shopify admin \u203a Discounts: a discount code, percentage off the order, customer eligibility set to customers with an account, and \"limit to one use per customer\" ticked. The theme puts the code on the bag; Shopify decides who may keep it." },
-      { "type": "checkbox", "id": "welcome_offer_enabled", "label": "Show the welcome offer", "default": true },
-      { "type": "text", "id": "welcome_offer_code", "label": "Discount code", "default": "WELCOME10", "info": "Must match the code in Shopify admin \u203a Discounts exactly. Case does not matter." },
-      { "type": "select", "id": "welcome_offer_kind", "label": "Discount type", "default": "percent", "options": [ { "value": "percent", "label": "Percentage off" }, { "value": "amount", "label": "Fixed amount off" } ], "info": "Must match the discount's type in admin. A percentage capped at a maximum is not something Shopify can express, so a capped offer is set up as a fixed amount here and in admin \u2014 above the minimum below, a cap always binds anyway, and the two are the same number." },
-      { "type": "text", "id": "welcome_offer_percent", "label": "Percentage shown in the copy", "default": "10", "info": "Digits only. Used when the type above is a percentage. This is wording, not the discount itself \u2014 change the real amount on the discount in admin and keep the two in step." },
-      { "type": "text", "id": "welcome_offer_amount", "label": "Fixed amount shown in the copy", "default": "20", "info": "Digits only, in store currency. Used when the type above is a fixed amount. Wording only, exactly as above." },
-      { "type": "checkbox", "id": "welcome_popup_enabled", "label": "Show the offer as a popup", "default": false, "info": "A corner popup naming the welcome offer, shown once per visitor until dismissed. Never over the cart, the checkout or the account pages, never to a customer who has already ordered, and never when the code is already on the bag." },
-      { "type": "checkbox", "id": "welcome_offer_excludes_shipping", "label": "Welcome discount replaces free delivery", "default": false, "info": "Tick only once admin \u2191 Discounts is actually set up that way \u2014 free delivery created as an automatic shipping discount, and the two told not to combine. This setting only changes what the storefront says; Shopify decides what a shopper may keep, and copy that disagrees with checkout is worse than no copy." },
-      { "type": "text", "id": "welcome_offer_min", "label": "Minimum order value", "default": "150", "info": "Digits only, in store currency. Must match the discount's minimum purchase amount in admin, or the storefront promises a discount that checkout refuses. Leave blank if the discount has no minimum." }
+      {
+        "type": "paragraph",
+        "content": "The first-order discount shown above the footer. A theme cannot create a discount, so the code below must exist in Shopify admin › Discounts: a discount code, percentage off the order, customer eligibility set to customers with an account, and \"limit to one use per customer\" ticked. The theme puts the code on the bag; Shopify decides who may keep it."
+      },
+      {
+        "type": "checkbox",
+        "id": "welcome_offer_enabled",
+        "label": "Show the welcome offer",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "welcome_offer_code",
+        "label": "Discount code",
+        "default": "WELCOME10",
+        "info": "Must match the code in Shopify admin › Discounts exactly. Case does not matter."
+      },
+      {
+        "type": "select",
+        "id": "welcome_offer_kind",
+        "label": "Discount type",
+        "default": "percent",
+        "options": [
+          {
+            "value": "percent",
+            "label": "Percentage off"
+          },
+          {
+            "value": "amount",
+            "label": "Fixed amount off"
+          }
+        ],
+        "info": "Must match the discount's type in admin. A percentage capped at a maximum is not something Shopify can express, so a capped offer is set up as a fixed amount here and in admin — above the minimum below, a cap always binds anyway, and the two are the same number."
+      },
+      {
+        "type": "text",
+        "id": "welcome_offer_percent",
+        "label": "Percentage shown in the copy",
+        "default": "10",
+        "info": "Digits only. Used when the type above is a percentage. This is wording, not the discount itself — change the real amount on the discount in admin and keep the two in step."
+      },
+      {
+        "type": "text",
+        "id": "welcome_offer_amount",
+        "label": "Fixed amount shown in the copy",
+        "default": "20",
+        "info": "Digits only, in store currency. Used when the type above is a fixed amount. Wording only, exactly as above."
+      },
+      {
+        "type": "checkbox",
+        "id": "welcome_popup_enabled",
+        "label": "Show the offer as a popup",
+        "default": false,
+        "info": "A corner popup naming the welcome offer, shown once per visitor until dismissed. Never over the cart, the checkout or the account pages, never to a customer who has already ordered, and never when the code is already on the bag."
+      },
+      {
+        "type": "checkbox",
+        "id": "welcome_offer_excludes_shipping",
+        "label": "Welcome discount replaces free delivery",
+        "default": false,
+        "info": "Tick only once admin ↑ Discounts is actually set up that way — free delivery created as an automatic shipping discount, and the two told not to combine. This setting only changes what the storefront says; Shopify decides what a shopper may keep, and copy that disagrees with checkout is worse than no copy."
+      },
+      {
+        "type": "text",
+        "id": "welcome_offer_min",
+        "label": "Minimum order value",
+        "default": "150",
+        "info": "Digits only, in store currency. Must match the discount's minimum purchase amount in admin, or the storefront promises a discount that checkout refuses. Leave blank if the discount has no minimum."
+      }
     ]
   },
   {
     "name": "Promotions & cashback",
     "settings": [
-      { "type": "paragraph", "content": "One switch over everything the storefront offers a shopper on top of the shelf price. Turning it off removes the welcome-offer band above the footer, the welcome strips on the cart, the drawer and the account page, and the \u201cHave a discount code?\u201d box \u2014 all of it, in one place, so an exclusivity commitment to a cashback partner does not depend on remembering eighteen surfaces. It does not touch delivery, returns, cash on delivery or instalments: those are terms of service, not promotions, and no partner treats them as competing offers. It also cannot touch price \u2014 markdowns live on the products in admin, and the shelf price is not something a theme setting can retract." },
-      { "type": "checkbox", "id": "promos_enabled", "label": "Run our own promotions", "default": true, "info": "Off: no discount is offered or accepted anywhere on the storefront. Also delete or disable the codes themselves in admin \u203a Discounts \u2014 a code hidden here still works if someone types it at checkout." },
-
-      { "type": "header", "content": "Cashback partner" },
-      { "type": "paragraph", "content": "A cashback partner pays the shopper a percentage back after the order and bills us for it. Two rules follow from that, and both are enforced below. First, the cashback is confirmed only to shoppers the partner actually sent \u2014 announcing it to everyone would hand the partner commission on traffic that was already ours. Second, a shopper the partner sent is shown no other offer, because a stacked order is one we pay for twice." },
-      { "type": "checkbox", "id": "cashback_enabled", "label": "We have a cashback partner", "default": false },
-      { "type": "text", "id": "cashback_partner", "label": "Partner name", "default": "Mimojo" },
-      { "type": "text", "id": "cashback_percent", "label": "Cashback the shopper receives (%)", "default": "7", "info": "Digits only. Wording, not the payout itself \u2014 the partner pays the shopper, so this must match what their own site advertises or the cart contradicts the page they clicked from." },
-      { "type": "text", "id": "cashback_sources", "label": "Referral sources that count", "default": "mimojo", "info": "Comma-separated, lower-case. A visit arriving with utm_source, ref or source set to any of these is treated as the partner\u2019s. Must match exactly what the partner puts on their outbound links \u2014 ask them, do not guess." },
-      { "type": "text", "id": "cashback_window_days", "label": "Attribution window (days)", "default": "30", "info": "Digits only. How long a visit stays attributed to the partner on this device. Set it to the same window the partner tracks, or the storefront will promise cashback on an order their system no longer credits." },
-      { "type": "checkbox", "id": "cashback_exclusive", "label": "Hide every other offer from shoppers the partner sent", "default": true, "info": "Belt and braces over the switch above: holds even while our own promotions are running, so a partner order can never carry a discount code as well." },
-      { "type": "url", "id": "cashback_terms_url", "label": "Partner terms link", "info": "Linked from the cashback confirmation in the cart. The partner owns the payout, the timing and the disputes \u2014 point at their terms rather than restating them here, where they would go stale." }
+      {
+        "type": "paragraph",
+        "content": "One switch over everything the storefront offers a shopper on top of the shelf price. Turning it off removes the welcome-offer band above the footer, the welcome strips on the cart, the drawer and the account page, and the “Have a discount code?” box — all of it, in one place, so an exclusivity commitment to a cashback partner does not depend on remembering eighteen surfaces. It does not touch delivery, returns, cash on delivery or instalments: those are terms of service, not promotions, and no partner treats them as competing offers. It also cannot touch price — markdowns live on the products in admin, and the shelf price is not something a theme setting can retract."
+      },
+      {
+        "type": "checkbox",
+        "id": "promos_enabled",
+        "label": "Run our own promotions",
+        "default": true,
+        "info": "Off: no discount is offered or accepted anywhere on the storefront. Also delete or disable the codes themselves in admin › Discounts — a code hidden here still works if someone types it at checkout."
+      },
+      {
+        "type": "header",
+        "content": "Cashback partner"
+      },
+      {
+        "type": "paragraph",
+        "content": "A cashback partner pays the shopper a percentage back after the order and bills us for it. Two rules follow from that, and both are enforced below. First, the cashback is confirmed only to shoppers the partner actually sent — announcing it to everyone would hand the partner commission on traffic that was already ours. Second, a shopper the partner sent is shown no other offer, because a stacked order is one we pay for twice."
+      },
+      {
+        "type": "checkbox",
+        "id": "cashback_enabled",
+        "label": "We have a cashback partner",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "cashback_partner",
+        "label": "Partner name",
+        "default": "Mimojo"
+      },
+      {
+        "type": "text",
+        "id": "cashback_percent",
+        "label": "Cashback the shopper receives (%)",
+        "default": "7",
+        "info": "Digits only. Wording, not the payout itself — the partner pays the shopper, so this must match what their own site advertises or the cart contradicts the page they clicked from."
+      },
+      {
+        "type": "text",
+        "id": "cashback_sources",
+        "label": "Referral sources that count",
+        "default": "mimojo",
+        "info": "Comma-separated, lower-case. A visit arriving with utm_source, ref or source set to any of these is treated as the partner’s. Must match exactly what the partner puts on their outbound links — ask them, do not guess."
+      },
+      {
+        "type": "text",
+        "id": "cashback_window_days",
+        "label": "Attribution window (days)",
+        "default": "30",
+        "info": "Digits only. How long a visit stays attributed to the partner on this device. Set it to the same window the partner tracks, or the storefront will promise cashback on an order their system no longer credits."
+      },
+      {
+        "type": "checkbox",
+        "id": "cashback_exclusive",
+        "label": "Hide every other offer from shoppers the partner sent",
+        "default": true,
+        "info": "Belt and braces over the switch above: holds even while our own promotions are running, so a partner order can never carry a discount code as well."
+      },
+      {
+        "type": "url",
+        "id": "cashback_terms_url",
+        "label": "Partner terms link",
+        "info": "Linked from the cashback confirmation in the cart. The partner owns the payout, the timing and the disputes — point at their terms rather than restating them here, where they would go stale."
+      }
+    ]
+  },
+  {
+    "name": "Reviews carousel",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "The “Loved by Fragrance Lovers” row. It reads Judge.me's own review data, so these two settings decide what it shows without a trip into the Judge.me admin. The average and the review count above it always describe every review, whatever is set here."
+      },
+      {
+        "type": "range",
+        "id": "reviews_max_cards",
+        "label": "Reviews in the carousel",
+        "min": 3,
+        "max": 25,
+        "step": 1,
+        "default": 12,
+        "info": "Judge.me publishes 25 at a time. Asking for more than it holds simply shows what there is."
+      },
+      {
+        "type": "range",
+        "id": "reviews_min_rating",
+        "label": "Lowest rating to show",
+        "min": 1,
+        "max": 5,
+        "step": 1,
+        "default": 4,
+        "unit": "★",
+        "info": "Set to 1 to put every review in the carousel. The heading above it says “Loved by Fragrance Lovers”, so the default is 4 and up — the honest total still sits directly above, and every review stays visible on its product page."
+      }
     ]
   }
 ]

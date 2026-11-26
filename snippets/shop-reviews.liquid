@@ -80,9 +80,85 @@
       The wrapper div is Judge.me's own documented requirement; the widget
       sizes its slides against it.
     {%- endcomment -%}
+    {%- comment -%}
+      Built from judgeme.reviews_grid, not judgeme.featured_carousel.
+
+      Both are written by the app. featured_carousel is pre-rendered HTML of
+      whatever is marked Featured in Judge.me, which here is three reviews —
+      so the carousel showed three out of forty-eight however wide the screen.
+      reviews_grid is the same data as JSON, 25 of them, which is enough to
+      scroll through and lets the count be a setting rather than a trip into
+      another app's admin.
+
+      Judge.me's own class names on purpose. Every rule the theme already has
+      for this widget keeps applying, and the arrows below bind to the same
+      markup, so nothing here depends on which of the two sources rendered it.
+
+      Falls back to the app's HTML if the JSON is ever missing.
+    {%- endcomment -%}
+    {%- assign sr_grid = shop.metafields.judgeme.reviews_grid.value -%}
+    {%- assign sr_pool = sr_grid.all_reviews.reviews -%}
+
     <div style="clear:both"></div>
     <div class="jdgm-carousel-wrapper">
-      {{ shop.metafields.judgeme.featured_carousel }}
+      {%- if sr_pool and sr_pool.size > 0 -%}
+        <div class="jdgm-widget jdgm-carousel jdgm-carousel--default-theme">
+          <div class="jdgm-carousel__item-container">
+            <div class="jdgm-carousel__item-wrapper">
+              {%- assign sr_min = settings.reviews_min_rating | default: 4 -%}
+              {%- assign sr_max = settings.reviews_max_cards | default: 12 -%}
+              {%- assign sr_shown = 0 -%}
+              {%- for sr in sr_pool -%}
+                {%- if sr_shown >= sr_max -%}{%- break -%}{%- endif -%}
+                {%- if sr.rating < sr_min -%}{%- continue -%}{%- endif -%}
+                {%- if sr.body == blank -%}{%- continue -%}{%- endif -%}
+                {%- assign sr_shown = sr_shown | plus: 1 -%}
+                {%- liquid
+                  assign sr_who = sr.reviewer_name | default: 'Anonymous'
+                  if sr.is_anonymous_reviewer
+                    assign sr_who = 'Anonymous'
+                  endif
+                -%}
+                <div class="jdgm-carousel-item">
+                  <div class="jdgm-carousel-item__review">
+                    <div class="jdgm-carousel-item__review-rating" role="img" aria-label="{{ sr.rating }} out of 5 stars">
+                      {%- for i in (1..5) -%}
+                        <span class="jdgm-star {% if i <= sr.rating %}jdgm--on{% else %}jdgm--off{% endif %}"></span>
+                      {%- endfor -%}
+                    </div>
+                    <div class="jdgm-carousel-item__review-content">
+                      {%- if sr.title != blank -%}<div class="jdgm-carousel-item__review-title">{{ sr.title }}</div>{%- endif -%}
+                      <div class="jdgm-carousel-item__review-body">{{ sr.body }}</div>
+                    </div>
+                  </div>
+                  <div class="jdgm-carousel-item__reviewer-name-wrapper">
+                    <div class="jdgm-carousel-item__reviewer-name jdgm-ellipsis">{{ sr_who }}</div>
+                    <div class="jdgm-carousel-item__timestamp jdgm-ellipsis">{{ sr.created_at | date: '%-d %b %Y' }}</div>
+                  </div>
+                  {%- comment -%}
+                    Linked, unlike the app's version. A review that names a
+                    bottle and does not let you reach it is a dead end on a
+                    page whose whole job is to send people to products.
+                  {%- endcomment -%}
+                  {%- if sr.product_title != blank and sr.product_in_store and sr.product_url != blank -%}
+                    <a class="jdgm-carousel-item__product" href="{{ sr.product_url }}" title="{{ sr.product_title | escape }}">
+                      {%- if sr.product_pictures_url != blank -%}
+                        <img class="jdgm-carousel-item__product-image" src="{{ sr.product_pictures_url }}" alt="{{ sr.product_title | escape }}" loading="lazy" width="54" height="54">
+                      {%- endif -%}
+                    </a>
+                  {%- endif -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          </div>
+          <div class="jdgm-carousel__arrows">
+            <div class="jdgm-carousel__left-arrow" tabindex="0" role="button" aria-label="Previous reviews"></div>
+            <div class="jdgm-carousel__right-arrow" tabindex="0" role="button" aria-label="Next reviews"></div>
+          </div>
+        </div>
+      {%- else -%}
+        {{ shop.metafields.judgeme.featured_carousel }}
+      {%- endif -%}
     </div>
 
     {%- comment -%}
