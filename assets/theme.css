@@ -5441,20 +5441,68 @@ html body [data-widget] {
 html body .reviews .jdgm-carousel-item {
   position: relative;
   box-sizing: border-box;
-  /* Horizontal only. The item is height:100% of a fixed-height track with
-     overflow:hidden, so vertical padding does not make the card taller — it
-     pushes the review down into the clip and cuts the end off it. Judge.me's
-     own value here is 24px; 36 leaves room for the card inset without
-     narrowing the text column much. */
-  padding: 0 36px
+  /* Vertical padding was 0 while the track had a fixed height and clipped:
+     padding did not make the card taller, it pushed the review into the clip
+     and cut the end off. The track is sized to its content now, so the card
+     grows with its padding and the text is not against the top edge.
+     Judge.me's own horizontal value is 24px; 36 leaves room for the card
+     inset without narrowing the text column much. */
+  padding: 26px 36px
 }
 
 /* The track's own height is what truncates a long review: 200px, with the
    review box inside it at calc(72% - 4em) and overflow hidden. Three lines of
    a four-line review fitted; the fourth was cut. Raising the track raises the
    review box with it, since that height is a percentage of this one. */
+/* Judge.me's own carousel script sizes these slides, positions them and binds
+   the arrows. It never arrives: the app embed ships the loader for their newer
+   snippet widget, not the legacy carousel this metafield renders. So the track
+   is laid out here instead and the arrows are bound in snippets/shop-reviews
+   — the carousel behaves the same whether or not their script ever loads.
+
+   height:auto replaces a fixed 290px. That height was sized for a long review
+   and these are short, so every card was a third empty under two lines of
+   text. Stretch equalises them against the tallest instead, which is the same
+   result when a long one turns up and no dead space when none does. */
 html body .reviews .jdgm-carousel__item-wrapper {
-  height: 290px !important
+  height: auto !important;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none
+}
+
+html body .reviews .jdgm-carousel__item-wrapper::-webkit-scrollbar { display: none }
+
+/* Three across, then two, then one. float and width are Judge.me's, set for
+   the layout their script would have driven. */
+html body .reviews .jdgm-carousel-item {
+  flex: 0 0 33.3333%;
+  width: auto !important;
+  float: none !important;
+  scroll-snap-align: start
+}
+
+@media (max-width: 900px) {
+  html body .reviews .jdgm-carousel-item { flex-basis: 50% }
+}
+
+@media (max-width: 600px) {
+  html body .reviews .jdgm-carousel-item { flex-basis: 100% }
+}
+
+/* The body's height is a percentage of the track, which only truncated
+   anything while the track was a fixed 290px. With the track sized to its
+   content the percentage resolves to nothing useful, so the review simply
+   shows. */
+html body .reviews .jdgm-carousel-item__review,
+html body .reviews .jdgm-carousel-item__review-content,
+html body .reviews .jdgm-carousel-item__review-body {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important
 }
 
 html body .reviews .jdgm-carousel-item::before {

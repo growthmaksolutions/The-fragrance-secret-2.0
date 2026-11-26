@@ -84,6 +84,63 @@
     <div class="jdgm-carousel-wrapper">
       {{ shop.metafields.judgeme.featured_carousel }}
     </div>
+
+    {%- comment -%}
+      The arrows Judge.me renders are inert.
+
+      Their legacy carousel script is what binds them, and it is not on the
+      page: the app embed loads the loader for their newer snippet widget,
+      while this metafield renders the older carousel. So the markup arrives
+      with two buttons that look like controls and do nothing — which is
+      worse than having none, because a shopper reads three reviews and
+      assumes there are no more.
+
+      The track is a scroll container (theme.css lays it out), so one card's
+      width of scrollLeft is the whole behaviour. No slide maths, no state,
+      nothing that drifts out of step with what is on screen.
+
+      Guarded against running twice, and against the day Judge.me's own
+      script does load and binds them itself.
+    {%- endcomment -%}
+    <script>
+      (function () {
+        function bind(root) {
+          if (!root || root.dataset.tfsArrows) return;
+          var track = root.querySelector('.jdgm-carousel__item-wrapper');
+          var prev  = root.querySelector('.jdgm-carousel__left-arrow');
+          var next  = root.querySelector('.jdgm-carousel__right-arrow');
+          if (!track || !prev || !next) return;
+          root.dataset.tfsArrows = '1';
+
+          function step(dir) {
+            var card = track.querySelector('.jdgm-carousel-item');
+            var by = card ? card.getBoundingClientRect().width : track.clientWidth;
+            track.scrollBy({ left: dir * by, behavior: 'smooth' });
+          }
+          function paint() {
+            /* Nothing to scroll to is not a disabled button, it is a button
+               that should not be there: with three reviews on a wide screen
+               the whole set is already visible. */
+            var over = track.scrollWidth - track.clientWidth > 2;
+            root.querySelector('.jdgm-carousel__arrows').style.display = over ? '' : 'none';
+          }
+          prev.addEventListener('click', function (e) { e.preventDefault(); step(-1); });
+          next.addEventListener('click', function (e) { e.preventDefault(); step(1); });
+          /* They are divs with role=button, so Enter and Space are ours to handle. */
+          [prev, next].forEach(function (b) {
+            b.addEventListener('keydown', function (e) {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault(); step(b === prev ? -1 : 1);
+            });
+          });
+          paint();
+          addEventListener('resize', paint);
+        }
+        function init() { document.querySelectorAll('.jdgm-carousel-wrapper .jdgm-carousel').forEach(bind); }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+        else init();
+      })();
+    </script>
   {%- endif -%}
 {%- else -%}
   {%- comment -%}
