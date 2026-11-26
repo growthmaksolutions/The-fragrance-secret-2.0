@@ -194,7 +194,13 @@
       var title = esc(p.title);
 
       return '' +
-        '<div class="prod-card wish-card fade-up" data-handle="' + esc(p.handle) + '" data-variant="' + (v.id || '') + '">' +
+        /* fade-up starts at opacity 0 and is revealed by observeFadeUps() in
+           app.js, which runs at load and after the renders app.js knows about.
+           It does not know about this one, so a card injected here would stay
+           invisible for good: the grid unhides, the counter says how many are
+           saved, and the page looks empty. Marked visible on creation, the
+           same way the quiz marks its own injected markup. */
+        '<div class="prod-card wish-card fade-up visible" data-handle="' + esc(p.handle) + '" data-variant="' + (v.id || '') + '">' +
           '<a class="prod-img-wrap" href="' + esc(p.url) + '" style="display:block">' +
             '<img class="prod-img" src="' + esc(img) + '" alt="' + title + '" loading="lazy" width="600" height="600" />' +
             (onSale ? '<div class="prod-badge badge-sale">Save ' + save + '%</div>' : '') +
