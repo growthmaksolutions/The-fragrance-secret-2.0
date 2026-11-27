@@ -39,7 +39,9 @@
         "hero_banner_link": "#grid",
         "hero_banner_bleed": false,
         "hero_banner_starts_at": "",
-        "hero_banner_ends_at": "2026-12-06T00:00:00+04:00"
+        "hero_banner_ends_at": "2026-12-06T00:00:00+04:00",
+        "intro_image": "uae-national-day-offer-intro.webp",
+        "intro_image_alt": "Paris Collection Imperial, Complexion and Saffhire eau de parfum, boxed, with 41% off"
       }
     },
     "terms": {
