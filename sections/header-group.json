@@ -26,7 +26,43 @@
         "a4": {
           "type": "message",
           "settings": {
-            "text": "National UAE Day offer is Live Limited Time Only 1 to 5 December Up to 50% Off Don’t Miss Out",
+            "text": "National UAE Day Offer is Live",
+            "link": "/collections/uae-national-day-offer",
+            "starts_at": "2026-12-01T00:00:00+04:00",
+            "ends_at": "2026-12-06T00:00:00+04:00"
+          }
+        },
+        "a5": {
+          "type": "message",
+          "settings": {
+            "text": "1 to 5 December",
+            "link": "/collections/uae-national-day-offer",
+            "starts_at": "2026-12-01T00:00:00+04:00",
+            "ends_at": "2026-12-06T00:00:00+04:00"
+          }
+        },
+        "a6": {
+          "type": "message",
+          "settings": {
+            "text": "Limited Time Only",
+            "link": "/collections/uae-national-day-offer",
+            "starts_at": "2026-12-01T00:00:00+04:00",
+            "ends_at": "2026-12-06T00:00:00+04:00"
+          }
+        },
+        "a7": {
+          "type": "message",
+          "settings": {
+            "text": "Up to 50% Off",
+            "link": "/collections/uae-national-day-offer",
+            "starts_at": "2026-12-01T00:00:00+04:00",
+            "ends_at": "2026-12-06T00:00:00+04:00"
+          }
+        },
+        "a8": {
+          "type": "message",
+          "settings": {
+            "text": "Don’t Miss Out",
             "link": "/collections/uae-national-day-offer",
             "starts_at": "2026-12-01T00:00:00+04:00",
             "ends_at": "2026-12-06T00:00:00+04:00"
@@ -37,7 +73,11 @@
         "a1",
         "a2",
         "a3",
-        "a4"
+        "a4",
+        "a5",
+        "a6",
+        "a7",
+        "a8"
       ]
     },
     "header": {
