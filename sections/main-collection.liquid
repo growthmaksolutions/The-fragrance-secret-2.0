@@ -153,7 +153,17 @@
       own empty space for the words, and the scrim then dims artwork that was
       composed to be seen. Those pages turn it off.
     {%- endcomment -%}
-    <section class="page-hero tall{% if hero_bg != blank %} has-bg{% endif %}{% unless section.settings.hero_overlay %} no-scrim{% endunless %}">
+    {%- comment -%}
+      A banner drawn with a clear area for the words only works if the words
+      stay inside it. The hero type is otherwise sized against the viewport,
+      which on a wide screen runs the heading across the artwork, so a page
+      with a composed banner caps the copy at the width of its empty space.
+
+      Carried as a custom property rather than a class per width, because the
+      figure depends on where the artwork starts and that differs per banner.
+    {%- endcomment -%}
+    <section class="page-hero tall{% if hero_bg != blank %} has-bg{% endif %}{% unless section.settings.hero_overlay %} no-scrim{% endunless %}{% if section.settings.hero_text_max != blank %} hero-narrow{% endif %}"
+      {%- if section.settings.hero_text_max != blank %} style="--ph-text-max:{{ section.settings.hero_text_max }}"{% endif %}>
       {%- if hero_bg != blank -%}
         <div class="ph-bg" aria-hidden="true">
           {%- comment -%}
@@ -714,6 +724,12 @@
       "label": "Dark overlay on the hero image",
       "info": "Keeps the heading legible over photography. Turn off for a banner already drawn with its own dark area for the text.",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "hero_text_max",
+      "label": "Hero text max width",
+      "info": "e.g. 560px or 42%. Keeps the heading inside a banner's clear area. Blank lets it run full width. Ignored on phones, where the banner is square."
     },
     {
       "type": "text",

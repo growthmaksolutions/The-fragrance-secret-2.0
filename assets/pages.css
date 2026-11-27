@@ -1852,3 +1852,27 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
    The background behind it stays ink, so nothing flashes light while the
    image loads. */
 .page-hero.no-scrim .ph-bg::after { display: none; }
+
+/* ── Hero text held inside a banner's clear area ────────────────────────
+   The hero type is sized against the viewport, so on a wide screen the
+   heading runs across the artwork. Where the banner was drawn with an empty
+   area for the words, the copy is capped at that width and the display size
+   comes down to match -- the heading wraps to two lines rather than reaching
+   into the photograph.
+
+   Only applies where a width is set, and only above phone size: the phone
+   banner is a square with its own clear ground at the top, so the text uses
+   the full width there as usual. */
+.page-hero.hero-narrow .ph-title,
+.page-hero.hero-narrow .ph-sub,
+.page-hero.hero-narrow .ph-meta { max-width: var(--ph-text-max, 560px); }
+.page-hero.hero-narrow .ph-title { font-size: clamp(1.8rem, 3vw, 2.75rem); line-height: 1.12; }
+.page-hero.hero-narrow .ph-meta { gap: 14px 22px; }
+.page-hero.hero-narrow .ph-meta span { font-size: .68rem; letter-spacing: .08em; }
+
+@media (max-width: 760px) {
+  .page-hero.hero-narrow .ph-title,
+  .page-hero.hero-narrow .ph-sub,
+  .page-hero.hero-narrow .ph-meta { max-width: none; }
+  .page-hero.hero-narrow .ph-title { font-size: clamp(2rem, 9vw, 2.6rem); }
+}
