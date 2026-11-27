@@ -171,9 +171,24 @@
       worse than having none, because a shopper reads three reviews and
       assumes there are no more.
 
-      The track is a scroll container (theme.css lays it out), so one card's
-      width of scrollLeft is the whole behaviour. No slide maths, no state,
-      nothing that drifts out of step with what is on screen.
+      The track is a scroll container (theme.css lays it out), so the arrows
+      only move scrollLeft. No slide maths, no state, nothing that drifts out
+      of step with what is on screen.
+
+      They move a whole page, not one card. Stepping by one card left two of
+      the three on screen unchanged and the row half-shifted, so a click read
+      as a nudge rather than "show me the next three". How many is a page is
+      measured from the layout rather than hardcoded, because the track is
+      three cards wide on desktop, two under 900px and one under 600px, and
+      the arrows have to agree with whichever is current.
+
+      The browser clamps scrollLeft to the end of the track, so the last page
+      shows the last three rather than one card and two gaps -- the full set
+      is visible at every stop, which is the point.
+
+      Both ends wrap. At the end, next returns to the start; at the start,
+      previous goes to the end. An arrow that does nothing when clicked is
+      indistinguishable from one that is broken.
 
       Guarded against running twice, and against the day Judge.me's own
       script does load and binds them itself.
@@ -188,10 +203,26 @@
           if (!track || !prev || !next) return;
           root.dataset.tfsArrows = '1';
 
-          function step(dir) {
+          function cardWidth() {
             var card = track.querySelector('.jdgm-carousel-item');
-            var by = card ? card.getBoundingClientRect().width : track.clientWidth;
-            track.scrollBy({ left: dir * by, behavior: 'smooth' });
+            var w = card ? card.getBoundingClientRect().width : 0;
+            return w > 0 ? w : track.clientWidth;
+          }
+          /* Three, two or one, read from the layout rather than assumed, so a
+             resize across a breakpoint changes the step without a reload. */
+          function perView() {
+            var w = cardWidth();
+            return w > 0 ? Math.max(1, Math.round(track.clientWidth / w)) : 1;
+          }
+          function step(dir) {
+            var page = cardWidth() * perView();
+            var max  = track.scrollWidth - track.clientWidth;
+            var at   = track.scrollLeft;
+            var to;
+            if (dir > 0 && at >= max - 2) to = 0;
+            else if (dir < 0 && at <= 2) to = max;
+            else to = Math.max(0, Math.min(max, at + dir * page));
+            track.scrollTo({ left: to, behavior: 'smooth' });
           }
           function paint() {
             /* Nothing to scroll to is not a disabled button, it is a button
