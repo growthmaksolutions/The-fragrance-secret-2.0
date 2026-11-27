@@ -37,6 +37,15 @@
     assign hero_bg_sm = ''
   endif
 
+  # A campaign page sits directly under Home, not inside Shop. This needs its
+  # own switch because `| default: 'Shop'` cannot tell a setting nobody filled
+  # in from one deliberately left empty — both arrive as an empty string, and
+  # the filter turns both into 'Shop'. Without it the visible trail carries a
+  # level the BreadcrumbList does not, which is the mismatch Google reports.
+  if section.settings.crumb_top_level
+    assign crumb_parent_label = ''
+  endif
+
   assign show_intro = false
   if copy_applies
     if section.settings.intro_heading != blank
@@ -685,6 +694,13 @@
       "default": "/collections/all"
     },
     {
+      "type": "checkbox",
+      "id": "crumb_top_level",
+      "label": "Breadcrumb sits directly under Home",
+      "info": "Drops the middle crumb, for campaign pages whose BreadcrumbList has two levels.",
+      "default": false
+    },
+    {
       "type": "header",
       "content": "Product grid"
     },
@@ -692,13 +708,13 @@
       "type": "text",
       "id": "results_eyebrow",
       "label": "Grid eyebrow",
-      "info": "Blank keeps \u201cThe Collection\u201d."
+      "info": "Blank keeps “The Collection”."
     },
     {
       "type": "text",
       "id": "results_heading",
       "label": "Grid heading (H2)",
-      "info": "Blank keeps \u201cShop the Range\u201d."
+      "info": "Blank keeps “Shop the Range”."
     },
     {
       "type": "textarea",

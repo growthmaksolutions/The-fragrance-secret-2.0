@@ -19,8 +19,6 @@
         "hero_bg_image": "",
         "hero_bg_image_sm": "",
         "show_hero_description": false,
-        "crumb_parent_label": "",
-        "crumb_parent_url": "",
         "show_trust_band": true,
         "show_reviews": true,
         "results_eyebrow": "The Offer",
@@ -29,7 +27,8 @@
         "intro_eyebrow": "Eid Al Etihad",
         "intro_heading": "Celebrate Eid Al Etihad with Exclusive UAE National Day Offers",
         "intro_text": "<p>Enjoy special perfume offers this UAE National Day at The Fragrance Secrets and get up to 50% off selected perfumes from 1 to 5 December. Explore authentic Arabic perfumes, luxurious oud fragrances and designer-inspired scents for men, women, unisex lovers and kids. Offer prices apply automatically with no promo code required, plus free UAE-wide delivery on orders above AED 300 and convenient card or cash-on-delivery payment options. Find your perfect festive fragrance today!</p>",
-        "show_why_rotator": false
+        "show_why_rotator": false,
+        "crumb_top_level": true
       }
     },
     "terms": {
