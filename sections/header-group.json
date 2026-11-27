@@ -5,40 +5,28 @@
     "announcement-bar": {
       "type": "announcement-bar",
       "blocks": {
-        "m1": {
+        "a1": {
           "type": "message",
           "settings": {
-            "text": "Complimentary delivery anywhere in the UAE on orders above AED 300"
+            "text": "100% Authentic Fragrances"
           }
         },
-        "m2": {
+        "a2": {
           "type": "message",
           "settings": {
-            "text": "Every fragrance is 100% authentic with fully verified sourcing"
+            "text": "Free UAE Delivery Above AED 300"
           }
         },
-        "m3": {
+        "a3": {
           "type": "message",
           "settings": {
-            "text": "Cash on delivery available across all Emirates for easy shopping"
+            "text": "Cash on Delivery Across UAE"
           }
         },
-        "m4": {
+        "a4": {
           "type": "message",
           "settings": {
-            "text": "Explore 218+ fragrance houses trusted by perfume lovers in the UAE"
-          }
-        },
-        "m5": {
-          "type": "message",
-          "settings": {
-            "text": "Need assistance? Connect with our WhatsApp team daily from 10am to 7pm"
-          }
-        },
-        "nd": {
-          "type": "message",
-          "settings": {
-            "text": "UAE National Day Offer · Up to 50% Off Perfumes · 1 to 5 December · Shop Now",
+            "text": "National UAE Day offer is Live Limited Time Only 1 to 5 December Up to 50% Off Don’t Miss Out",
             "link": "/collections/uae-national-day-offer",
             "starts_at": "2026-12-01T00:00:00+04:00",
             "ends_at": "2026-12-06T00:00:00+04:00"
@@ -46,12 +34,10 @@
         }
       },
       "block_order": [
-        "nd",
-        "m1",
-        "m2",
-        "m3",
-        "m4",
-        "m5"
+        "a1",
+        "a2",
+        "a3",
+        "a4"
       ]
     },
     "header": {

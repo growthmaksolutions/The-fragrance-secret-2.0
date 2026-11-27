@@ -52,6 +52,33 @@
       {%- endfor -%}
     </div>
   </div>
+
+  {%- comment -%}
+    The marquee slides the track by exactly -50%, so the two halves above are
+    what make it loop without a seam. That only looks continuous while one
+    half is at least as wide as the screen: with a short set of messages the
+    first half scrolls clear of a wide monitor before the second arrives, and
+    the bar runs empty for a moment every lap.
+
+    Doubling the whole track keeps the two halves identical, so the -50% stays
+    correct however many times it runs. Capped, and it does nothing when the
+    content is already wide enough, which is the usual case.
+  {%- endcomment -%}
+  <script>
+    (function () {
+      function fill() {
+        var track = document.getElementById('atrack');
+        if (!track || !track.parentElement) return;
+        var need = track.parentElement.clientWidth * 2;
+        for (var i = 0; i < 3 && track.scrollWidth < need; i++) {
+          track.innerHTML += track.innerHTML;
+        }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fill);
+      else fill();
+      addEventListener('resize', fill);
+    })();
+  </script>
 {%- endif -%}
 
 {% schema %}
