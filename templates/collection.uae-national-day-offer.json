@@ -37,7 +37,7 @@
         "term1": {
           "type": "term",
           "settings": {
-            "icon": "calendar_clock",
+            "icon": "calendar_month",
             "title": "Offer Period",
             "text": "Valid from 1 December, 12:00 AM to 6 December, 12:00 AM UAE time."
           }
