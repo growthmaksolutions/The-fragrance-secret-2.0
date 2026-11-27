@@ -5438,7 +5438,7 @@ html body [data-widget] {
    An earlier version made the item and its __review a flex column. That
    broke the widget's own line clamp: a three-line review collapsed to one.
    Their internals are left alone now. */
-html body .reviews .jdgm-carousel-item {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item {
   position: relative;
   box-sizing: border-box;
   /* Vertical padding was 0 while the track had a fixed height and clipped:
@@ -5464,7 +5464,7 @@ html body .reviews .jdgm-carousel-item {
    and these are short, so every card was a third empty under two lines of
    text. Stretch equalises them against the tallest instead, which is the same
    result when a long one turns up and no dead space when none does. */
-html body .reviews .jdgm-carousel__item-wrapper {
+html body .jdgm-carousel-wrapper .jdgm-carousel__item-wrapper {
   height: auto !important;
   display: flex;
   align-items: stretch;
@@ -5474,11 +5474,11 @@ html body .reviews .jdgm-carousel__item-wrapper {
   scrollbar-width: none
 }
 
-html body .reviews .jdgm-carousel__item-wrapper::-webkit-scrollbar { display: none }
+html body .jdgm-carousel-wrapper .jdgm-carousel__item-wrapper::-webkit-scrollbar { display: none }
 
 /* Three across, then two, then one. float and width are Judge.me's, set for
    the layout their script would have driven. */
-html body .reviews .jdgm-carousel-item {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item {
   flex: 0 0 33.3333%;
   width: auto !important;
   float: none !important;
@@ -5486,61 +5486,61 @@ html body .reviews .jdgm-carousel-item {
 }
 
 @media (max-width: 900px) {
-  html body .reviews .jdgm-carousel-item { flex-basis: 50% }
+  html body .jdgm-carousel-wrapper .jdgm-carousel-item { flex-basis: 50% }
 }
 
 @media (max-width: 600px) {
-  html body .reviews .jdgm-carousel-item { flex-basis: 100% }
+  html body .jdgm-carousel-wrapper .jdgm-carousel-item { flex-basis: 100% }
 }
 
 /* The body's height is a percentage of the track, which only truncated
    anything while the track was a fixed 290px. With the track sized to its
    content the percentage resolves to nothing useful, so the review simply
    shows. */
-html body .reviews .jdgm-carousel-item__review,
-html body .reviews .jdgm-carousel-item__review-content,
-html body .reviews .jdgm-carousel-item__review-body {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__review,
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__review-content,
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__review-body {
   height: auto !important;
   max-height: none !important;
   overflow: visible !important
 }
 
-html body .reviews .jdgm-carousel-item::before {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item::before {
   content: '';
   position: absolute;
   inset: 0 12px;
   background: var(--white);
   border: 1px solid rgba(201, 168, 76, .14);
   border-radius: 8px;
-  box-shadow: 0 16px 46px rgba(0, 0, 0, .42);
+  box-shadow: 0 10px 28px rgba(13, 10, 6, .10);
   z-index: 0
 }
 
 /* Content above the card it sits on. */
-html body .reviews .jdgm-carousel-item > * {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item > * {
   position: relative;
   z-index: 1
 }
 
-html body .reviews .jdgm-carousel-item__review-body {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__review-body {
   font-size: .88rem;
   line-height: 1.65;
   color: var(--charcoal) !important
 }
 
-html body .reviews .jdgm-carousel-item__reviewer-name {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__reviewer-name {
   font-weight: 600;
   color: var(--ink) !important
 }
 
-html body .reviews .jdgm-carousel-item__timestamp {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__timestamp {
   color: var(--muted) !important
 }
 
 /* The product shot looked accidental: a bare bottle on one card, a white
    cut-out on the next, both unframed. One size, one frame, always on cream,
    so a supplier's crop and a lifestyle photograph sit in the same box. */
-html body .reviews .jdgm-carousel-item__product-image {
+html body .jdgm-carousel-wrapper .jdgm-carousel-item__product-image {
   width: 54px;
   height: 54px;
   object-fit: contain;
@@ -5551,17 +5551,36 @@ html body .reviews .jdgm-carousel-item__product-image {
   border-radius: 6px
 }
 
-/* Arrows sit outside the cards, on the dark band. */
-html body .reviews .jdgm-carousel__left-arrow,
-html body .reviews .jdgm-carousel__right-arrow {
-  color: var(--cream) !important;
-  opacity: .7;
+/* Arrows sit outside the cards, so they take the page's ink by default and
+   are overridden to cream on the dark band below. They were cream for every
+   carousel, which is why they vanished on the three light pages that render
+   this band inside .section rather than .reviews. */
+html body .jdgm-carousel-wrapper .jdgm-carousel__left-arrow,
+html body .jdgm-carousel-wrapper .jdgm-carousel__right-arrow {
+  color: var(--ink) !important;
+  opacity: .65;
   transition: opacity .2s
 }
 
-html body .reviews .jdgm-carousel__left-arrow:hover,
-html body .reviews .jdgm-carousel__right-arrow:hover {
+html body .jdgm-carousel-wrapper .jdgm-carousel__left-arrow:hover,
+html body .jdgm-carousel-wrapper .jdgm-carousel__right-arrow:hover {
   opacity: 1
+}
+
+/* ── The dark .reviews band ────────────────────────────────────────────
+   Everything above is written for a carousel on a light page, because that is
+   what most of the pages rendering it are. Where it sits on the ink-to-
+   charcoal .reviews band, the card needs the deeper shadow to lift off it and
+   the arrows need to be cream to be seen at all. Same specificity as the base
+   rules, so these win by coming after them. */
+html body .reviews .jdgm-carousel-item::before {
+  box-shadow: 0 16px 46px rgba(0, 0, 0, .42)
+}
+
+html body .reviews .jdgm-carousel__left-arrow,
+html body .reviews .jdgm-carousel__right-arrow {
+  color: var(--cream) !important;
+  opacity: .7
 }
 
 /* v3 empty state — one centered column, brand type */
