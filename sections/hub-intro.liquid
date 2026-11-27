@@ -1,0 +1,30 @@
+{%- comment -%}
+  The hub intro row as a section of its own, for pages that need something
+  between the hero banner and the intro. hub-hero renders the same snippet, so
+  a page uses one or the other, never both: leave hub-hero's intro settings
+  blank and put the copy here.
+
+  The brands page is why this exists — its A–Z brand list sits above the intro,
+  and the hero and intro were a single section that template order could not
+  split.
+{%- endcomment -%}
+
+{% render 'hub-intro',
+   eyebrow: section.settings.intro_eyebrow,
+   heading: section.settings.intro_heading,
+   text: section.settings.intro_text,
+   show_rotator: section.settings.show_why_rotator,
+   uid: section.id %}
+
+{% schema %}
+{
+  "name": "Hub intro",
+  "settings": [
+    { "type": "text", "id": "intro_eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "intro_heading", "label": "Heading" },
+    { "type": "richtext", "id": "intro_text", "label": "Intro copy" },
+    { "type": "checkbox", "id": "show_why_rotator", "label": "Show \"Why Choose Us\" rotator", "default": false }
+  ],
+  "presets": [{ "name": "Hub intro" }]
+}
+{% endschema %}

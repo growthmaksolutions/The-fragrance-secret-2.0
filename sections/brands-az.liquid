@@ -1,0 +1,58 @@
+{%- comment -%}
+  The A–Z index of every brand we carry.
+
+  Split out of the page-brands section so it can sit above the page intro
+  rather than below the signature houses: shoppers arriving at /pages/brands
+  are looking for a brand, and the list is what they came for.
+
+  Driven by collection handles and rendered in Liquid, so every chip links to a
+  collection that actually exists. It used to be built client-side from the old
+  demo catalogue, linking to /collections/vendors?q=NAME — not a real Shopify
+  route. Handles with no matching collection are skipped rather than rendered
+  as dead links.
+{%- endcomment -%}
+
+{%- assign brand_handles = section.settings.brand_handles | split: ',' -%}
+
+<section class="section alt brands-az">
+  <div class="container">
+    {%- comment -%} Counted first so the heading states the real number. {%- endcomment -%}
+    {%- assign brand_count = 0 -%}
+    {%- for raw_handle in brand_handles -%}
+      {%- assign brand_handle = raw_handle | strip -%}
+      {%- if collections[brand_handle].handle != blank -%}
+        {%- assign brand_count = brand_count | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    <div class="sec-head">
+      {%- if section.settings.az_eyebrow != blank -%}<span class="label">{{ section.settings.az_eyebrow }}</span>{%- endif -%}
+      <h2 class="sec-title">{{ brand_count }} Fragrance <em>Houses</em></h2>
+      {%- if section.settings.az_sub != blank -%}<p class="sec-sub">{{ section.settings.az_sub }}</p>{%- endif -%}
+    </div>
+
+    <div class="brand-cloud fade-up">
+      {%- for raw_handle in brand_handles -%}
+        {%- assign brand_handle = raw_handle | strip -%}
+        {%- assign brand = collections[brand_handle] -%}
+        {%- if brand.handle == blank -%}{%- continue -%}{%- endif -%}
+        {% render 'brand-chip', brand: brand %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "All brands A–Z",
+  "settings": [
+    { "type": "text", "id": "az_eyebrow", "label": "Eyebrow", "default": "View All Brands" },
+    { "type": "textarea", "id": "az_sub", "label": "Intro",
+      "default": "Every designer and Arabic-house brand below is 100% genuine, sourced through verified wholesalers and market-authorised channels — sealed stock, authenticity guaranteed." },
+    { "type": "textarea", "id": "brand_handles", "label": "Brand collections (comma separated handles)",
+      "info": "Shown in this order. The heading counts only the handles that resolve to a collection.",
+      "default": "" }
+  ],
+  "presets": [{ "name": "All brands A–Z" }]
+}
+{% endschema %}

@@ -1,0 +1,37 @@
+{%- comment -%}
+  The hub intro row: eyebrow, H2, body copy, and optionally the "Why Choose
+  Us" rotator beside it.
+
+  Lived inside hub-hero, which rendered the hero banner and this row as one
+  section. That was fine until the brands page wanted its A–Z list between
+  the two — a section cannot be split by template order, so the row had to
+  become something both hub-hero and a standalone section could render. The
+  markup is unchanged, so the five hubs that render it through hub-hero look
+  exactly as they did.
+
+  Accepts: eyebrow, heading, text, show_rotator, uid.
+
+  uid is passed through rather than read from section.id because the snippet
+  has no section of its own when rendered from a snippet context, and the
+  rotator keys its state on that id.
+{%- endcomment -%}
+
+{%- if heading != blank or text != blank -%}
+  {%- comment -%}
+    The class follows the content: with the rotator beside it the row is the
+    normal two-column grid, and without it .no-aside collapses to one, because
+    a 1.25fr column of copy with dead space beside it is what the rotator's
+    removal from the other hubs was avoiding in the first place.
+  {%- endcomment -%}
+  <section class="section-sm coll-intro"><div class="container coll-intro-grid{% unless show_rotator %} no-aside{% endunless %}">
+    <div class="coll-intro-copy">
+      {%- if eyebrow != blank -%}<span class="label">{{ eyebrow }}</span>{%- endif -%}
+      {%- if heading != blank -%}<h2 class="sec-title">{{ heading }}</h2>{%- endif -%}
+      {%- if text != blank -%}<div class="sec-sub coll-intro-body">{{ text }}</div>{%- endif -%}
+    </div>
+
+    {%- if show_rotator -%}
+      {% render 'why-choose-rotator', uid: uid %}
+    {%- endif -%}
+  </div></section>
+{%- endif -%}

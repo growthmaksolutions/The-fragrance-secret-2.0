@@ -1280,12 +1280,11 @@ a.wo-row:hover { background: rgba(201,168,76,.16); border-color: var(--gold); }
   }
 }
 
-/* The A–Z brand list is followed by "How to Shop by Brand", and both are
-   .section.alt — so their 88px paddings met as 176px of unbroken cream with no
-   colour change to explain the gap. Trimmed on this section rather than on
-   .section, which would move every seam on the site. The section below still
-   brings its own 88px, so the pair reads as one comfortable break. */
-.section.brands-az { padding-bottom: 30px; }
+/* The A–Z brand list used to sit below the signature houses and above "How to
+   Shop by Brand" — both .section.alt, so their 88px paddings met as 176px of
+   unbroken cream with no colour change to explain the gap, and this trimmed it.
+   The list now sits above the page intro, which is not .alt, so the background
+   changes at the seam and the full padding is the right amount again. */
 
 /* ── Trust strip on light sections (variant of theme .trust-strip) ── */
 .trust-band { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }

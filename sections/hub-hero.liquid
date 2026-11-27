@@ -42,32 +42,21 @@
   </div>
 </section>
 
-{%- if section.settings.intro_heading != blank or section.settings.intro_text != blank -%}
-  {%- comment -%}
-    The "Why Choose Us" rotator is opt-in per hub. It was removed from here
-    wholesale because it was not wanted on the hubs, but the brands hub asks
-    for it, and one hub wanting it is not a reason for all of them to have it.
+{%- comment -%}
+  The "Why Choose Us" rotator is opt-in per hub. It was removed from here
+  wholesale because it was not wanted on the hubs, but the brands hub asks for
+  it, and one hub wanting it is not a reason for all of them to have it.
 
-    The class follows the content: with the rotator beside it the row is the
-    normal two-column grid, and without it .no-aside collapses to one, because
-    a 1.25fr column of copy with dead space beside it is what the removal was
-    avoiding in the first place.
-
-    Same snippet and the same uid contract collection pages use, so there is
-    one rotator in the theme rather than a hub copy of it.
-  {%- endcomment -%}
-  <section class="section-sm coll-intro"><div class="container coll-intro-grid{% unless section.settings.show_why_rotator %} no-aside{% endunless %}">
-    <div class="coll-intro-copy">
-      {%- if section.settings.intro_eyebrow != blank -%}<span class="label">{{ section.settings.intro_eyebrow }}</span>{%- endif -%}
-      {%- if section.settings.intro_heading != blank -%}<h2 class="sec-title">{{ section.settings.intro_heading }}</h2>{%- endif -%}
-      {%- if section.settings.intro_text != blank -%}<div class="sec-sub coll-intro-body">{{ section.settings.intro_text }}</div>{%- endif -%}
-    </div>
-
-    {%- if section.settings.show_why_rotator -%}
-      {% render 'why-choose-rotator', uid: section.id %}
-    {%- endif -%}
-  </div></section>
-{%- endif -%}
+  The row itself is a snippet so the brands page can render it below its A–Z
+  list instead of here. Leaving the intro settings blank on this section is how
+  a page opts out of rendering it in place.
+{%- endcomment -%}
+{% render 'hub-intro',
+   eyebrow: section.settings.intro_eyebrow,
+   heading: section.settings.intro_heading,
+   text: section.settings.intro_text,
+   show_rotator: section.settings.show_why_rotator,
+   uid: section.id %}
 
 {%- if child_blocks.size > 0 -%}
   <section class="section"><div class="container">

@@ -16,13 +16,13 @@
         "hero_bg_image_sm": "brands-hub-hero-sm.webp",
         "hero_eyebrow": "The Houses We Carry",
         "hero_heading": "Shop by <em>Brand</em>",
-        "intro_eyebrow": "The Houses We Carry",
-        "intro_heading": "Shop Perfume Brands in the UAE",
-        "intro_text": "<p>Every fragrance house has its own story, style, and signature creations. The Fragrance Secrets brings together 47+ authentic perfume brands, from renowned designer labels and luxury niche houses to iconic Arabian fragrance brands, all sourced through trusted suppliers. Browse perfume brands from A to Z, including our exclusive signature collections created to our own standards in the UAE. Whether you're searching for your favourite fragrance house or exploring a new brand, you'll find the complete collection in one place. Compare brands, discover their fragrances, and shop with complete confidence.</p>",
+        "intro_eyebrow": "",
+        "intro_heading": "",
+        "intro_text": "",
         "children_eyebrow": "",
         "children_heading": "",
         "children_sub": "",
-        "show_why_rotator": true
+        "show_why_rotator": false
       }
     },
     "brandgrid": {
@@ -31,10 +31,7 @@
         "house_eyebrow": "Our Signature Houses",
         "house_heading": "Made By Us, For the UAE",
         "house_sub": "Our in-house lines — original compositions manufactured to our own standards through certified UAE partners. Never claimed as designer originals; inspired-by lines are always labelled as inspired.",
-        "house_handles": "fragrance-secrets, secret-scents, paris-collection",
-        "az_eyebrow": "View All Brands",
-        "az_sub": "Every designer and Arabic-house brand below is 100% genuine, sourced through verified wholesalers and market-authorised channels — sealed stock, authenticity guaranteed.",
-        "brand_handles": "ahmed-al-maghribi, al-haramain, alezz-oud, amouage, arabiyat-prestige, armaf, azzaro, billie-eilish, boadicea-the-victorious, borntostandout, calvin-klein, chanel, cristiano-ronaldo, davidoff, dior, dolce-and-gabbana, elan-dor, ex-nihilo, farzanas-collection, fragrance-secrets, french-avenue, giorgio-armani, hevora, house-of-morais, hugo-boss, ibrahim-al-qurashi, jay-marley, jean-paul-gaultier, khaleej-pride, la-parfum-galleria, la-parfum-galleria-exclusif, lattafa, mancera, marxzelle, niche-profumo, orchid, paris-collection, parisbelle, prada, rafaan, ralph-lauren, rasasi, rayhaan, reef, riiffs, roberto-cavalli, sabrina-carpenter, swiss-arabian, yves-saint-laurent, Dumont-Paris, Dkhoon-Emirates, Al-majed-oud, Sasan-Perfumes,Bujairami,"
+        "house_handles": "fragrance-secrets, secret-scents, paris-collection"
       }
     },
     "body": {
@@ -217,10 +214,29 @@
         "shop_sub": "Looking for something specific? Explore our shop collections to browse the full range, bestsellers, new launches, and limited-time offers.",
         "crumb_name": "Shop by Brand"
       }
+    },
+    "brandsaz": {
+      "type": "brands-az",
+      "settings": {
+        "az_eyebrow": "View All Brands",
+        "az_sub": "Every designer and Arabic-house brand below is 100% genuine, sourced through verified wholesalers and market-authorised channels — sealed stock, authenticity guaranteed.",
+        "brand_handles": "ahmed-al-maghribi, al-haramain, alezz-oud, amouage, arabiyat-prestige, armaf, azzaro, billie-eilish, boadicea-the-victorious, borntostandout, calvin-klein, chanel, cristiano-ronaldo, davidoff, dior, dolce-and-gabbana, elan-dor, ex-nihilo, farzanas-collection, fragrance-secrets, french-avenue, giorgio-armani, hevora, house-of-morais, hugo-boss, ibrahim-al-qurashi, jay-marley, jean-paul-gaultier, khaleej-pride, la-parfum-galleria, la-parfum-galleria-exclusif, lattafa, mancera, marxzelle, niche-profumo, orchid, paris-collection, parisbelle, prada, rafaan, ralph-lauren, rasasi, rayhaan, reef, riiffs, roberto-cavalli, sabrina-carpenter, swiss-arabian, yves-saint-laurent, Dumont-Paris, Dkhoon-Emirates, Al-majed-oud, Sasan-Perfumes,Bujairami,"
+      }
+    },
+    "brandsintro": {
+      "type": "hub-intro",
+      "settings": {
+        "intro_eyebrow": "The Houses We Carry",
+        "intro_heading": "Shop Perfume Brands in the UAE",
+        "intro_text": "<p>Every fragrance house has its own story, style, and signature creations. The Fragrance Secrets brings together 47+ authentic perfume brands, from renowned designer labels and luxury niche houses to iconic Arabian fragrance brands, all sourced through trusted suppliers. Browse perfume brands from A to Z, including our exclusive signature collections created to our own standards in the UAE. Whether you're searching for your favourite fragrance house or exploring a new brand, you'll find the complete collection in one place. Compare brands, discover their fragrances, and shop with complete confidence.</p>",
+        "show_why_rotator": true
+      }
     }
   },
   "order": [
     "hero",
+    "brandsaz",
+    "brandsintro",
     "brandgrid",
     "body"
   ]
