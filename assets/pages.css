@@ -1759,6 +1759,12 @@ body.jdgm-modal-open .sticky-atc {
    JavaScript off and each tier is a crawlable, shareable page. */
 .disc-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 26px; }
 .disc-chip {
+  /* Each chip takes an equal share of the row rather than hugging its text,
+     so the set spans the grid's full width and the tiers read as one control
+     instead of four loose buttons. The basis is what they fall back to when
+     they wrap, which keeps two per row on a narrow screen rather than a
+     ragged three and one. */
+  flex: 1 1 160px;
   position: relative; overflow: hidden; isolation: isolate;
   display: inline-flex; align-items: center; justify-content: center;
   padding: 11px 22px; border-radius: 10px;
@@ -1766,22 +1772,35 @@ body.jdgm-modal-open .sticky-atc {
   color: #fff; background: #0b7a3d; border: 1px solid #0b7a3d;
   text-decoration: none; transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
-/* Confetti: three small flecks in the flag's red and white, placed off the
-   text so they read as texture and never reduce contrast on the label. */
+/* Confetti in the flag's red and white, as a repeating tile rather than
+   three flecks placed by percentage. Percentages spread with the chip: once
+   the chips grew to share the row, the same three dots sat far apart and read
+   as specks on the surface instead of texture. A tile in pixels holds its
+   density at any width. Kept low in contrast so it never competes with the
+   label sitting on it. */
 .disc-chip::before {
-  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .9;
-  background:
-    radial-gradient(4px 4px at 14% 28%, rgba(255,255,255,.85) 99%, transparent),
-    radial-gradient(3px 3px at 86% 70%, rgba(239,56,56,.85) 99%, transparent),
-    radial-gradient(3px 3px at 72% 22%, rgba(255,255,255,.55) 99%, transparent),
-    linear-gradient(118deg, rgba(255,255,255,.14) 0 42%, transparent 42%);
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background-image:
+    radial-gradient(2.5px 2.5px at 16px 11px, rgba(255,255,255,.55) 99%, transparent),
+    radial-gradient(2px 2px at 52px 27px, rgba(239,56,56,.60) 99%, transparent),
+    radial-gradient(1.5px 1.5px at 35px 34px, rgba(255,255,255,.35) 99%, transparent),
+    radial-gradient(2px 2px at 70px 8px, rgba(255,255,255,.30) 99%, transparent);
+  background-size: 88px 46px;
+  background-repeat: repeat;
+}
+
+/* The sheen is one pass across the whole chip, so it stays separate from the
+   tiling confetti above. */
+.disc-chip::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(118deg, rgba(255,255,255,.12) 0 40%, transparent 40%);
 }
 .disc-chip:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(11,122,61,.28); }
 .disc-chip:focus-visible { outline: 2px solid #0b7a3d; outline-offset: 3px; }
 .disc-chip.is-on { background: #06562a; border-color: #06562a; box-shadow: inset 0 0 0 2px rgba(255,255,255,.35); }
 @media (max-width: 560px) {
   .disc-chips { gap: 8px; margin-bottom: 20px; }
-  .disc-chip { padding: 10px 16px; font-size: 13px; }
+  .disc-chip { padding: 10px 14px; font-size: 13px; flex-basis: calc(50% - 4px); }
 }
 
 /* ── Offer strip (timed campaign band) ──────────────────────────────────
