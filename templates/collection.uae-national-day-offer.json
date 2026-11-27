@@ -37,43 +37,49 @@
         "term1": {
           "type": "term",
           "settings": {
-            "text": "The UAE National Day Offer runs from 1 December at 12:00 AM to 6 December at 12:00 AM, UAE time."
+            "icon": "calendar_clock",
+            "title": "Offer Period",
+            "text": "Valid from 1 December, 12:00 AM to 6 December, 12:00 AM UAE time."
           }
         },
         "term2": {
           "type": "term",
           "settings": {
-            "text": "Discounts of up to 50% apply to selected products only. Offer prices are shown on each product page."
+            "icon": "percent",
+            "title": "Selected Products",
+            "text": "Enjoy up to 50% off selected products, with prices displayed on product pages."
           }
         },
         "term3": {
           "type": "term",
           "settings": {
-            "text": "No discount code is needed."
+            "icon": "sell",
+            "title": "No Promo Code",
+            "text": "Enjoy exclusive offer prices automatically, with no discount code required at checkout."
           }
         },
         "term4": {
           "type": "term",
           "settings": {
-            "text": "The WELCOME10 welcome discount can’t be combined with offer prices."
+            "icon": "redeem",
+            "title": "Welcome Discount",
+            "text": "The WELCOME10 welcome discount cannot be combined with any National Day offer prices."
           }
         },
         "term5": {
           "type": "term",
           "settings": {
-            "text": "Free delivery applies to orders above AED 300."
+            "icon": "local_shipping",
+            "title": "Free Delivery",
+            "text": "Enjoy free delivery on all orders with a total value above AED 300."
           }
         },
         "term6": {
           "type": "term",
           "settings": {
-            "text": "Offers are available while stock lasts."
-          }
-        },
-        "term7": {
-          "type": "term",
-          "settings": {
-            "text": "Our standard return policy applies."
+            "icon": "inventory_2",
+            "title": "Stock & Returns",
+            "text": "Offers remain valid while stocks last, and our standard return policy applies."
           }
         },
         "faq1": {
@@ -154,7 +160,6 @@
         "term4",
         "term5",
         "term6",
-        "term7",
         "faq1",
         "faq2",
         "faq3",
@@ -167,7 +172,7 @@
         "faq10"
       ],
       "settings": {
-        "terms_heading": "Offer Terms",
+        "terms_heading": "UAE National Day – Offer Terms",
         "faq_eyebrow": "Your Questions, Answered",
         "faq_heading": "UAE National Day Offer FAQs",
         "emit_schema": true,

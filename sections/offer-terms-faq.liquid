@@ -22,16 +22,34 @@
   assign page_url = shop.url | append: section.settings.page_path
 -%}
 
+{%- comment -%}
+  The terms as cards rather than a bulleted list. Each one answers a different
+  question -- when, how much, what you need to do, what it cannot be combined
+  with, delivery, stock -- so a shopper is nearly always looking for one of the
+  six rather than reading all of them. A titled card is scannable; seven
+  sentences in a list are not.
+
+  They are still the offer's terms, so they keep body contrast and measure
+  rather than being set as small print.
+{%- endcomment -%}
 {%- if term_blocks.size > 0 -%}
   <section class="section alt" id="offer-terms"><div class="container">
     <div class="sec-head">
       <h2 class="sec-title">{{ section.settings.terms_heading }}</h2>
     </div>
-    <ul class="offer-terms fade-up">
+    <div class="offer-terms-grid fade-up">
       {%- for block in term_blocks -%}
-        <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+        <div class="offer-term" {{ block.shopify_attributes }}>
+          {%- if block.settings.icon != blank -%}
+            <span class="mi offer-term-icon" aria-hidden="true">{{ block.settings.icon }}</span>
+          {%- endif -%}
+          {%- if block.settings.title != blank -%}
+            <h3 class="offer-term-title">{{ block.settings.title }}</h3>
+          {%- endif -%}
+          <p class="offer-term-body">{{ block.settings.text }}</p>
+        </div>
       {%- endfor -%}
-    </ul>
+    </div>
   </div></section>
 {%- endif -%}
 
@@ -115,7 +133,10 @@
   ],
   "blocks": [
     { "type": "term", "name": "Term", "settings": [
-      { "type": "textarea", "id": "text", "label": "Term" }
+      { "type": "text", "id": "icon", "label": "Icon",
+        "info": "Material Symbols name, e.g. calendar_clock, percent, sell, redeem, local_shipping, inventory_2." },
+      { "type": "text", "id": "title", "label": "Title" },
+      { "type": "textarea", "id": "text", "label": "Body" }
     ] },
     { "type": "faq", "name": "FAQ", "settings": [
       { "type": "text", "id": "question", "label": "Question" },
