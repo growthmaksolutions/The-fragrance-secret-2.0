@@ -90,11 +90,35 @@
     </div>
   {%- endcapture -%}
 
+  {%- comment -%}
+    The three standing facts are what a shopper wants to know about any
+    collection. A campaign page wants the terms of the campaign there instead,
+    so the row is overridable per template: one line each, "icon|Label", or a
+    bare label for no icon.
+
+    Icon names must already be in the font, which is subset to the symbols the
+    theme uses — see scripts/build-icon-font.py. A name the subset has never
+    seen renders as its own text.
+  {%- endcomment -%}
   {%- capture hero_facts -%}
     <div class="ph-meta">
-      <span><span class="mi" aria-hidden="true">verified_user</span>100% Authentic</span>
-      <span><span class="mi" aria-hidden="true">local_shipping</span>Fast Shipping</span>
-      <span><span class="mi" aria-hidden="true">lock</span>Secure Checkout</span>
+      {%- if section.settings.hero_facts != blank -%}
+        {%- assign fact_rows = section.settings.hero_facts | newline_to_br | split: '<br />' -%}
+        {%- for raw_fact in fact_rows -%}
+          {%- assign fact_row = raw_fact | strip -%}
+          {%- if fact_row == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign fact_bits = fact_row | split: '|' -%}
+          {%- if fact_bits.size > 1 -%}
+            <span><span class="mi" aria-hidden="true">{{ fact_bits[0] | strip }}</span>{{ fact_bits[1] | strip }}</span>
+          {%- else -%}
+            <span>{{ fact_row }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <span><span class="mi" aria-hidden="true">verified_user</span>100% Authentic</span>
+        <span><span class="mi" aria-hidden="true">local_shipping</span>Fast Shipping</span>
+        <span><span class="mi" aria-hidden="true">lock</span>Secure Checkout</span>
+      {%- endif -%}
     </div>
   {%- endcapture -%}
 
@@ -656,6 +680,12 @@
       "id": "hero_image_alt",
       "label": "Hero image alt text",
       "info": "Leave blank to use the collection title."
+    },
+    {
+      "type": "textarea",
+      "id": "hero_facts",
+      "label": "Hero facts row",
+      "info": "One per line as icon|Label, or a bare label for no icon. Blank keeps 100% Authentic / Fast Shipping / Secure Checkout. Icon names must already be in the font subset."
     },
     {
       "type": "text",
