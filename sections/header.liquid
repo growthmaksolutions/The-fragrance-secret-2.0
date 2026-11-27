@@ -132,9 +132,38 @@
           if link.url contains 'find-my-scent'
             assign is_quiz = true
           endif
+
+          # A campaign link is still an ordinary Shopify menu item — the menu
+          # stays the one place navigation is edited. The theme only adds the
+          # accent and the dates, so the item disappears when the offer ends
+          # rather than waiting for someone to remember to delete it. Epoch
+          # comparison is timezone-independent, so a date written with the UAE
+          # offset switches at UAE midnight for every shopper.
+          assign is_promo = false
+          assign promo_hidden = false
+          if section.settings.promo_url != blank and link.url contains section.settings.promo_url
+            assign is_promo = true
+            assign now_ts = 'now' | date: '%s' | plus: 0
+            if section.settings.promo_starts_at != blank
+              assign promo_start = section.settings.promo_starts_at | date: '%s' | plus: 0
+              if now_ts < promo_start
+                assign promo_hidden = true
+              endif
+            endif
+            if section.settings.promo_ends_at != blank
+              assign promo_end = section.settings.promo_ends_at | date: '%s' | plus: 0
+              if now_ts >= promo_end
+                assign promo_hidden = true
+              endif
+            endif
+          endif
         -%}
 
-        {%- if link.links.size > 0 -%}
+        {%- if promo_hidden -%}
+          {%- continue -%}
+        {%- elsif is_promo -%}
+          <a href="{{ link.url }}" class="nav-toplink nav-promo{% if is_act %} nav-active{% endif %}"{% if is_act %} aria-current="page"{% endif %}>{{ link.title }}</a>
+        {%- elsif link.links.size > 0 -%}
           <div class="nav-item has-mega">
             <a href="{{ link.url }}" class="nav-toplink{% if is_act %} nav-active{% endif %}"{% if is_act %} aria-current="page"{% endif %} onclick="toggleShopGroup(this, event)">{{ link.title }}<span class="mi nav-caret" aria-hidden="true">expand_more</span></a>
             <div class="nav-mega"><div class="nav-mega-inner container">
@@ -256,11 +285,55 @@
 {
   "name": "Header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" },
-    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Shopify admin \u2192 Content \u2192 Navigation. A top-level entry with sub-items becomes the Shop mega-menu, its sub-items the columns and theirs the links. An entry pointing at the Find My Scent page opens the concierge rather than loading the page." },
-    { "type": "select", "id": "theme", "label": "Header theme", "options": [
-      { "value": "dark", "label": "Dark" }, { "value": "light", "label": "Light" }
-    ], "default": "dark" }
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "info": "Shopify admin → Content → Navigation. A top-level entry with sub-items becomes the Shop mega-menu, its sub-items the columns and theirs the links. An entry pointing at the Find My Scent page opens the concierge rather than loading the page."
+    },
+    {
+      "type": "select",
+      "id": "theme",
+      "label": "Header theme",
+      "options": [
+        {
+          "value": "dark",
+          "label": "Dark"
+        },
+        {
+          "value": "light",
+          "label": "Light"
+        }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "header",
+      "content": "Campaign link"
+    },
+    {
+      "type": "text",
+      "id": "promo_url",
+      "label": "Highlight the menu item whose URL contains",
+      "info": "e.g. /collections/uae-national-day-offer. The item itself is added in Shopify › Navigation."
+    },
+    {
+      "type": "text",
+      "id": "promo_starts_at",
+      "label": "Show from",
+      "info": "ISO with offset, e.g. 2026-12-01T00:00:00+04:00. Blank = always."
+    },
+    {
+      "type": "text",
+      "id": "promo_ends_at",
+      "label": "Hide from",
+      "info": "Exclusive. 2026-12-06T00:00:00+04:00 removes it at UAE midnight."
+    }
   ]
 }
 {% endschema %}

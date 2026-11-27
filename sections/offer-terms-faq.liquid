@@ -1,0 +1,127 @@
+{%- comment -%}
+  Offer Terms, the offer FAQ, and the campaign's structured data.
+
+  Built as its own section rather than folded into category-editorial, which
+  ~90 collection pages render: that section always emits a three-level
+  BreadcrumbList (Home › parent › this), and the handoff specifies a two-level
+  one (Home › UAE National Day Offer). Changing it there to suit one page would
+  reach every category page on the site.
+
+  The FAQ answers are plain text, so the visible accordion and the FAQPage
+  JSON-LD are generated from the same block settings and cannot drift apart —
+  which is what Google requires and what the QA checklist asks someone to
+  verify by eye.
+
+  Uses the theme's existing .faq markup so the accordion matches every other
+  page without new CSS.
+{%- endcomment -%}
+
+{%- liquid
+  assign term_blocks = section.blocks | where: 'type', 'term'
+  assign faq_blocks = section.blocks | where: 'type', 'faq'
+  assign page_url = shop.url | append: section.settings.page_path
+-%}
+
+{%- if term_blocks.size > 0 -%}
+  <section class="section alt" id="offer-terms"><div class="container">
+    <div class="sec-head">
+      <h2 class="sec-title">{{ section.settings.terms_heading }}</h2>
+    </div>
+    <ul class="offer-terms fade-up">
+      {%- for block in term_blocks -%}
+        <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+      {%- endfor -%}
+    </ul>
+  </div></section>
+{%- endif -%}
+
+{%- if faq_blocks.size > 0 -%}
+  <section class="faq"><div class="faq-inner">
+    <div class="faq-head fade-up">
+      {%- if section.settings.faq_eyebrow != blank -%}
+        <span class="label">{{ section.settings.faq_eyebrow }}</span>
+      {%- endif -%}
+      <h2 class="sec-title">{{ section.settings.faq_heading }}</h2>
+    </div>
+    <div class="faq-list fade-up">
+      {%- for block in faq_blocks -%}
+        <details class="faq-item" {{ block.shopify_attributes }}>
+          <summary class="faq-q">{{ block.settings.question }}<span class="mi" aria-hidden="true">add</span></summary>
+          <div class="faq-a">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div></section>
+{%- endif -%}
+
+{%- comment -%} ── Structured data ── {%- endcomment -%}
+{%- if section.settings.emit_schema -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": {{ shop.url | append: '/' | json }}
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ section.settings.crumb_name | json }},
+      "item": {{ page_url | json }}
+    }
+  ]
+}
+</script>
+
+{%- if faq_blocks.size > 0 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for block in faq_blocks -%}
+    {
+      "@type": "Question",
+      "name": {{ block.settings.question | json }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ block.settings.answer | strip_html | strip | json }}
+      }
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Offer terms & FAQ",
+  "settings": [
+    { "type": "text", "id": "terms_heading", "label": "Terms heading (H2)", "default": "Offer Terms" },
+    { "type": "header", "content": "FAQ" },
+    { "type": "text", "id": "faq_eyebrow", "label": "FAQ eyebrow" },
+    { "type": "text", "id": "faq_heading", "label": "FAQ heading (H2)", "default": "Offer FAQs" },
+    { "type": "header", "content": "Structured data" },
+    { "type": "checkbox", "id": "emit_schema", "label": "Output BreadcrumbList and FAQPage", "default": true },
+    { "type": "text", "id": "crumb_name", "label": "Breadcrumb name" },
+    { "type": "text", "id": "page_path", "label": "Page path",
+      "info": "Used for the breadcrumb item URL, e.g. /collections/uae-national-day-offer" }
+  ],
+  "blocks": [
+    { "type": "term", "name": "Term", "settings": [
+      { "type": "textarea", "id": "text", "label": "Term" }
+    ] },
+    { "type": "faq", "name": "FAQ", "settings": [
+      { "type": "text", "id": "question", "label": "Question" },
+      { "type": "textarea", "id": "answer", "label": "Answer" }
+    ] }
+  ],
+  "presets": [{ "name": "Offer terms & FAQ" }]
+}
+{% endschema %}

@@ -7,13 +7,47 @@
   and only a default at that, since the live text lives in header-group.json
   once the section has been saved.
 {%- endcomment -%}
+{%- comment -%}
+  A message may carry its own start and end, for campaign lines that must
+  appear and vanish on a date — the National Day offer runs to midnight on
+  6 December and the bar is meant to stop advertising it then. Dates are
+  compared as Unix epochs, which are timezone-independent, so a date written
+  with the UAE offset switches at UAE midnight wherever the shopper is. Both
+  blank, which is the case for the standing messages, means always on.
+{%- endcomment -%}
+{%- assign now_ts = 'now' | date: '%s' | plus: 0 -%}
+
 {%- if section.blocks.size > 0 -%}
   <div class="announce">
     <div class="announce-track" id="atrack">
       {%- comment -%} duplicated once so the CSS marquee loops seamlessly {%- endcomment -%}
       {%- for i in (1..2) -%}
         {%- for block in section.blocks -%}
-          <div class="a-item" {{ block.shopify_attributes }}>{{ block.settings.text }}<span class="dot">&#10022;</span></div>
+          {%- liquid
+            assign show = true
+            if block.settings.starts_at != blank
+              assign start_ts = block.settings.starts_at | date: '%s' | plus: 0
+              if now_ts < start_ts
+                assign show = false
+              endif
+            endif
+            if block.settings.ends_at != blank
+              assign end_ts = block.settings.ends_at | date: '%s' | plus: 0
+              if now_ts >= end_ts
+                assign show = false
+              endif
+            endif
+          -%}
+          {%- if show and block.settings.text != blank -%}
+            <div class="a-item" {{ block.shopify_attributes }}>
+              {%- if block.settings.link != blank -%}
+                <a class="a-link" href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+              {%- else -%}
+                {{ block.settings.text }}
+              {%- endif -%}
+              <span class="dot">&#10022;</span>
+            </div>
+          {%- endif -%}
         {%- endfor -%}
       {%- endfor -%}
     </div>
@@ -26,7 +60,13 @@
   "settings": [],
   "blocks": [
     { "type": "message", "name": "Message", "settings": [
-      { "type": "text", "id": "text", "label": "Text" }
+      { "type": "text", "id": "text", "label": "Text" },
+      { "type": "url", "id": "link", "label": "Link (optional)" },
+      { "type": "header", "content": "Live window (optional)" },
+      { "type": "text", "id": "starts_at", "label": "Starts",
+        "info": "ISO with offset, e.g. 2026-12-01T00:00:00+04:00. Blank = always on." },
+      { "type": "text", "id": "ends_at", "label": "Ends",
+        "info": "Exclusive. 2026-12-06T00:00:00+04:00 means the message is gone at midnight." }
     ] }
   ],
   "presets": [

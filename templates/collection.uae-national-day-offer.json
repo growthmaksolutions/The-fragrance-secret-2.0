@@ -1,0 +1,185 @@
+{
+  "sections": {
+    "offerstrip": {
+      "type": "offer-strip",
+      "settings": {
+        "text": "Limited Time Only · 1 to 5 December · Up to 50% Off · Don’t Miss Out",
+        "link": "/collections/uae-national-day-offer",
+        "starts_at": "2026-12-01T00:00:00+04:00",
+        "ends_at": "2026-12-06T00:00:00+04:00"
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "products_per_page": 24,
+        "hero_eyebrow": "1 to 5 December",
+        "hero_heading": "UAE National Day Offer",
+        "hero_image_alt": "UAE National Day perfume offers at The Fragrance Secrets",
+        "hero_bg_image": "",
+        "hero_bg_image_sm": "",
+        "show_hero_description": false,
+        "crumb_parent_label": "",
+        "crumb_parent_url": "",
+        "show_trust_band": true,
+        "show_reviews": true,
+        "results_eyebrow": "The Offer",
+        "results_heading": "Shop the National Day Perfume Sale",
+        "discount_chips": "20% Off & Above|disc-20\n30% Off & Above|disc-30\n50% Off|disc-50",
+        "intro_eyebrow": "Eid Al Etihad",
+        "intro_heading": "Celebrate Eid Al Etihad with Exclusive UAE National Day Offers",
+        "intro_text": "<p>Enjoy special perfume offers this UAE National Day at The Fragrance Secrets and get up to 50% off selected perfumes from 1 to 5 December. Explore authentic Arabic perfumes, luxurious oud fragrances and designer-inspired scents for men, women, unisex lovers and kids. Offer prices apply automatically with no promo code required, plus free UAE-wide delivery on orders above AED 300 and convenient card or cash-on-delivery payment options. Find your perfect festive fragrance today!</p>",
+        "show_why_rotator": false
+      }
+    },
+    "terms": {
+      "type": "offer-terms-faq",
+      "blocks": {
+        "term1": {
+          "type": "term",
+          "settings": {
+            "text": "The UAE National Day Offer runs from 1 December at 12:00 AM to 6 December at 12:00 AM, UAE time."
+          }
+        },
+        "term2": {
+          "type": "term",
+          "settings": {
+            "text": "Discounts of up to 50% apply to selected products only. Offer prices are shown on each product page."
+          }
+        },
+        "term3": {
+          "type": "term",
+          "settings": {
+            "text": "No discount code is needed."
+          }
+        },
+        "term4": {
+          "type": "term",
+          "settings": {
+            "text": "The WELCOME10 welcome discount can’t be combined with offer prices."
+          }
+        },
+        "term5": {
+          "type": "term",
+          "settings": {
+            "text": "Free delivery applies to orders above AED 300."
+          }
+        },
+        "term6": {
+          "type": "term",
+          "settings": {
+            "text": "Offers are available while stock lasts."
+          }
+        },
+        "term7": {
+          "type": "term",
+          "settings": {
+            "text": "Our standard return policy applies."
+          }
+        },
+        "faq1": {
+          "type": "faq",
+          "settings": {
+            "question": "When does the UAE National Day sale start and end?",
+            "answer": "The UAE National Day Offer starts on 1 December at 12:00 AM and ends on 6 December at 12:00 AM, UAE time. That gives you five full days, from 1 to 5 December, to shop."
+          }
+        },
+        "faq2": {
+          "type": "faq",
+          "settings": {
+            "question": "How much can I save in the National Day perfume sale?",
+            "answer": "You can save up to 50% on selected perfumes. The exact discount depends on the product and is shown on each product page."
+          }
+        },
+        "faq3": {
+          "type": "faq",
+          "settings": {
+            "question": "Do I need a discount code?",
+            "answer": "No. Offer prices are already applied to the products, so you'll see the discounted price straight away with no code to enter."
+          }
+        },
+        "faq4": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I use WELCOME10 with the National Day Offer?",
+            "answer": "No. The WELCOME10 welcome discount can't be combined with National Day offer prices."
+          }
+        },
+        "faq5": {
+          "type": "faq",
+          "settings": {
+            "question": "Is delivery free during the offer?",
+            "answer": "Yes, on orders above AED 300. Orders below AED 300 have a delivery fee of AED 12. UAE orders usually arrive within 1 to 4 business days."
+          }
+        },
+        "faq6": {
+          "type": "faq",
+          "settings": {
+            "question": "Do you deliver National Day offers to Dubai, Abu Dhabi and Sharjah?",
+            "answer": "Yes. We deliver offer orders across the UAE, including Dubai, Abu Dhabi and Sharjah. Orders usually arrive within 1 to 4 business days, and delivery is free on orders above AED 300."
+          }
+        },
+        "faq7": {
+          "type": "faq",
+          "settings": {
+            "question": "Can I pay cash on delivery?",
+            "answer": "Yes. Cash on Delivery is available across the UAE, and you can also pay securely by credit or debit card."
+          }
+        },
+        "faq8": {
+          "type": "faq",
+          "settings": {
+            "question": "Which brands are part of the National Day offer?",
+            "answer": "The offer covers hundreds of perfumes from many brands, including Arabic, oud and designer-inspired houses. Use the Brand filter on this page to see every brand on offer."
+          }
+        },
+        "faq9": {
+          "type": "faq",
+          "settings": {
+            "question": "Are the offer perfumes authentic?",
+            "answer": "Yes. Every perfume at The Fragrance Secrets, including all offer items, is 100% authentic, sourced from trusted suppliers, and sealed and checked before dispatch."
+          }
+        },
+        "faq10": {
+          "type": "faq",
+          "settings": {
+            "question": "Will the offer items sell out?",
+            "answer": "Offer stock is limited and available while it lasts, so we recommend ordering your favourites early."
+          }
+        }
+      },
+      "block_order": [
+        "term1",
+        "term2",
+        "term3",
+        "term4",
+        "term5",
+        "term6",
+        "term7",
+        "faq1",
+        "faq2",
+        "faq3",
+        "faq4",
+        "faq5",
+        "faq6",
+        "faq7",
+        "faq8",
+        "faq9",
+        "faq10"
+      ],
+      "settings": {
+        "terms_heading": "Offer Terms",
+        "faq_eyebrow": "Your Questions, Answered",
+        "faq_heading": "UAE National Day Offer FAQs",
+        "emit_schema": true,
+        "crumb_name": "UAE National Day Offer",
+        "page_path": "/collections/uae-national-day-offer"
+      }
+    }
+  },
+  "order": [
+    "offerstrip",
+    "main",
+    "terms"
+  ]
+}

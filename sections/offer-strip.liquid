@@ -1,0 +1,62 @@
+{%- comment -%}
+  Campaign strip for a timed offer — the "Limited Time Only · 1 to 5 December"
+  band that sits directly above the offer banner.
+
+  It carries its own start and end, so it appears and disappears on the dates
+  rather than on someone remembering. The handoff asks for the strip to be
+  removed when the offer ends at midnight on 6 December; a window that closes
+  itself is the difference between that happening on time and happening when
+  somebody next looks at the site.
+
+  Dates are written with the UAE offset (+04:00) and compared as Unix epochs,
+  which are timezone-independent, so the switch lands at UAE midnight wherever
+  the shopper is. A blank date means "no bound on that side".
+{%- endcomment -%}
+
+{%- liquid
+  assign now_ts = 'now' | date: '%s' | plus: 0
+  assign start_ts = 0
+  assign end_ts = 0
+  if section.settings.starts_at != blank
+    assign start_ts = section.settings.starts_at | date: '%s' | plus: 0
+  endif
+  if section.settings.ends_at != blank
+    assign end_ts = section.settings.ends_at | date: '%s' | plus: 0
+  endif
+
+  assign in_window = true
+  if start_ts > 0 and now_ts < start_ts
+    assign in_window = false
+  endif
+  if end_ts > 0 and now_ts >= end_ts
+    assign in_window = false
+  endif
+-%}
+
+{%- if section.settings.text != blank and in_window -%}
+  {%- if section.settings.link != blank -%}
+    <a class="offer-strip" href="{{ section.settings.link }}">
+      <span class="offer-strip-text">{{ section.settings.text }}</span>
+    </a>
+  {%- else -%}
+    <div class="offer-strip">
+      <span class="offer-strip-text">{{ section.settings.text }}</span>
+    </div>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Offer strip",
+  "settings": [
+    { "type": "text", "id": "text", "label": "Strip text" },
+    { "type": "url", "id": "link", "label": "Link (optional)" },
+    { "type": "header", "content": "Live window" },
+    { "type": "text", "id": "starts_at", "label": "Starts",
+      "info": "ISO with offset, e.g. 2026-12-01T00:00:00+04:00. Blank = already started." },
+    { "type": "text", "id": "ends_at", "label": "Ends",
+      "info": "Exclusive: 2026-12-06T00:00:00+04:00 means the strip is gone at midnight. Blank = no end." }
+  ],
+  "presets": [{ "name": "Offer strip" }]
+}
+{% endschema %}

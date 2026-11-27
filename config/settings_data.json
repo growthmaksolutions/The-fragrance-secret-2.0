@@ -38,7 +38,9 @@
     "sections": {
       "customer-login-cta": {
         "type": "customer-login-cta",
-        "settings": {}
+        "settings": {
+          "hide_on_paths": "/collections/uae-national-day-offer"
+        }
       },
       "cart-drawer": {
         "type": "cart-drawer",

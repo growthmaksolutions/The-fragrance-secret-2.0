@@ -114,6 +114,21 @@ mutation($input: ProductInput!) {
 """
 
 
+TIERS = (20, 30, 50)
+
+
+def tier_tags_for(cut):
+    """Cumulative depth tags, so "20% off and above" includes the 50% items.
+
+    Storefront filters read tags, options, price and vendor -- never the gap
+    between price and compare-at -- so depth has to be written onto the product
+    at the moment it is priced. The offer page's chips link to
+    /collections/<handle>/<tag>, Shopify's native tag route, which needs no
+    Search & Discovery setup.
+    """
+    return ["disc-%d" % t for t in TIERS if cut >= t]
+
+
 def money(value):
     return "%.2f" % float(value)
 
@@ -210,15 +225,23 @@ def plan_offer(client, rows, step):
             continue
 
         first = planned[0]
+        # The shallowest variant decides the tier. A product whose 100g is 50%
+        # off but whose 1Kg is 20% off must not appear under "50% Off", or the
+        # chip sends shoppers to a page that does not deliver what it promised.
+        cuts = []
+        for v in planned:
+            was = float(v["after"]["compare_at"])
+            if was:
+                cuts.append((was - float(v["after"]["price"])) / was * 100)
+        shallowest = min(cuts) if cuts else 0
         changes.append({
+            "tier_tags": tier_tags_for(shallowest),
             "handle": handle,
             "title": product["title"],
             "product_id": product["id"],
             "tags_before": product["tags"],
             "variants": planned,
-            "cut": round((float(first["after"]["compare_at"]) - float(first["after"]["price"]))
-                         / float(first["after"]["compare_at"]) * 100)
-            if float(first["after"]["compare_at"]) else 0,
+            "cut": round(shallowest),
         })
     return changes, skips
 
@@ -233,7 +256,7 @@ def write_variants(client, change, key):
     })["productVariantsBulkUpdate"]
 
 
-def apply_changes(client, changes, tag):
+def apply_changes(client, changes, tag, tier_tags):
     done = 0
     for change in changes:
         result = write_variants(client, change, "after")
@@ -280,6 +303,8 @@ def main():
     parser.add_argument("--tag", help="also add this tag (e.g. sale, to join Crazy Deals)")
     parser.add_argument("--round", type=float, default=0, metavar="STEP", dest="step",
                         help="snap percentage results: 1 for whole dirhams, 0.99 for .99 endings")
+    parser.add_argument("--tier-tags", action="store_true", dest="tier_tags",
+                        help="also tag depth as disc-20/disc-30/disc-50 for the offer page chips")
     parser.add_argument("--apply", action="store_true",
                         help="write the changes (default is a dry run)")
     parser.add_argument("--token", help="Admin API token (defaults to .env)")
@@ -324,6 +349,10 @@ def main():
     if args.tag:
         adding = sum(1 for c in changes if args.tag not in c["tags_before"])
         print("%d would also be tagged %r" % (adding, args.tag))
+    if args.tier_tags:
+        for t in TIERS:
+            n = sum(1 for c in changes if ("disc-%d" % t) in c["tier_tags"])
+            print("%4d would be tagged disc-%d" % (n, t))
 
     if not args.apply:
         print("\n%sDry run — nothing was written. Re-run with --apply.%s" % (YELLOW, RESET))
@@ -337,7 +366,7 @@ def main():
     with open(rollback, "w", encoding="utf-8") as handle:
         json.dump({"created": stamp, "tag": args.tag, "changes": changes}, handle, indent=1)
 
-    done = apply_changes(client, changes, args.tag)
+    done = apply_changes(client, changes, args.tag, args.tier_tags)
     print("\n%sPriced %d products.%s" % (GREEN, done, RESET))
     print("Rollback written to %s" % rollback)
     print("End the offer with:\n  python3 scripts/set-offer-prices.py --revert %s --apply"

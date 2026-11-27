@@ -63,12 +63,20 @@
 <div data-collection-native>
 
   <!-- PAGE HERO -->
+  {%- comment -%}
+    The middle crumb is dropped when no parent label is set. A campaign page
+    sits directly under Home rather than inside Shop, and its BreadcrumbList
+    JSON-LD says so — a visible trail with a level the structured data does not
+    have is the mismatch Google reports against the page.
+  {%- endcomment -%}
   {%- capture collection_breadcrumb -%}
     <div class="breadcrumb">
       <a href="{{ routes.root_url }}">Home</a>
       <span class="mi" aria-hidden="true">chevron_right</span>
-      <a href="{{ crumb_parent_url }}">{{ crumb_parent_label }}</a>
-      <span class="mi" aria-hidden="true">chevron_right</span>
+      {%- if crumb_parent_label != blank -%}
+        <a href="{{ crumb_parent_url }}">{{ crumb_parent_label }}</a>
+        <span class="mi" aria-hidden="true">chevron_right</span>
+      {%- endif -%}
       <span>{{ hero_heading | strip_html }}</span>
     </div>
   {%- endcapture -%}
@@ -165,10 +173,41 @@
 
   {%- paginate collection.products by paginate_by -%}
   <section class="section" id="grid"><div class="container">
+    {%- liquid
+      assign results_eyebrow = section.settings.results_eyebrow | default: 'The Collection'
+      assign results_heading = section.settings.results_heading | default: 'Shop the Range'
+    -%}
     <div class="results-head">
-      <div><span class="label">The Collection</span><h2 class="sec-title results-title">Shop the Range</h2></div>
+      <div><span class="label">{{ results_eyebrow }}</span><h2 class="sec-title results-title">{{ results_heading }}</h2></div>
       <div class="results-count">{{ collection.products_count }} products</div>
     </div>
+
+    {%- comment -%}
+      Discount tiers. Storefront filters cannot express "30% off and above" —
+      they read tags, options, price and vendor, not the gap between price and
+      compare-at. So the depth is written onto the product as a tag when the
+      offer is priced (scripts/set-offer-prices.py --tier-tags), and these chips
+      link to Shopify's native /collections/<handle>/<tag> route, which needs no
+      Search & Discovery configuration to work.
+
+      One chip per line, "Label|tag". Blank on every other collection.
+    {%- endcomment -%}
+    {%- if section.settings.discount_chips != blank -%}
+      {%- assign chip_rows = section.settings.discount_chips | newline_to_br | split: '<br />' -%}
+      <div class="disc-chips fade-up" role="group" aria-label="Filter by discount">
+        <a class="disc-chip{% if current_tags.size == 0 %} is-on{% endif %}" href="{{ collection.url }}">All offers</a>
+        {%- for raw_row in chip_rows -%}
+          {%- assign row = raw_row | strip -%}
+          {%- if row == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign bits = row | split: '|' -%}
+          {%- if bits.size < 2 -%}{%- continue -%}{%- endif -%}
+          {%- assign chip_label = bits[0] | strip -%}
+          {%- assign chip_tag = bits[1] | strip -%}
+          <a class="disc-chip{% if current_tags contains chip_tag %} is-on{% endif %}"
+             href="{{ collection.url }}/{{ chip_tag | handleize }}">{{ chip_label }}</a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
 
     {%- comment -%}
       Filters & Sort sits after the heading, not before it. It used to precede
@@ -644,6 +683,28 @@
       "id": "crumb_parent_url",
       "label": "Breadcrumb parent URL",
       "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Product grid"
+    },
+    {
+      "type": "text",
+      "id": "results_eyebrow",
+      "label": "Grid eyebrow",
+      "info": "Blank keeps \u201cThe Collection\u201d."
+    },
+    {
+      "type": "text",
+      "id": "results_heading",
+      "label": "Grid heading (H2)",
+      "info": "Blank keeps \u201cShop the Range\u201d."
+    },
+    {
+      "type": "textarea",
+      "id": "discount_chips",
+      "label": "Discount chips",
+      "info": "One per line as Label|tag, e.g. 50% Off|disc-50. Links to /collections/<handle>/<tag>. Blank hides the row."
     },
     {
       "type": "header",
