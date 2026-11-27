@@ -5098,10 +5098,22 @@
     }
 
     @media(max-width:900px) {
-      .coll-intro-grid {
+      /* .has-figure has to be named here. It sets its own two columns above,
+         and a media query adds no specificity -- so one class could never
+         beat two and the intro stayed side by side on a phone: the copy
+         crushed into a half-width column, the image a thumbnail beside it.
+         The offer page is the first to set an intro image, which is why this
+         only surfaced now. */
+      .coll-intro-grid,
+      .coll-intro-grid.has-figure {
         grid-template-columns: 1fr;
         gap: 30px
       }
+
+      /* Stacked, the figure reads as a band under the copy rather than a
+         portrait, and it comes first so the artwork is what you meet. */
+      .coll-intro-grid.has-figure .coll-intro-figure { order: -1; }
+      .coll-intro-grid.has-figure .coll-intro-figure img { width: 100%; }
     }
 
     /* Why Customers Choose — icon cards */
