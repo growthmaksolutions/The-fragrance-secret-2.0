@@ -144,7 +144,16 @@
       </div>
     </section>
   {%- else -%}
-    <section class="page-hero tall{% if hero_bg != blank %} has-bg{% endif %}">
+    {%- comment -%}
+      The scrim over the banner is on by default because most of these heroes
+      are product photography that the heading has to sit on top of, and it is
+      what keeps that text legible.
+
+      A banner drawn for this purpose already carries its own darkness and its
+      own empty space for the words, and the scrim then dims artwork that was
+      composed to be seen. Those pages turn it off.
+    {%- endcomment -%}
+    <section class="page-hero tall{% if hero_bg != blank %} has-bg{% endif %}{% unless section.settings.hero_overlay %} no-scrim{% endunless %}">
       {%- if hero_bg != blank -%}
         <div class="ph-bg" aria-hidden="true">
           {%- comment -%}
@@ -698,6 +707,13 @@
       "id": "hero_bg_image_sm",
       "label": "Hero background image, small (theme asset filename)",
       "info": "Optional 1200 × 417 variant served to phones."
+    },
+    {
+      "type": "checkbox",
+      "id": "hero_overlay",
+      "label": "Dark overlay on the hero image",
+      "info": "Keeps the heading legible over photography. Turn off for a banner already drawn with its own dark area for the text.",
+      "default": true
     },
     {
       "type": "text",

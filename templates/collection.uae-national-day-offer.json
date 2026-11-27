@@ -16,8 +16,8 @@
         "hero_eyebrow": "1 to 5 December",
         "hero_heading": "UAE National Day Offer",
         "hero_image_alt": "UAE National Day perfume offers at The Fragrance Secrets",
-        "hero_bg_image": "",
-        "hero_bg_image_sm": "",
+        "hero_bg_image": "uae-national-day-offer-hero.webp",
+        "hero_bg_image_sm": "uae-national-day-offer-hero-sm.webp",
         "show_hero_description": false,
         "show_trust_band": false,
         "show_reviews": true,
@@ -29,7 +29,8 @@
         "intro_text": "<p>Enjoy special perfume offers this UAE National Day at The Fragrance Secrets and get up to 50% off selected perfumes from 1 to 5 December. Explore authentic Arabic perfumes, luxurious oud fragrances and designer-inspired scents for men, women, unisex lovers and kids. Offer prices apply automatically with no promo code required, plus free UAE-wide delivery on orders above AED 300 and convenient card or cash-on-delivery payment options. Find your perfect festive fragrance today!</p>",
         "show_why_rotator": false,
         "crumb_top_level": true,
-        "hero_facts": "schedule|Limited Time Only\ncalendar_month|1 to 5 December\npercent|Up to 50% Off\nlocal_fire_department|Don’t Miss Out"
+        "hero_facts": "schedule|Limited Time Only\ncalendar_month|1 to 5 December\npercent|Up to 50% Off\nlocal_fire_department|Don’t Miss Out",
+        "hero_overlay": false
       }
     },
     "terms": {

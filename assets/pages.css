@@ -1843,3 +1843,12 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 @media (max-width: 1024px) {
   .nav-toplink.nav-promo { display: inline-flex; align-self: flex-start; margin: 4px 0; }
 }
+
+/* ── Hero with no scrim ─────────────────────────────────────────────────
+   For a banner drawn for the page rather than cropped from product
+   photography: it brings its own dark ground and its own empty space for the
+   heading, so the standard gradient only dims artwork meant to be seen.
+
+   The background behind it stays ink, so nothing flashes light while the
+   image loads. */
+.page-hero.no-scrim .ph-bg::after { display: none; }
