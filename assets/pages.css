@@ -1854,25 +1854,32 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 .page-hero.no-scrim .ph-bg::after { display: none; }
 
 /* ── Hero text held inside a banner's clear area ────────────────────────
-   The hero type is sized against the viewport, so on a wide screen the
-   heading runs across the artwork. Where the banner was drawn with an empty
-   area for the words, the copy is capped at that width and the display size
-   comes down to match -- the heading wraps to two lines rather than reaching
-   into the photograph.
+   The copy is capped at the width of the artwork's empty area so the heading
+   does not run across the photograph. The display size is left alone: the
+   heading wraps inside that column at its normal scale rather than being
+   shrunk to fit on one line.
 
-   Only applies where a width is set, and only above phone size: the phone
-   banner is a square with its own clear ground at the top, so the text uses
-   the full width there as usual. */
+   The facts sit as two rows of two. Four across needed the full width of the
+   hero, which put the last of them behind the bottles; left to wrap on their
+   own they split unevenly, three and one. max-content columns keep the pair
+   tight to their text instead of spreading to half the column each.
+
+   Only where a width is set, and only above phone size: the phone banner is
+   a square with its own clear ground at the top, so the text runs full width
+   there and the facts wrap as they always did. */
 .page-hero.hero-narrow .ph-title,
 .page-hero.hero-narrow .ph-sub,
 .page-hero.hero-narrow .ph-meta { max-width: var(--ph-text-max, 560px); }
-.page-hero.hero-narrow .ph-title { font-size: clamp(1.8rem, 3vw, 2.75rem); line-height: 1.12; }
-.page-hero.hero-narrow .ph-meta { gap: 14px 22px; }
-.page-hero.hero-narrow .ph-meta span { font-size: .68rem; letter-spacing: .08em; }
+
+.page-hero.hero-narrow .ph-meta {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 14px 30px;
+}
 
 @media (max-width: 760px) {
   .page-hero.hero-narrow .ph-title,
   .page-hero.hero-narrow .ph-sub,
   .page-hero.hero-narrow .ph-meta { max-width: none; }
-  .page-hero.hero-narrow .ph-title { font-size: clamp(2rem, 9vw, 2.6rem); }
+  .page-hero.hero-narrow .ph-meta { display: flex; flex-wrap: wrap; gap: 14px 22px; }
 }
