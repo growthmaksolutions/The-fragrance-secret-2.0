@@ -162,8 +162,19 @@
       Carried as a custom property rather than a class per width, because the
       figure depends on where the artwork starts and that differs per banner.
     {%- endcomment -%}
-    <section class="page-hero tall{% if hero_bg != blank %} has-bg{% endif %}{% unless section.settings.hero_overlay %} no-scrim{% endunless %}{% if section.settings.hero_text_max != blank %} hero-narrow{% endif %}"
-      {%- if section.settings.hero_text_max != blank %} style="--ph-text-max:{{ section.settings.hero_text_max }}"{% endif %}>
+    {%- comment -%}
+      hero_shift nudges the banner sideways. At most viewport widths the image
+      is scaled to the full width of the hero, so there is no horizontal
+      overflow for object-position to work against — moving it means moving
+      it, and the sliver that opens on the left is the hero's own ink, which
+      is #0D0A06 against the banner's own #100403 ground.
+    {%- endcomment -%}
+    {%- capture hero_style -%}
+      {%- if section.settings.hero_text_max != blank %}--ph-text-max:{{ section.settings.hero_text_max }};{% endif -%}
+      {%- if section.settings.hero_shift != blank %}--ph-shift:{{ section.settings.hero_shift }};{% endif -%}
+    {%- endcapture -%}
+    <section class="page-hero tall{% if hero_bg != blank %} has-bg{% endif %}{% unless section.settings.hero_overlay %} no-scrim{% endunless %}{% if section.settings.hero_text_max != blank %} hero-narrow{% endif %}{% if section.settings.hero_shift != blank %} hero-shift{% endif %}"
+      {%- if hero_style != blank %} style="{{ hero_style | strip }}"{% endif %}>
       {%- if hero_bg != blank -%}
         <div class="ph-bg" aria-hidden="true">
           {%- comment -%}
@@ -730,6 +741,12 @@
       "id": "hero_text_max",
       "label": "Hero text max width",
       "info": "e.g. 560px or 42%. Keeps the heading inside a banner's clear area. Blank lets it run full width. Ignored on phones, where the banner is square."
+    },
+    {
+      "type": "text",
+      "id": "hero_shift",
+      "label": "Nudge the hero image right",
+      "info": "e.g. 5%. Moves the banner sideways to clear the heading. The strip that opens on the left is the hero's ink background."
     },
     {
       "type": "text",

@@ -1853,21 +1853,24 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
    image loads. */
 .page-hero.no-scrim .ph-bg::after { display: none; }
 
-/* ── Hero text held inside a banner's clear area ────────────────────────
-   The copy is capped at the width of the artwork's empty area so the heading
-   does not run across the photograph. The display size is left alone: the
-   heading wraps inside that column at its normal scale rather than being
-   shrunk to fit on one line.
+/* ── Hero text over a composed banner ──────────────────────────────────
+   For a banner drawn with an empty area for the words rather than cropped
+   from product photography.
 
-   The facts sit as two rows of two. Four across needed the full width of the
-   hero, which put the last of them behind the bottles; left to wrap on their
-   own they split unevenly, three and one. max-content columns keep the pair
-   tight to their text instead of spreading to half the column each.
+   The heading is not capped. Capping it is what made it wrap: at the theme's
+   own clamp(2.4rem, 5.5vw, 4.2rem) "UAE National Day Offer" is about 660px
+   and the column was 520. It sets on one line as every other hero does, and
+   the banner is nudged right instead so the line has room.
 
-   Only where a width is set, and only above phone size: the phone banner is
-   a square with its own clear ground at the top, so the text runs full width
-   there and the facts wrap as they always did. */
-.page-hero.hero-narrow .ph-title,
+   The sub and the facts are capped, because those do want to stay in a
+   column. The facts sit two by two: four across needed the full width of the
+   hero, which put the last of them behind the bottles, and left to wrap on
+   their own they split three and one. max-content columns keep each pair
+   tight to its text rather than spreading to half the column.
+
+   Above phone size only. The phone banner is the square, which has its own
+   clear ground across the top, so the text runs full width and the facts
+   wrap as they always did. */
 .page-hero.hero-narrow .ph-sub,
 .page-hero.hero-narrow .ph-meta { max-width: var(--ph-text-max, 560px); }
 
@@ -1877,9 +1880,17 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
   gap: 14px 30px;
 }
 
+/* The nudge: the banner is scaled to the hero's full width at most sizes, so
+   there is no horizontal overflow for object-position to act on. The sliver
+   this opens on the left is the hero's ink, #0D0A06, against the banner's own
+   #100403 ground -- three values apart and not visible. The right edge is
+   clipped by .ph-bg, which already hides its overflow. */
+.page-hero.hero-shift .ph-bg img { transform: translateX(var(--ph-shift, 0)); }
+
 @media (max-width: 760px) {
-  .page-hero.hero-narrow .ph-title,
   .page-hero.hero-narrow .ph-sub,
   .page-hero.hero-narrow .ph-meta { max-width: none; }
+  /* The phone banner is the square, drawn to sit where it is. */
+  .page-hero.hero-shift .ph-bg img { transform: none; }
   .page-hero.hero-narrow .ph-meta { display: flex; flex-wrap: wrap; gap: 14px 22px; }
 }
