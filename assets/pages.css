@@ -1894,3 +1894,20 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
   .page-hero.hero-shift .ph-bg img { transform: none; }
   .page-hero.hero-narrow .ph-meta { display: flex; flex-wrap: wrap; gap: 14px 22px; }
 }
+
+/* ── Image-only banner ──────────────────────────────────────────────────
+   Artwork that carries its own message, so there is nothing over it. Sized
+   by its own aspect ratio rather than a fixed height: the art is 3:1 on
+   desktop and about 3:2 as a phone crop, and a set height would letterbox
+   one or crop the other. */
+.img-banner-sec { padding-top: 0; }
+.img-banner {
+  display: block; width: 100%; height: auto;
+  border-radius: 12px;
+}
+.img-banner-sec.is-bleed .img-banner { border-radius: 0; }
+.img-banner-link { display: block; }
+.img-banner-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+@media (max-width: 760px) {
+  .img-banner { border-radius: 8px; }
+}

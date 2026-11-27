@@ -183,11 +183,24 @@
         "crumb_name": "UAE National Day Offer",
         "page_path": "/collections/uae-national-day-offer"
       }
+    },
+    "promobanner": {
+      "type": "image-banner",
+      "settings": {
+        "image": "uae-national-day-offer-promo.webp",
+        "image_sm": "uae-national-day-offer-promo-sm.webp",
+        "alt": "Happy 55th Eid Al Etihad — UAE National Day. Sale is on live, up to 50% off. Don’t miss it.",
+        "link": "#grid",
+        "full_bleed": false,
+        "starts_at": "2026-12-01T00:00:00+04:00",
+        "ends_at": "2026-12-06T00:00:00+04:00"
+      }
     }
   },
   "order": [
     "offerstrip",
     "main",
+    "promobanner",
     "terms"
   ]
 }
