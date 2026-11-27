@@ -32,7 +32,7 @@
         "hero_facts": "schedule|Limited Time Only\ncalendar_month|1 to 5 December\npercent|Up to 50% Off\nlocal_fire_department|Don’t Miss Out",
         "hero_overlay": false,
         "hero_text_max": "520px",
-        "hero_shift": "5%"
+        "hero_shift": ""
       }
     },
     "terms": {
