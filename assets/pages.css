@@ -1924,6 +1924,9 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
    had more air above it than below and read as adrift between the two. */
 .img-banner-sec { padding-top: 48px; padding-bottom: 48px; }
 .img-banner-sec.is-bleed { padding-top: 0; padding-bottom: 0; }
+/* The <picture> wrapper is inline by default, which leaves a descender gap
+   under the banner; the image inside it is what carries the box. */
+.img-banner-sec picture { display: block; }
 .img-banner {
   display: block; width: 100%; height: auto;
   border-radius: 12px;

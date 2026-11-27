@@ -38,16 +38,24 @@
 {%- if ib_image != blank and ib_show -%}
   <section class="section-sm img-banner-sec{% if ib_full_bleed %} is-bleed{% endif %}">
     <div class="{% unless ib_full_bleed %}container{% endunless %}">
+      {%- comment -%}
+        <picture> with a media query, not srcset and sizes. The phone file is
+        a different crop, not a smaller copy of the same one, and srcset picks
+        on pixels: a 390px handset at DPR 3 asks for 1170px and is handed the
+        full-width desktop strip, so the crop would never be seen on the
+        phones it was made for. media asks the question that actually decides
+        it, which is how wide the screen is.
+      {%- endcomment -%}
       {%- capture ib_tag -%}
-        <img class="img-banner"
-             src="{{ ib_image | asset_url }}"
-             {%- if ib_image_sm != blank %}
-             srcset="{{ ib_image_sm | asset_url }} 1150w,
-                     {{ ib_image | asset_url }} 2172w"
-             sizes="100vw"
-             {%- endif %}
-             alt="{{ ib_alt | escape }}"
-             loading="lazy" decoding="async">
+        <picture>
+          {%- if ib_image_sm != blank -%}
+            <source media="(max-width: 760px)" srcset="{{ ib_image_sm | asset_url }}">
+          {%- endif -%}
+          <img class="img-banner"
+               src="{{ ib_image | asset_url }}"
+               alt="{{ ib_alt | escape }}"
+               loading="lazy" decoding="async">
+        </picture>
       {%- endcapture -%}
       {%- if ib_link != blank -%}
         <a class="img-banner-link" href="{{ ib_link }}">{{ ib_tag }}</a>
