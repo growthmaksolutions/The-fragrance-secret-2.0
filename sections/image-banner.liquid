@@ -1,63 +1,18 @@
 {%- comment -%}
-  A banner that is only an image.
-
-  For artwork whose message is set into it — this one says "Happy 55th Eid Al
-  Etihad", "Sale is on live", "Up to 50% off" — rather than a background with
-  theme text over it, which is what the hero does. Nothing is overlaid here.
-
-  Because the words are part of the picture, the alt text is where they exist
-  for a screen reader, for search, and for anyone whose connection drops the
-  image. It is a required-in-practice setting, not decoration: left blank the
-  banner is announced as nothing at all.
-
-  A phone image is served separately when one is named. A 3:1 banner on a
-  handset puts its headline a few pixels tall, so the mobile file is normally
-  a crop of the half that carries the message.
-
-  Carries its own start and end like the rest of the campaign, so it appears
-  and goes without anyone editing the page.
+  The image-only banner, as a section for anywhere a section can go. The
+  markup lives in snippets/image-banner.liquid because the offer page needs
+  the same thing directly below its hero, and the hero, intro and grid are one
+  section that template order cannot split.
 {%- endcomment -%}
 
-{%- liquid
-  assign now_ts = 'now' | date: '%s' | plus: 0
-  assign in_window = true
-  if section.settings.starts_at != blank
-    assign start_ts = section.settings.starts_at | date: '%s' | plus: 0
-    if now_ts < start_ts
-      assign in_window = false
-    endif
-  endif
-  if section.settings.ends_at != blank
-    assign end_ts = section.settings.ends_at | date: '%s' | plus: 0
-    if now_ts >= end_ts
-      assign in_window = false
-    endif
-  endif
--%}
-
-{%- if section.settings.image != blank and in_window -%}
-  <section class="section-sm img-banner-sec{% if section.settings.full_bleed %} is-bleed{% endif %}">
-    <div class="{% unless section.settings.full_bleed %}container{% endunless %}">
-      {%- capture banner_img -%}
-        <img class="img-banner"
-             src="{{ section.settings.image | asset_url }}"
-             {%- if section.settings.image_sm != blank %}
-             srcset="{{ section.settings.image_sm | asset_url }} 1100w,
-                     {{ section.settings.image | asset_url }} 2172w"
-             sizes="100vw"
-             {%- endif %}
-             alt="{{ section.settings.alt | escape }}"
-             loading="lazy" decoding="async">
-      {%- endcapture -%}
-
-      {%- if section.settings.link != blank -%}
-        <a class="img-banner-link" href="{{ section.settings.link }}">{{ banner_img }}</a>
-      {%- else -%}
-        {{ banner_img }}
-      {%- endif -%}
-    </div>
-  </section>
-{%- endif -%}
+{% render 'image-banner',
+   ib_image: section.settings.image,
+   ib_image_sm: section.settings.image_sm,
+   ib_alt: section.settings.alt,
+   ib_link: section.settings.link,
+   ib_full_bleed: section.settings.full_bleed,
+   ib_starts_at: section.settings.starts_at,
+   ib_ends_at: section.settings.ends_at %}
 
 {% schema %}
 {

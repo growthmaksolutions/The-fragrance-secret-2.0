@@ -32,7 +32,14 @@
         "hero_facts": "schedule|Limited Time Only\ncalendar_month|1 to 5 December\npercent|Up to 50% Off\nlocal_fire_department|Don’t Miss Out",
         "hero_overlay": false,
         "hero_text_max": "520px",
-        "hero_shift": ""
+        "hero_shift": "",
+        "hero_banner_image": "uae-national-day-offer-promo.webp",
+        "hero_banner_image_sm": "uae-national-day-offer-promo-sm.webp",
+        "hero_banner_alt": "“We carry the UAE with us, like a fragrance that never fades.” Happy 55th Eid Al Etihad — up to 50% off. Shop the offer.",
+        "hero_banner_link": "#grid",
+        "hero_banner_bleed": false,
+        "hero_banner_starts_at": "",
+        "hero_banner_ends_at": "2026-12-06T00:00:00+04:00"
       }
     },
     "terms": {
@@ -183,24 +190,11 @@
         "crumb_name": "UAE National Day Offer",
         "page_path": "/collections/uae-national-day-offer"
       }
-    },
-    "promobanner": {
-      "type": "image-banner",
-      "settings": {
-        "image": "uae-national-day-offer-promo.webp",
-        "image_sm": "uae-national-day-offer-promo-sm.webp",
-        "alt": "“We carry the UAE with us, like a fragrance that never fades.” Happy 55th Eid Al Etihad — up to 50% off. Shop the offer.",
-        "link": "#grid",
-        "full_bleed": true,
-        "starts_at": "",
-        "ends_at": "2026-12-06T00:00:00+04:00"
-      }
     }
   },
   "order": [
     "offerstrip",
     "main",
-    "promobanner",
     "terms"
   ]
 }

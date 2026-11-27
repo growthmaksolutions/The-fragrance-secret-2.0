@@ -1,0 +1,59 @@
+{%- comment -%}
+  A banner that is only an image.
+
+  For artwork whose message is set into it rather than a background with theme
+  text over it, which is what the hero does. Nothing is overlaid here.
+
+  Because the words are part of the picture, ib_alt is where they exist for a
+  screen reader, for search, and for anyone whose image never arrives. Left
+  blank the banner is announced as nothing at all.
+
+  A snippet rather than only a section, because the offer page wants it
+  directly below its hero — and the hero, intro and grid are one section, so
+  template order cannot put anything between them. sections/image-banner.liquid
+  renders this for anywhere a section can go; main-collection renders it for
+  that one position.
+
+  Accepts: ib_image, ib_image_sm, ib_alt, ib_link, ib_full_bleed,
+           ib_starts_at, ib_ends_at.
+{%- endcomment -%}
+
+{%- liquid
+  assign ib_now = 'now' | date: '%s' | plus: 0
+  assign ib_show = true
+  if ib_starts_at != blank
+    assign ib_from = ib_starts_at | date: '%s' | plus: 0
+    if ib_now < ib_from
+      assign ib_show = false
+    endif
+  endif
+  if ib_ends_at != blank
+    assign ib_to = ib_ends_at | date: '%s' | plus: 0
+    if ib_now >= ib_to
+      assign ib_show = false
+    endif
+  endif
+-%}
+
+{%- if ib_image != blank and ib_show -%}
+  <section class="section-sm img-banner-sec{% if ib_full_bleed %} is-bleed{% endif %}">
+    <div class="{% unless ib_full_bleed %}container{% endunless %}">
+      {%- capture ib_tag -%}
+        <img class="img-banner"
+             src="{{ ib_image | asset_url }}"
+             {%- if ib_image_sm != blank %}
+             srcset="{{ ib_image_sm | asset_url }} 1150w,
+                     {{ ib_image | asset_url }} 2172w"
+             sizes="100vw"
+             {%- endif %}
+             alt="{{ ib_alt | escape }}"
+             loading="lazy" decoding="async">
+      {%- endcapture -%}
+      {%- if ib_link != blank -%}
+        <a class="img-banner-link" href="{{ ib_link }}">{{ ib_tag }}</a>
+      {%- else -%}
+        {{ ib_tag }}
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}

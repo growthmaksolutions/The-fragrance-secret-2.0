@@ -200,6 +200,21 @@
     </section>
   {%- endif -%}
 
+  {%- comment -%}
+    A campaign banner directly below the hero, before the intro. It cannot be
+    a section of its own in that position: the hero, intro and grid are all
+    rendered here, and template order has nothing to insert between them. Same
+    snippet sections/image-banner.liquid uses, so the two cannot drift.
+  {%- endcomment -%}
+  {% render 'image-banner',
+     ib_image: section.settings.hero_banner_image,
+     ib_image_sm: section.settings.hero_banner_image_sm,
+     ib_alt: section.settings.hero_banner_alt,
+     ib_link: section.settings.hero_banner_link,
+     ib_full_bleed: section.settings.hero_banner_bleed,
+     ib_starts_at: section.settings.hero_banner_starts_at,
+     ib_ends_at: section.settings.hero_banner_ends_at %}
+
   <!-- TRUST BAND -->
   {%- if section.settings.show_trust_band -%}
     <section class="section-sm alt"><div class="container">
@@ -747,6 +762,50 @@
       "id": "hero_shift",
       "label": "Nudge the hero image right",
       "info": "e.g. 5%. Moves the banner sideways to clear the heading. The strip that opens on the left is the hero's ink background."
+    },
+    {
+      "type": "header",
+      "content": "Banner below the hero"
+    },
+    {
+      "type": "text",
+      "id": "hero_banner_image",
+      "label": "Image (theme asset filename)"
+    },
+    {
+      "type": "text",
+      "id": "hero_banner_image_sm",
+      "label": "Phone image (theme asset filename)",
+      "info": "Optional crop of the part that carries the message."
+    },
+    {
+      "type": "textarea",
+      "id": "hero_banner_alt",
+      "label": "Alt text",
+      "info": "The words shown in the artwork. The only place they exist for a screen reader or for search."
+    },
+    {
+      "type": "url",
+      "id": "hero_banner_link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "hero_banner_bleed",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "hero_banner_starts_at",
+      "label": "Starts",
+      "info": "ISO with offset. Blank = always."
+    },
+    {
+      "type": "text",
+      "id": "hero_banner_ends_at",
+      "label": "Ends",
+      "info": "Exclusive, e.g. 2026-12-06T00:00:00+04:00."
     },
     {
       "type": "text",
