@@ -1919,7 +1919,11 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
    by its own aspect ratio rather than a fixed height: the art is 3:1 on
    desktop and about 3:2 as a phone crop, and a set height would letterbox
    one or crop the other. */
-.img-banner-sec { padding-top: 0; }
+/* Symmetric padding. padding-top was zeroed to tuck the banner under the
+   product grid, but the reviews band sits between them now, so the banner
+   had more air above it than below and read as adrift between the two. */
+.img-banner-sec { padding-top: 48px; padding-bottom: 48px; }
+.img-banner-sec.is-bleed { padding-top: 0; padding-bottom: 0; }
 .img-banner {
   display: block; width: 100%; height: auto;
   border-radius: 12px;

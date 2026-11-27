@@ -191,7 +191,7 @@
         "image_sm": "uae-national-day-offer-promo-sm.webp",
         "alt": "“We carry the UAE with us, like a fragrance that never fades.” Happy 55th Eid Al Etihad — up to 50% off. Shop the offer.",
         "link": "#grid",
-        "full_bleed": false,
+        "full_bleed": true,
         "starts_at": "",
         "ends_at": "2026-12-06T00:00:00+04:00"
       }
