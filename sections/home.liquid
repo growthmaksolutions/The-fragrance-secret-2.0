@@ -649,6 +649,26 @@
   which is also what a shopper gets if the file is missing.
 {%- endcomment -%}
 {%- assign reel_blocks = section.blocks | where: 'type', 'reel' -%}
+
+{%- comment -%}
+  Empty, the section is invisible on the storefront and explains itself in the
+  theme editor. Hiding it outright is right for shoppers and useless for
+  whoever has to fill it: there is nothing to click and no clue the section
+  exists. The feed below does the same.
+{%- endcomment -%}
+{%- if reel_blocks.size == 0 and request.design_mode -%}
+  <section class="reels"><div class="container">
+    <div class="sec-head center">
+      <span class="label">{{ section.settings.reels_eyebrow }}</span>
+      <h2 class="sec-title">{{ section.settings.reels_heading }}</h2>
+    </div>
+    <p class="reels-empty">No reels added yet, so this section is hidden on the live site.
+      Use <strong>Add block</strong> on this Home section, choose <strong>Influencer reel</strong>,
+      and give it a poster image and either an MP4 or the Instagram link. Add one block per
+      creator. This message only appears in the theme editor.</p>
+  </div></section>
+{%- endif -%}
+
 {%- if reel_blocks.size > 0 -%}
   <section class="reels" id="reels">
     <div class="container">

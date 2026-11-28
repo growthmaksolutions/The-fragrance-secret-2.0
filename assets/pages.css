@@ -2033,3 +2033,11 @@ a.reel-link:hover { color: var(--gold-dk); }
   .reel-card { flex-basis: 64vw; }
   .reel-play-dot { width: 46px; height: 46px; }
 }
+
+/* Editor-only note for the reels section when it has no blocks. */
+.reels-empty {
+  max-width: 620px; margin: 0 auto; text-align: center;
+  padding: 22px 24px; border: 1px dashed rgba(13, 10, 6, .22);
+  border-radius: 10px; background: var(--white);
+  color: var(--warm); line-height: 1.6; font-size: .92rem;
+}
