@@ -401,6 +401,51 @@
             "heading": "The Set Everyone <em>Starts With</em>",
             "sub": "Three bestselling long-lasting unisex fragrances in one box — our most gifted set."
           }
+        },
+        "reel1": {
+          "type": "reel",
+          "settings": {
+            "poster": "reel-dxbmaheen.webp",
+            "name": "Maheen Hassan",
+            "handle": "@dxbmaheen",
+            "link": "https://www.instagram.com/reel/DdGqMBDTCrC/"
+          }
+        },
+        "reel2": {
+          "type": "reel",
+          "settings": {
+            "poster": "reel-farinvibes.webp",
+            "name": "Farin",
+            "handle": "@farinvibes",
+            "link": "https://www.instagram.com/reel/Dcv0clRqtkA/"
+          }
+        },
+        "reel3": {
+          "type": "reel",
+          "settings": {
+            "poster": "reel-saffooiii.webp",
+            "name": "Safa",
+            "handle": "@saffooiii",
+            "link": "https://www.instagram.com/reel/DdZeJIvRXTq/"
+          }
+        },
+        "reel4": {
+          "type": "reel",
+          "settings": {
+            "poster": "reel-parul.webp",
+            "name": "Parul Khurana",
+            "handle": "@parul_promax",
+            "link": "https://www.instagram.com/reel/Dc5awpRsfxm/"
+          }
+        },
+        "reel5": {
+          "type": "reel",
+          "settings": {
+            "poster": "reel-mrw3.webp",
+            "name": "Marwa",
+            "handle": "@mrw3._",
+            "link": "https://www.instagram.com/reel/DdUtCZksCrw/"
+          }
         }
       },
       "block_order": [
@@ -445,7 +490,12 @@
         "faq3",
         "faq4",
         "faq5",
-        "faq6"
+        "faq6",
+        "reel1",
+        "reel2",
+        "reel3",
+        "reel4",
+        "reel5"
       ],
       "settings": {
         "scent_all_label": "All Scent Families",

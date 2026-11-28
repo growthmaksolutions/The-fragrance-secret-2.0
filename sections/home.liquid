@@ -725,8 +725,17 @@
                   </span>
                 </button>
               {%- elsif reel_poster != blank -%}
+                {%- comment -%}
+                  No video file, so the still links out to the reel. It still
+                  wears the play mark: without one a shopper reads the card as
+                  a photograph and never clicks, and the whole point is that
+                  there is a video behind it.
+                {%- endcomment -%}
                 <a class="reel-still" href="{{ block.settings.link | default: '#' }}"{% if block.settings.link != blank %} target="_blank" rel="noopener"{% endif %}>
                   <img src="{{ reel_poster }}" alt="{{ block.settings.name | default: 'Creator reel' | escape }}" loading="lazy" decoding="async">
+                  <span class="reel-play-dot reel-play-static" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="22" height="22" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+                  </span>
                 </a>
               {%- endif -%}
             </div>

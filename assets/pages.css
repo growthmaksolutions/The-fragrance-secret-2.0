@@ -2041,3 +2041,16 @@ a.reel-link:hover { color: var(--gold-dk); }
   border-radius: 10px; background: var(--white);
   color: var(--warm); line-height: 1.6; font-size: .92rem;
 }
+
+/* The still variant: poster that links out, with the same play mark so it
+   does not read as a photograph. Centred over the frame like the button. */
+.reel-still { display: block; position: relative; height: 100%; }
+.reel-play-static {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.reel-still::after {
+  content: ""; position: absolute; inset: 0;
+  background: rgba(13, 10, 6, .14); transition: background .2s ease;
+}
+.reel-still:hover::after { background: rgba(13, 10, 6, .04); }
