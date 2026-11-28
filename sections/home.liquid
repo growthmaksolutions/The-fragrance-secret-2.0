@@ -705,54 +705,38 @@
             endif
             assign reel_who = block.settings.handle | default: block.settings.name
           -%}
+          {%- comment -%}
+            The whole card is the link. With the creator's name and handle
+            gone there is nothing else to click, and a video that cannot be
+            heard on the page is worth a tap through to the one that can.
+          {%- endcomment -%}
           <article class="reel-card" {{ block.shopify_attributes }}>
-            <div class="reel-media">
+            <a class="reel-media" href="{{ block.settings.link | default: '#' }}"
+               {%- if block.settings.link != blank %} target="_blank" rel="noopener"{% endif %}
+               aria-label="{{ block.settings.name | default: 'Creator' | escape }} reel on Instagram">
               {%- if reel_video != blank -%}
-                <video class="reel-video" preload="none" playsinline loop muted
-                       {% if reel_poster != blank %}poster="{{ reel_poster }}"{% endif %}
-                       aria-label="{{ block.settings.name | default: 'Creator' | escape }} reel">
-                  <source src="{{ reel_video }}" type="video/mp4">
-                </video>
                 {%- comment -%}
-                  The triangle is inline SVG, not a Material Symbols ligature.
-                  The icon font is subset to the names the theme already uses
-                  and play_arrow was not among them, so it would have rendered
-                  as the word. One shape is not worth a font rebuild.
+                  Autoplays, muted and inline, which is the only way a browser
+                  will start a video by itself. preload="none" still applies:
+                  the observer below is what starts them, so a card that never
+                  scrolls into view never downloads its file.
                 {%- endcomment -%}
-                <button type="button" class="reel-play" aria-label="Play {{ block.settings.name | default: 'this' | escape }} reel">
-                  <span class="reel-play-dot" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="22" height="22" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
-                  </span>
-                </button>
+                <video class="reel-video" preload="none" playsinline loop muted autoplay
+                       {% if reel_poster != blank %}poster="{{ reel_poster }}"{% endif %}></video>
+                <span class="reel-src" data-src="{{ reel_video }}" hidden></span>
               {%- elsif reel_poster != blank -%}
+                <img src="{{ reel_poster }}" alt="{{ block.settings.name | default: 'Creator reel' | escape }}"
+                     loading="lazy" decoding="async">
                 {%- comment -%}
-                  No video file, so the still links out to the reel. It still
-                  wears the play mark: without one a shopper reads the card as
-                  a photograph and never clicks, and the whole point is that
-                  there is a video behind it.
+                  No file for this one, so it is a still. It keeps the play
+                  mark: without one the card reads as a photograph and nobody
+                  taps it, and there is a video behind it.
                 {%- endcomment -%}
-                <a class="reel-still" href="{{ block.settings.link | default: '#' }}"{% if block.settings.link != blank %} target="_blank" rel="noopener"{% endif %}>
-                  <img src="{{ reel_poster }}" alt="{{ block.settings.name | default: 'Creator reel' | escape }}" loading="lazy" decoding="async">
-                  <span class="reel-play-dot reel-play-static" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" width="22" height="22" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
-                  </span>
-                </a>
+                <span class="reel-play-dot reel-play-static" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+                </span>
               {%- endif -%}
-            </div>
-
-            {%- if block.settings.name != blank or reel_who != blank or block.settings.link != blank -%}
-              <div class="reel-meta">
-                {%- if block.settings.name != blank -%}<span class="reel-name">{{ block.settings.name }}</span>{%- endif -%}
-                {%- if block.settings.link != blank -%}
-                  <a class="reel-link" href="{{ block.settings.link }}" target="_blank" rel="noopener">
-                    {{ reel_who | default: 'Watch on Instagram' }}
-                    <span class="mi" aria-hidden="true">arrow_forward</span>
-                  </a>
-                {%- elsif reel_who != blank -%}
-                  <span class="reel-link">{{ reel_who }}</span>
-                {%- endif -%}
-              </div>
-            {%- endif -%}
+            </a>
           </article>
         {%- endfor -%}
       </div>
@@ -761,32 +745,44 @@
 
   <script>
     (function () {
-      /* One handler for the row rather than one per card: the first tap swaps
-         the poster for the file, and starting a second reel stops the first,
-         because two vertical videos running at once on a phone is noise and
-         bandwidth nobody asked for. */
       var row = document.querySelector('.reel-row');
       if (!row || row.dataset.tfsReels) return;
       row.dataset.tfsReels = '1';
-      row.addEventListener('click', function (e) {
-        var btn = e.target.closest('.reel-play');
-        if (!btn) return;
-        var card = btn.closest('.reel-card');
-        var vid = card.querySelector('.reel-video');
-        if (!vid) return;
-        row.querySelectorAll('.reel-video').forEach(function (other) {
-          if (other !== vid) { other.pause(); other.closest('.reel-card').classList.remove('is-playing'); }
+
+      /* Autoplay, but only what is on screen. Five vertical videos all
+         running is bandwidth and battery spent on cards nobody is looking
+         at, and on a phone only one is visible at a time anyway. The source
+         is attached on first sight rather than in the markup, so a card that
+         never scrolls into view never downloads its file. */
+      var cards = row.querySelectorAll('.reel-card');
+      if (!('IntersectionObserver' in window)) {
+        cards.forEach(function (c) { attach(c.querySelector('.reel-video'), c); });
+        return;
+      }
+      function attach(vid, card) {
+        if (!vid || vid.dataset.tfsLoaded) return;
+        var holder = card.querySelector('.reel-src');
+        if (!holder) return;
+        vid.src = holder.dataset.src;
+        vid.dataset.tfsLoaded = '1';
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          var card = e.target;
+          var vid = card.querySelector('.reel-video');
+          if (!vid) return;
+          if (e.isIntersecting) {
+            attach(vid, card);
+            var p = vid.play();
+            /* Safari rejects this if the tab is in low-power mode; the poster
+               simply stays, which is the right thing to show. */
+            if (p && p.catch) p.catch(function () {});
+          } else {
+            vid.pause();
+          }
         });
-        if (vid.paused) {
-          vid.play();
-          card.classList.add('is-playing');
-          btn.setAttribute('aria-label', 'Pause reel');
-        } else {
-          vid.pause();
-          card.classList.remove('is-playing');
-          btn.setAttribute('aria-label', 'Play reel');
-        }
-      });
+      }, { threshold: 0.4 });
+      cards.forEach(function (c) { io.observe(c); });
     })();
   </script>
 {%- endif -%}
