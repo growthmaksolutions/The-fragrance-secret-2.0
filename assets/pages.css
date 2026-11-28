@@ -1874,20 +1874,39 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 
 /* Except on phones. The desktop banner is drawn with an empty third for the
    heading, which is why the scrim comes off it. The phone banner is a full
-   composition -- bottles edge to edge -- so the heading would sit straight on
-   them. This is not the scrim coming back: it is weighted to the top and gone
-   by 58%, so it darkens the band the words occupy and leaves the bottles
-   below it alone. */
+   composition -- bottles edge to edge -- so the words land on them.
+
+   The first attempt was weighted to the top and gone by 58%, which darkened
+   the empty strip above the breadcrumb and left the heading and the facts
+   on the brightest part of the artwork. Measured off the rendered page, the
+   text runs from roughly a third of the way down to four fifths, so the
+   gradient holds through that band and only lets go underneath it, where the
+   podiums and the reflections are.
+
+   Lighter than the scrim it replaces -- that one sat at .9 and .86 -- and
+   the text carries its own shadow, so the artwork does less of the work of
+   keeping the words legible. */
 @media (max-width: 760px) {
   .page-hero.no-scrim .ph-bg::after {
     display: block;
     background: linear-gradient(
       to bottom,
-      rgba(13, 10, 6, .82) 0%,
-      rgba(13, 10, 6, .62) 28%,
-      rgba(13, 10, 6, .18) 46%,
-      rgba(13, 10, 6, 0) 58%
+      rgba(13, 10, 6, .70) 0%,
+      rgba(13, 10, 6, .66) 32%,
+      rgba(13, 10, 6, .58) 58%,
+      rgba(13, 10, 6, .38) 84%,
+      rgba(13, 10, 6, .10) 100%
     );
+  }
+
+  /* A halo on the letters themselves. The bottles are pale -- the Cedrus
+     Blanc carton is nearly white -- and white type on them needs an edge of
+     its own, not just a darker ground behind it. */
+  .page-hero.no-scrim .breadcrumb,
+  .page-hero.no-scrim .ph-eyebrow,
+  .page-hero.no-scrim .ph-title,
+  .page-hero.no-scrim .ph-meta {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .70), 0 2px 14px rgba(0, 0, 0, .55);
   }
 }
 
