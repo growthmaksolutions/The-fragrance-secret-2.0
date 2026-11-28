@@ -1975,3 +1975,61 @@ a.offer-strip:focus-visible { outline: 2px solid #fff; outline-offset: -4px; }
 @media (max-width: 760px) {
   .img-banner { border-radius: 8px; }
 }
+
+/* ── Influencer reels ───────────────────────────────────────────────────
+   Vertical video in the 9:16 the files are shot in, so nothing is letterboxed
+   or cropped. A scroll row rather than a grid: the count varies with whoever
+   has posted lately, and a row absorbs three or seven without leaving a hole
+   in a layout built for four. */
+.reels { background: var(--cream-mid); padding: 88px 0; }
+.reel-row {
+  display: flex; gap: 18px; overflow-x: auto;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.reel-row::-webkit-scrollbar { display: none; }
+.reel-card { flex: 0 0 232px; scroll-snap-align: start; }
+.reel-media {
+  position: relative; aspect-ratio: 9 / 16; overflow: hidden;
+  border-radius: 12px; background: var(--ink);
+  box-shadow: 0 18px 40px -28px rgba(13, 10, 6, .55);
+}
+.reel-media video,
+.reel-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* The control sits over the whole frame, so the tap target is the card and
+   not a 44px circle a thumb has to find. */
+.reel-play {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(13, 10, 6, .18); border: 0; cursor: pointer;
+  transition: background .2s ease, opacity .2s ease;
+}
+.reel-play-dot {
+  color: var(--ink);
+  background: rgba(247, 242, 234, .92); border-radius: 50%;
+  width: 54px; height: 54px; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+  transition: opacity .2s ease;
+}
+.reel-play:hover { background: rgba(13, 10, 6, .28); }
+.reel-play:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; }
+/* Playing, the control thins to a tap area so it stops covering the video. */
+.reel-card.is-playing .reel-play { background: transparent; }
+.reel-card.is-playing .reel-play-dot { opacity: 0; }
+.reel-card.is-playing .reel-play:hover .reel-play-dot { opacity: .85; }
+
+.reel-meta { padding: 12px 2px 0; display: flex; flex-direction: column; gap: 2px; }
+.reel-name { font-weight: 600; font-size: .92rem; color: var(--ink); }
+.reel-link {
+  font-size: .8rem; color: var(--warm); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.reel-link .mi { font-size: 14px; }
+a.reel-link:hover { color: var(--gold-dk); }
+
+@media (max-width: 760px) {
+  .reels { padding: 56px 0; }
+  .reel-card { flex-basis: 64vw; }
+  .reel-play-dot { width: 46px; height: 46px; }
+}

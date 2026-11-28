@@ -629,6 +629,139 @@
   </div>
 </section>
 
+<!-- 9 · INFLUENCER REELS -->
+{%- comment -%}
+  Creators who have featured the brand, as vertical video.
+
+  Separate from the Instagram feed below it, which is a grid of the shop's own
+  posts pulled by an app. These are chosen, not fetched: a handful of reels
+  worth putting on the home page, in an order someone decided.
+
+  Nothing renders until a reel block exists, so the page never shows empty
+  frames waiting for content -- the same rule the feed below follows.
+
+  The video is not auto-played. Six vertical videos starting on their own
+  would cost a phone several megabytes before the shopper has asked for
+  anything, so each card shows its poster and loads the file on the first
+  tap: preload="none" means the browser fetches nothing until then.
+
+  A card with no video falls back to its poster and links out to the reel,
+  which is also what a shopper gets if the file is missing.
+{%- endcomment -%}
+{%- assign reel_blocks = section.blocks | where: 'type', 'reel' -%}
+{%- if reel_blocks.size > 0 -%}
+  <section class="reels" id="reels">
+    <div class="container">
+      <div class="sec-head center fade-up">
+        {%- if section.settings.reels_eyebrow != blank -%}
+          <span class="label">{{ section.settings.reels_eyebrow }}</span>
+        {%- endif -%}
+        {%- if section.settings.reels_heading != blank -%}
+          <h2 class="sec-title">{{ section.settings.reels_heading }}</h2>
+        {%- endif -%}
+        {%- if section.settings.reels_sub != blank -%}
+          <p class="sec-sub">{{ section.settings.reels_sub }}</p>
+        {%- endif -%}
+      </div>
+
+      <div class="reel-row fade-up">
+        {%- for block in reel_blocks -%}
+          {%- liquid
+            assign reel_poster = ''
+            if block.settings.poster != blank
+              if block.settings.poster contains '//'
+                assign reel_poster = block.settings.poster
+              else
+                assign reel_poster = block.settings.poster | asset_url
+              endif
+            endif
+            assign reel_video = ''
+            if block.settings.video != blank
+              if block.settings.video contains '//'
+                assign reel_video = block.settings.video
+              else
+                assign reel_video = block.settings.video | asset_url
+              endif
+            endif
+            assign reel_who = block.settings.handle | default: block.settings.name
+          -%}
+          <article class="reel-card" {{ block.shopify_attributes }}>
+            <div class="reel-media">
+              {%- if reel_video != blank -%}
+                <video class="reel-video" preload="none" playsinline loop muted
+                       {% if reel_poster != blank %}poster="{{ reel_poster }}"{% endif %}
+                       aria-label="{{ block.settings.name | default: 'Creator' | escape }} reel">
+                  <source src="{{ reel_video }}" type="video/mp4">
+                </video>
+                {%- comment -%}
+                  The triangle is inline SVG, not a Material Symbols ligature.
+                  The icon font is subset to the names the theme already uses
+                  and play_arrow was not among them, so it would have rendered
+                  as the word. One shape is not worth a font rebuild.
+                {%- endcomment -%}
+                <button type="button" class="reel-play" aria-label="Play {{ block.settings.name | default: 'this' | escape }} reel">
+                  <span class="reel-play-dot" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="22" height="22" focusable="false"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>
+                  </span>
+                </button>
+              {%- elsif reel_poster != blank -%}
+                <a class="reel-still" href="{{ block.settings.link | default: '#' }}"{% if block.settings.link != blank %} target="_blank" rel="noopener"{% endif %}>
+                  <img src="{{ reel_poster }}" alt="{{ block.settings.name | default: 'Creator reel' | escape }}" loading="lazy" decoding="async">
+                </a>
+              {%- endif -%}
+            </div>
+
+            {%- if block.settings.name != blank or reel_who != blank or block.settings.link != blank -%}
+              <div class="reel-meta">
+                {%- if block.settings.name != blank -%}<span class="reel-name">{{ block.settings.name }}</span>{%- endif -%}
+                {%- if block.settings.link != blank -%}
+                  <a class="reel-link" href="{{ block.settings.link }}" target="_blank" rel="noopener">
+                    {{ reel_who | default: 'Watch on Instagram' }}
+                    <span class="mi" aria-hidden="true">arrow_forward</span>
+                  </a>
+                {%- elsif reel_who != blank -%}
+                  <span class="reel-link">{{ reel_who }}</span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </article>
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      /* One handler for the row rather than one per card: the first tap swaps
+         the poster for the file, and starting a second reel stops the first,
+         because two vertical videos running at once on a phone is noise and
+         bandwidth nobody asked for. */
+      var row = document.querySelector('.reel-row');
+      if (!row || row.dataset.tfsReels) return;
+      row.dataset.tfsReels = '1';
+      row.addEventListener('click', function (e) {
+        var btn = e.target.closest('.reel-play');
+        if (!btn) return;
+        var card = btn.closest('.reel-card');
+        var vid = card.querySelector('.reel-video');
+        if (!vid) return;
+        row.querySelectorAll('.reel-video').forEach(function (other) {
+          if (other !== vid) { other.pause(); other.closest('.reel-card').classList.remove('is-playing'); }
+        });
+        if (vid.paused) {
+          vid.play();
+          card.classList.add('is-playing');
+          btn.setAttribute('aria-label', 'Pause reel');
+        } else {
+          vid.pause();
+          card.classList.remove('is-playing');
+          btn.setAttribute('aria-label', 'Play reel');
+        }
+      });
+    })();
+  </script>
+{%- endif -%}
+
 <!-- 9 · INSTAGRAM -->
 {%- comment -%}
   The feed itself comes from an Instagram app block, which holds and refreshes the
@@ -872,6 +1005,27 @@
     {
       "type": "header",
       "content": "10 · Instagram"
+    },
+    {
+      "type": "header",
+      "content": "Influencer reels"
+    },
+    {
+      "type": "text",
+      "id": "reels_eyebrow",
+      "label": "Eyebrow",
+      "default": "As Seen On"
+    },
+    {
+      "type": "text",
+      "id": "reels_heading",
+      "label": "Heading (H2)",
+      "default": "Creators Who <em>Wear Us</em>"
+    },
+    {
+      "type": "textarea",
+      "id": "reels_sub",
+      "label": "Intro"
     },
     {
       "type": "text",
@@ -1275,6 +1429,40 @@
           "type": "textarea",
           "id": "answer",
           "label": "Answer"
+        }
+      ]
+    },
+    {
+      "type": "reel",
+      "name": "Influencer reel",
+      "settings": [
+        {
+          "type": "text",
+          "id": "video",
+          "label": "Video (MP4)",
+          "info": "A Shopify Files URL, or a theme asset filename. Leave blank to show the poster as a still that links to the reel."
+        },
+        {
+          "type": "text",
+          "id": "poster",
+          "label": "Poster image",
+          "info": "Theme asset filename or a full URL. Shown before the video loads, so it should be a frame from the reel."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Creator name"
+        },
+        {
+          "type": "text",
+          "id": "handle",
+          "label": "Handle",
+          "info": "e.g. @thefragrancesecrets"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Instagram permalink"
         }
       ]
     }
